@@ -33,14 +33,14 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
   late TextEditingController productNameCtl = TextEditingController();
   late TextEditingController supplierNameCtl = TextEditingController();
   final _formGlobalKey = GlobalKey<FormState>();
-  String _selectedUnit = "Meter";
+  String _selectedUnit = "Meters";
   final List<String> _unitList = [
-    "Meter",
+    "Meters",
     "Yards",
     "Rolls",
     'SQM',
-    "Pallet",
-    "Sheet"
+    "Pallets",
+    "Sheets"
   ];
   late String _selectedPaletteId = '';
   late String _whId = '';
@@ -142,6 +142,11 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
         await productService.decrementProductQtyList(productIdCtl.text,
             _selectedPaletteId, _selectedUnit, int.parse(qtyCtl.text));
 
+        await productService.decrementProductTotalQty(
+          productIdCtl.text,
+          _selectedUnit,
+          int.parse(qtyCtl.text),
+        );
         await paletteservice.decrementProduct(_selectedPaletteId,
             productIdCtl.text, _selectedUnit, int.parse(qtyCtl.text));
 

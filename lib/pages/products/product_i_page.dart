@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:Mahasu/components/product_total_qty_card.dart';
+import 'package:Mahasu/pages/palettes/palette_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Mahasu/pages/products/edit_product_page.dart';
@@ -175,6 +177,12 @@ class _ProductPageState extends State<ProductPage> {
                     palette.data() as Map<String, dynamic>;
 
                 String productName = data['name'];
+                int metersQty = data['meters'];
+                int rollsQty = data['rolls'];
+                int yardsQty = data['yards'];
+                int sqmQty = data['sqm'];
+                int palletsQty = data['pallets'];
+                int sheetsQty = data['sheets'];
 
                 // prepare the products list
                 final List<Map<String, dynamic>> products =
@@ -202,8 +210,8 @@ class _ProductPageState extends State<ProductPage> {
                                     ),
                                     SizedBox(width: 4),
                                     Text(
-                                      productName.length > 30
-                                          ? '${productName.substring(0, 30).toUpperCase()}...'
+                                      productName.length > 20
+                                          ? '${productName.substring(0, 20).toUpperCase()}...'
                                           : productName.toUpperCase(),
                                       overflow: TextOverflow.clip,
                                       maxLines: 1,
@@ -217,10 +225,70 @@ class _ProductPageState extends State<ProductPage> {
                                   ],
                                 ),
                               ),
+                              GestureDetector(
+                                onTap: () {
+                                  getQR(
+                                    textToGenerate: widget.productId,
+                                    type: 'product',
+                                  );
+                                },
+                                child: Container(
+                                  width: 30,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFFAFAFA),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.qr_code,
+                                      color: Color(0xFF058B06),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              TotalQtyCard(
+                                unit: 'Meters',
+                                text: metersQty.toString(),
+                              ),
+                              TotalQtyCard(
+                                unit: 'Rolls',
+                                text: rollsQty.toString(),
+                              ),
+                              TotalQtyCard(
+                                unit: 'Yards',
+                                text: yardsQty.toString(),
+                              ),
+                              TotalQtyCard(
+                                unit: 'SQM',
+                                text: sqmQty.toString(),
+                              ),
+                              TotalQtyCard(
+                                unit: 'Pallets',
+                                text: palletsQty.toString(),
+                              ),
+                              TotalQtyCard(
+                                unit: 'Sheets',
+                                text: sheetsQty.toString(),
+                              ),
+                            ],
+                          )
                         ],
                       ),
+                    ),
+                    Divider(
+                      color: Colors.grey,
+                      thickness: 2,
+                      indent: 20,
+                      endIndent: 20,
                     ),
                     Expanded(
                       child: products.isNotEmpty
@@ -229,6 +297,7 @@ class _ProductPageState extends State<ProductPage> {
                               itemBuilder: (context, index) {
                                 final Map<String, dynamic> product =
                                     products[index];
+                                String paletteId = product['palette_id'];
                                 String paletteName = product['palette_name'];
 
                                 // prepare the qty list
@@ -236,87 +305,132 @@ class _ProductPageState extends State<ProductPage> {
                                     (product['qty_list']
                                         as Map<String, dynamic>);
 
+                                // present the palette name and its qty list
                                 return GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) {
+                                        return PalettePage(
+                                          productId: paletteId,
+                                          paletteName: paletteName,
+                                        );
+                                      }),
+                                    );
+                                  },
                                   child: Container(
                                     margin: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 5,
-                                    ),
-                                    padding: const EdgeInsets.all(10),
+                                        horizontal: 10, vertical: 10),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
-                                      borderRadius: BorderRadius.circular(5),
+                                      borderRadius: BorderRadius.circular(10),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.grey.withOpacity(0.5),
-                                          spreadRadius: 1,
-                                          blurRadius: 2,
-                                          offset: const Offset(0, 1),
+                                          color: Colors.grey.withOpacity(0.2),
+                                          spreadRadius: 2,
+                                          blurRadius: 5,
+                                          offset: const Offset(0, 3),
                                         ),
                                       ],
                                     ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Image.asset(
-                                                'assets/images/rack.png',
-                                                height: 30,
-                                                width: 30),
-                                            Text(
-                                              paletteName.toUpperCase(),
-                                              style: GoogleFonts.nunitoSans(
-                                                textStyle: const TextStyle(
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 30,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(20),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  Image.asset(
+                                                    'assets/images/rack.png',
+                                                    width: 20,
+                                                    height: 20,
+                                                  ),
+                                                  Text(
+                                                    paletteName,
+                                                    style:
+                                                        GoogleFonts.nunitoSans(
+                                                      textStyle:
+                                                          const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        fontSize: 16,
+                                                        height: 1.4,
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  getQR(
+                                                    textToGenerate: paletteName,
+                                                    type: 'palette',
+                                                  );
+                                                },
+                                                child: Container(
+                                                  width: 30,
+                                                  height: 30,
+                                                  decoration: BoxDecoration(
+                                                    color: Color(0xFFFAFAFA),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                  ),
+                                                  child: Center(
+                                                    child: Icon(
+                                                      Icons.qr_code,
+                                                      color: Color(0xFF058B06),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 15),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            if (qtyList['Meter'] != null)
-                                              Column(children: [
-                                                Text('Meter'),
-                                                Text('${qtyList['Meter']}')
-                                              ]),
-                                            if (qtyList['Roll'] != null)
-                                              Column(children: [
-                                                Text('Roll'),
-                                                Text('${qtyList['Roll']}')
-                                              ]),
-                                            if (qtyList['Yard'] != null)
-                                              Column(children: [
-                                                Text('Yard'),
-                                                Text('${qtyList['Yard']}')
-                                              ]),
-                                            if (qtyList['SQM'] != null)
-                                              Column(children: [
-                                                Text('SQM'),
-                                                Text('${qtyList['SQM']}')
-                                              ]),
-                                            if (qtyList['Pallet'] != null)
-                                              Column(children: [
-                                                Text('Pallet'),
-                                                Text('${qtyList['Pallet']}')
-                                              ]),
-                                            if (qtyList['Sheet'] != null)
-                                              Column(children: [
-                                                Text('Sheet'),
-                                                Text('${qtyList['Sheet']}')
-                                              ]),
-                                          ],
-                                        ),
-                                      ],
+                                            ],
+                                          ),
+                                          SizedBox(height: 10),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              TotalQtyCard(
+                                                unit: 'Meters',
+                                                text: (qtyList['meters'] ?? 0)
+                                                    .toString(),
+                                              ),
+                                              TotalQtyCard(
+                                                unit: 'Rolls',
+                                                text: (qtyList['rolls'] ?? 0)
+                                                    .toString(),
+                                              ),
+                                              TotalQtyCard(
+                                                unit: 'Yards',
+                                                text: (qtyList['yards'] ?? 0)
+                                                    .toString(),
+                                              ),
+                                              TotalQtyCard(
+                                                unit: 'SQM',
+                                                text: (qtyList['sqm'] ?? 0)
+                                                    .toString(),
+                                              ),
+                                              TotalQtyCard(
+                                                unit: 'Pallets',
+                                                text: (qtyList['pallets'] ?? 0)
+                                                    .toString(),
+                                              ),
+                                              TotalQtyCard(
+                                                unit: 'Sheets',
+                                                text: (qtyList['sheets'] ?? 0)
+                                                    .toString(),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );

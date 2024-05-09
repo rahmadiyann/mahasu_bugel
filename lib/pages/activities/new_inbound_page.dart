@@ -33,14 +33,14 @@ class _NewInboundPageState extends State<NewInboundPage> {
   late TextEditingController productNameCtl = TextEditingController();
   late TextEditingController supplierNameCtl = TextEditingController();
   final _formGlobalKey = GlobalKey<FormState>();
-  String _selectedUnit = "Meter";
+  String _selectedUnit = "Meters";
   final List<String> _unitList = [
-    "Meter",
+    "Meters",
     "Yards",
     "Rolls",
     'SQM',
-    "Pallet",
-    "Sheet"
+    "Pallets",
+    "Sheets"
   ];
   late String _selectedPaletteId = '';
   late String _whId = '';

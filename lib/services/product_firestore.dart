@@ -31,12 +31,12 @@ class ProductFirestoreService {
         },
         'created_at': Timestamp.now(),
         'palettes': [],
-        'meter': 0,
-        'roll': 0,
-        'yard': 0,
+        'meters': 0,
+        'rolls': 0,
+        'yards': 0,
         'sqm': 0,
-        'pallet': 0,
-        'sheet': 0
+        'pallets': 0,
+        'sheets': 0
       },
     );
     return productRef.id;
@@ -45,21 +45,26 @@ class ProductFirestoreService {
   // Increment product total qty
   Future<void> incrementProductTotalQty(String id, String unit, int qty) async {
     final product = await products.doc(id).get();
+    int currentQty = product[unit.toLowerCase()];
+    print('currentQty: $currentQty');
+    print('qty: $qty');
     int totalQty = product[unit.toLowerCase()] + qty;
+    print('totalQty: $totalQty');
 
-    await products.doc(id).update({
-      unit: totalQty,
-    });
+    await products.doc(id).update({unit.toLowerCase(): totalQty});
   }
 
-  // Decrement product total qty
+  // Increment product total qty
   Future<void> decrementProductTotalQty(String id, String unit, int qty) async {
+    print('decrementing');
     final product = await products.doc(id).get();
+    int currentQty = product[unit.toLowerCase()];
+    print('currentQty: $currentQty');
+    print('qty: $qty');
     int totalQty = product[unit.toLowerCase()] - qty;
+    print('totalQty: $totalQty');
 
-    await products.doc(id).update({
-      unit: totalQty,
-    });
+    await products.doc(id).update({unit.toLowerCase(): totalQty});
   }
 
   Stream<QuerySnapshot> readProduct() {
@@ -96,7 +101,7 @@ class ProductFirestoreService {
             (palettes[i]['qty_list'] as Map<String, dynamic>);
 
         // Update the quantity of the existing unit or add a new unit
-        qtyList[unit] = (qtyList[unit] ?? 0) + qty;
+        qtyList[unit.toLowerCase()] = (qtyList[unit.toLowerCase()] ?? 0) + qty;
 
         // Update the qty_list for the product
         palettes[i]['qty_list'] = qtyList;
@@ -113,7 +118,7 @@ class ProductFirestoreService {
           'palette_id': paletteId,
           'palette_name': paletteName,
           'qty_list': {
-            unit: qty,
+            unit.toLowerCase(): qty,
           }
         },
       );
@@ -139,14 +144,14 @@ class ProductFirestoreService {
             (palettes[i]['qty_list'] as Map<String, dynamic>);
 
         // Update the quantity of the existing unit or add a new unit
-        qtyList[unit] = (qtyList[unit] ?? 0) - qty;
+        qtyList[unit.toLowerCase()] = (qtyList[unit.toLowerCase()] ?? 0) - qty;
 
         // Update the qty_list for the product
         palettes[i]['qty_list'] = qtyList;
 
         // if all units are removed, remove the palette from the product
-        if (qtyList[unit] <= 0) {
-          qtyList.remove(unit);
+        if (qtyList[unit.toLowerCase()] <= 0) {
+          qtyList.remove(unit.toLowerCase());
         }
 
         if (qtyList.isEmpty) {
@@ -171,8 +176,8 @@ class ProductFirestoreService {
 
     for (var i = 0; i < palettes.length; i++) {
       if (palettes[i]['palette_id'] == paletteId &&
-          palettes[i]['qty_list'][unit] != null) {
-        return palettes[i]['qty_list'][unit];
+          palettes[i]['qty_list'][unit.toLowerCase()] != null) {
+        return palettes[i]['qty_list'][unit.toLowerCase()];
       }
     }
     return 0;

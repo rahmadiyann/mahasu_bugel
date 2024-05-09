@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors, camel_case_types, use_build_context_synchronously
 
+import 'package:Mahasu/pages/products/product_i_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Mahasu/components/button.dart';
 import 'package:Mahasu/components/myappbar.dart';
@@ -453,7 +455,16 @@ class _allPalettePageState extends State<allPalettePage> {
                                   Map<String, dynamic> product =
                                       data['products'][index];
                                   return GestureDetector(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ProductPage(
+                                            productId: product['productId'],
+                                          ),
+                                        ),
+                                      );
+                                    },
                                     child: Container(
                                       margin: EdgeInsets.symmetric(
                                           horizontal: 10, vertical: 5),
@@ -500,42 +511,60 @@ class _allPalettePageState extends State<allPalettePage> {
                                                 ],
                                               ),
                                             ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                            Column(
                                               children: [
-                                                // there is a map of 'Meter': qty, 'Rolls': qty, and 'Yards': qty inside qty_list. If each exists, display the qty
-                                                if (product['qty_list']
-                                                        ['Meter'] !=
-                                                    null)
-                                                  Text(
-                                                      'Meter: ${product['qty_list']['Meter']}'),
-                                                if (product['qty_list']
-                                                        ['Rolls'] !=
-                                                    null)
-                                                  Text(
-                                                      'Rolls: ${product['qty_list']['Rolls']}'),
-                                                if (product['qty_list']
-                                                        ['Yards'] !=
-                                                    null)
-                                                  Text(
-                                                      'Yards: ${product['qty_list']['Yards']}'),
-                                                if (product['qty_list']
-                                                        ['Sheet'] !=
-                                                    null)
-                                                  Text(
-                                                      'Sheet: ${product['qty_list']['Sheet']}'),
-                                                if (product['qty_list']
-                                                        ['SQM'] !=
-                                                    null)
-                                                  Text(
-                                                      'SQM: ${product['qty_list']['SQM']}'),
-                                                if (product['qty_list']
-                                                        ['Pallet'] !=
-                                                    null)
-                                                  Text(
-                                                      'Pallet: ${product['qty_list']['Pallet']}'),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    // there is a map of 'Meters': qty, 'Rolls': qty, and 'Yards': qty inside qty_list. If each exists, display the qty
+                                                    if (product['qty_list']
+                                                            ['Meters'] !=
+                                                        null)
+                                                      Text(
+                                                          'Meters: ${product['qty_list']['Meters']}'),
+                                                    if (product['qty_list']
+                                                            ['Rolls'] !=
+                                                        null)
+                                                      Text(
+                                                          'Rolls: ${product['qty_list']['Rolls']}'),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    if (product['qty_list']
+                                                            ['Yards'] !=
+                                                        null)
+                                                      Text(
+                                                          'Yards: ${product['qty_list']['Yards']}'),
+                                                    if (product['qty_list']
+                                                            ['Sheets'] !=
+                                                        null)
+                                                      Text(
+                                                          'Sheets: ${product['qty_list']['Sheets']}'),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    if (product['qty_list']
+                                                            ['SQM'] !=
+                                                        null)
+                                                      Text(
+                                                          'SQM: ${product['qty_list']['SQM']}'),
+                                                    if (product['qty_list']
+                                                            ['Pallets'] !=
+                                                        null)
+                                                      Text(
+                                                          'Pallets: ${product['qty_list']['Pallets']}'),
+                                                  ],
+                                                )
                                               ],
                                             ),
                                           ],

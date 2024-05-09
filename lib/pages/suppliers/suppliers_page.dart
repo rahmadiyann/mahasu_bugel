@@ -1,12 +1,16 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:Mahasu/components/button.dart';
+import 'package:Mahasu/services/phonestripper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Mahasu/pages/suppliers/new_supplier_page.dart';
 import 'package:Mahasu/pages/suppliers/supplier_i_page.dart';
 import 'package:Mahasu/services/supplier_firestore.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AllSuppliersPage extends StatefulWidget {
   const AllSuppliersPage({super.key});
@@ -237,29 +241,134 @@ class _AllSuppliersPageState extends State<AllSuppliersPage> {
                                     ),
                                   ],
                                 ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Icon(
-                                      Icons.phone,
-                                      size: 15,
-                                      color: Colors.black,
-                                    ),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(
-                                      supplierPhone,
-                                      style: GoogleFonts.nunitoSans(
-                                        textStyle: const TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 14,
-                                          height: 1.4,
-                                          color: Colors.black,
+                                GestureDetector(
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      useSafeArea: true,
+                                      showDragHandle: false,
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.transparent,
+                                      builder: (context) => ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(20),
+                                          topRight: Radius.circular(20),
+                                        ),
+                                        child: Container(
+                                          color: Colors.white,
+                                          child: SizedBox(
+                                            height: 400,
+                                            width: double.infinity,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              children: [
+                                                SizedBox(height: 20),
+                                                Container(
+                                                  margin: const EdgeInsets
+                                                      .symmetric(vertical: 10),
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Color.fromRGBO(
+                                                        251, 222, 154, 1),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Image.asset(
+                                                      'assets/images/warningicon.png',
+                                                      // height: 100,
+                                                      // width: 100,
+                                                      // color: Color.fromRGBO(
+                                                      //     198, 181, 47, 1),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 30),
+                                                Container(
+                                                  margin: const EdgeInsets
+                                                      .symmetric(vertical: 10),
+                                                  height: 100,
+                                                  width: 300,
+                                                  alignment:
+                                                      Alignment.topCenter,
+                                                  child: Text(
+                                                    'You will be redirected to WhatsApp to chat with the supplier. Continue?',
+                                                    textAlign: TextAlign.center,
+                                                    style:
+                                                        GoogleFonts.nunitoSans(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  children: [
+                                                    MyButton(
+                                                      onTap: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      text: 'No',
+                                                    ),
+                                                    MyButton(
+                                                      onTap: () async {
+                                                        // redirect to link
+                                                        String
+                                                            phoneNumberFormatted =
+                                                            await stripPhoneNumber(
+                                                                supplierPhone);
+                                                        final Uri _url = Uri.parse(
+                                                            'https://wa.me/$phoneNumberFormatted');
+                                                        launchUrl(_url);
+                                                      },
+                                                      text: 'Yes',
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(height: 20)
+                                              ],
+                                            ),
+                                          ),
                                         ),
                                       ),
+                                    );
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color.fromARGB(
+                                          255, 179, 255, 181),
+                                      borderRadius: BorderRadius.circular(5),
                                     ),
-                                  ],
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Icon(
+                                          Icons.phone,
+                                          size: 15,
+                                          color: Colors.black,
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Text(
+                                          supplierPhone,
+                                          style: GoogleFonts.nunitoSans(
+                                            textStyle: const TextStyle(
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 14,
+                                              height: 1.4,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),

@@ -549,32 +549,38 @@ class _HomePageState extends State<HomePage> {
                                         if (snapshot.hasData) {
                                           DocumentSnapshot warehouse =
                                               snapshot.data as DocumentSnapshot;
-                                          Map<String, dynamic> warehouseData =
-                                              warehouse.data()
-                                                  as Map<String, dynamic>;
-                                          String name = warehouseData['name'];
-                                          return Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Image.asset(
-                                                  'assets/images/warehouseicon.png',
-                                                  height: 15,
-                                                  width: 15,
-                                                ),
-                                                Text(
-                                                  name.toUpperCase(),
-                                                  style: TextStyle(
-                                                    color: Colors.grey,
-                                                    fontWeight: FontWeight.bold,
+                                          if (warehouse.data() == null) {
+                                            return Text('Loading...');
+                                          } else {
+                                            Map<String, dynamic> warehouseData =
+                                                warehouse.data()
+                                                    as Map<String, dynamic>;
+                                            String name = warehouseData['name'];
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  Image.asset(
+                                                    'assets/images/warehouseicon.png',
+                                                    height: 15,
+                                                    width: 15,
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
+                                                  Text(
+                                                    name.toUpperCase(),
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          }
                                         } else {
                                           return Text('Loading...');
                                         }

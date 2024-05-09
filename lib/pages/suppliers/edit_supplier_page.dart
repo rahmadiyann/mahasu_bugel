@@ -98,6 +98,12 @@ class _EditSupplierPageState extends State<EditSupplierPage> {
                   children: [
                     MyButton(
                       onTap: () {
+                        Navigator.pop(context);
+                      },
+                      text: 'No',
+                    ),
+                    MyButton(
+                      onTap: () {
                         supplierFirestoreService.updateSupplier(
                             widget.supplierId,
                             supplierNameController.text,
@@ -113,12 +119,6 @@ class _EditSupplierPageState extends State<EditSupplierPage> {
                         Navigator.pop(context);
                       },
                       text: 'Yes',
-                    ),
-                    MyButton(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      text: 'No',
                     ),
                   ],
                 ),
@@ -188,6 +188,12 @@ class _EditSupplierPageState extends State<EditSupplierPage> {
                   children: [
                     MyButton(
                       onTap: () {
+                        Navigator.pop(context);
+                      },
+                      text: 'No',
+                    ),
+                    MyButton(
+                      onTap: () {
                         supplierFirestoreService
                             .deleteSupplier(widget.supplierId);
                         // show snackbar
@@ -200,12 +206,6 @@ class _EditSupplierPageState extends State<EditSupplierPage> {
                         Navigator.pop(context);
                       },
                       text: 'Yes',
-                    ),
-                    MyButton(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      text: 'No',
                     ),
                   ],
                 ),
