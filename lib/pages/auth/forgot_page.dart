@@ -18,7 +18,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController emailCtl = TextEditingController();
 
   forgotPassword() {
+    // show snackbar
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Center(
+            child: Text('A password reset link has been sent to your email')),
+      ),
+    );
     FirebaseAuth.instance.sendPasswordResetEmail(email: emailCtl.text);
+    // redirect login page
+    Navigator.pop(context);
   }
 
   @override
