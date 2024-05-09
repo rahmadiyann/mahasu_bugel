@@ -162,8 +162,7 @@ class _AllSuppliersPageState extends State<AllSuppliersPage> {
                                     ),
                                     Text(
                                       supplierName.length > 15
-                                          ? supplierName.substring(0, 15) +
-                                              '...'
+                                          ? '${supplierName.substring(0, 15)}...'
                                           : supplierName,
                                       style: GoogleFonts.nunitoSans(
                                         textStyle: const TextStyle(

@@ -201,9 +201,7 @@ class _AllProductPageState extends State<AllProductPage> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.pop(
-                context,
-              );
+              Navigator.popAndPushNamed(context, '/home');
             },
           ),
           title: Text(

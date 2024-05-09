@@ -307,6 +307,22 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
+                Row(children: [
+                  // Refresh icon
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {});
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Image.asset(
+                        'assets/images/refresh.png',
+                        height: 25,
+                        width: 25,
+                      ),
+                    ),
+                  ),
+                ])
                 // GestureDetector(
                 //   onTap: () {
                 //     // download excel
@@ -399,22 +415,27 @@ class _HomePageState extends State<HomePage> {
                                           if (snapshot.hasData) {
                                             DocumentSnapshot product = snapshot
                                                 .data as DocumentSnapshot;
-                                            Map<String, dynamic> productData =
-                                                product.data()
-                                                    as Map<String, dynamic>;
-                                            String name = productData['name'];
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                name,
-                                                style: GoogleFonts.nunitoSans(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: Color(0xFF000000),
+
+                                            if (product.data() == null) {
+                                              return Text('Loading...');
+                                            } else {
+                                              Map<String, dynamic> productData =
+                                                  product.data()
+                                                      as Map<String, dynamic>;
+                                              String name = productData['name'];
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  name,
+                                                  style: GoogleFonts.nunitoSans(
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Color(0xFF000000),
+                                                  ),
                                                 ),
-                                              ),
-                                            );
+                                              );
+                                            }
                                           } else {
                                             return Text('Loading...');
                                           }

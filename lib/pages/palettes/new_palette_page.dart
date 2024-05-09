@@ -58,122 +58,130 @@ class _NewPalettePageState extends State<NewPalettePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MyAppBar(
-        title: 'New Palette',
-        isHomePage: false,
-        isAction: false,
-        backPageDestination: allPalettePage(),
-        destinationPage: NewPalettePage(),
-      ),
-      body: Form(
-        key: _formGlobalKey,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: ListView(
-            scrollDirection: Axis.vertical,
-            children: <Widget>[
-              TextField(
-                onChanged: (value) {
-                  setState(() {
-                    _isPaletteNameValid = paletteNameCtl.text.isNotEmpty;
-                  });
-                },
-                enabled: true,
-                controller: paletteNameCtl,
-                obscureText: false,
-                decoration: InputDecoration(
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
+    return Dismissible(
+      key: const ValueKey('new-palette'),
+      direction: DismissDirection.endToStart,
+      onDismissed: (direction) {
+        Navigator.popAndPushNamed(context, '/palettes');
+      },
+      child: Scaffold(
+        appBar: MyAppBar(
+          title: 'New Palette',
+          isHomePage: false,
+          isAction: false,
+          backPageDestination: allPalettePage(),
+          destinationPage: NewPalettePage(),
+        ),
+        body: Form(
+          key: _formGlobalKey,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: ListView(
+              scrollDirection: Axis.vertical,
+              children: <Widget>[
+                TextField(
+                  onChanged: (value) {
+                    setState(() {
+                      _isPaletteNameValid = paletteNameCtl.text.isNotEmpty;
+                    });
+                  },
+                  enabled: true,
+                  controller: paletteNameCtl,
+                  obscureText: false,
+                  decoration: InputDecoration(
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
+                    hintText: 'Palette name',
+                    hintStyle: const TextStyle(color: Colors.grey),
                   ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue),
-                  ),
-                  hintText: 'Palette name',
-                  hintStyle: const TextStyle(color: Colors.grey),
+                  style: const TextStyle(color: Colors.black),
                 ),
-                style: const TextStyle(color: Colors.black),
-              ),
-              const SizedBox(height: 16),
-              StreamBuilder(
-                  stream: warehouseService.readWarehouse(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      List<Warehouses> warehouseList =
-                          snapshot.data!.docs.map((doc) {
-                        return Warehouses(doc.id, doc['name']);
-                      }).toList();
+                const SizedBox(height: 16),
+                StreamBuilder(
+                    stream: warehouseService.readWarehouse(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        List<Warehouses> warehouseList =
+                            snapshot.data!.docs.map((doc) {
+                          return Warehouses(doc.id, doc['name']);
+                        }).toList();
 
-                      return Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: DropdownButton(
-                            isExpanded: true,
-                            underline: const SizedBox(),
-                            items: warehouseList
-                                .map<DropdownMenuItem<Warehouses>>(
-                                    (supplier) => DropdownMenuItem(
-                                          value: supplier,
-                                          child: Text(supplier.name),
-                                        ))
-                                .toList(),
-                            onChanged: (Warehouses? value) {
-                              if (value != null) {
-                                setState(() {
-                                  hintText = value.name;
-                                  whNameCtl.text = value.name;
-                                  whIdCtl.text = value.id;
-                                });
-                              }
-                            },
-                            hint: Text(hintText),
-                          ),
-                        ),
-                      );
-                    } else {
-                      return const Text('No data');
-                    }
-                  }),
-              const SizedBox(height: 16),
-              GestureDetector(
-                onTap: _isPaletteNameValid
-                    ? onTap
-                    : () {
-                        // show snackbar
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Center(
-                                child: Text('Please fill in the palette name')),
+                        return Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: DropdownButton(
+                              isExpanded: true,
+                              underline: const SizedBox(),
+                              items: warehouseList
+                                  .map<DropdownMenuItem<Warehouses>>(
+                                      (supplier) => DropdownMenuItem(
+                                            value: supplier,
+                                            child: Text(supplier.name),
+                                          ))
+                                  .toList(),
+                              onChanged: (Warehouses? value) {
+                                if (value != null) {
+                                  setState(() {
+                                    hintText = value.name;
+                                    whNameCtl.text = value.name;
+                                    whIdCtl.text = value.id;
+                                  });
+                                }
+                              },
+                              hint: Text(hintText),
+                            ),
                           ),
                         );
-                      },
-                child: Container(
-                  height: 50,
-                  width: 200,
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.green.shade400, Colors.green.shade600],
-                      begin: AlignmentDirectional.topStart,
-                      end: AlignmentDirectional.bottomEnd,
+                      } else {
+                        return const Text('No data');
+                      }
+                    }),
+                const SizedBox(height: 16),
+                GestureDetector(
+                  onTap: _isPaletteNameValid
+                      ? onTap
+                      : () {
+                          // show snackbar
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Center(
+                                  child:
+                                      Text('Please fill in the palette name')),
+                            ),
+                          );
+                        },
+                  child: Container(
+                    height: 50,
+                    width: 200,
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.green.shade400, Colors.green.shade600],
+                        begin: AlignmentDirectional.topStart,
+                        end: AlignmentDirectional.bottomEnd,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Text(
-                        'Submit',
-                        style: const TextStyle(color: Colors.white),
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Text(
+                          'Submit',
+                          style: const TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

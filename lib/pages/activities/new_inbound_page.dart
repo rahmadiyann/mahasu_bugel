@@ -45,7 +45,6 @@ class _NewInboundPageState extends State<NewInboundPage> {
   late String _selectedPaletteId = '';
   late String _whId = '';
   late String _paletteName = '';
-  bool _isQtyValid = false;
 
   // using palette service, make a list of palette names and remember its id
   @override
@@ -140,7 +139,7 @@ class _NewInboundPageState extends State<NewInboundPage> {
       );
 
       // after snackbar, navigate back to the previous page
-      Navigator.pop(context);
+      Navigator.popAndPushNamed(context, '/inbound');
     }
 
     return Scaffold(
@@ -394,13 +393,6 @@ class _NewInboundPageState extends State<NewInboundPage> {
                 ),
               ),
               TextField(
-                onEditingComplete: () {
-                  setState(() {
-                    _isQtyValid = qtyCtl.text.isNotEmpty;
-                  });
-                  // pop the keyboard
-                  FocusScope.of(context).unfocus();
-                },
                 keyboardType: TextInputType.number,
                 enabled: true,
                 controller: qtyCtl,
@@ -441,17 +433,9 @@ class _NewInboundPageState extends State<NewInboundPage> {
                   enabled: true),
               const SizedBox(height: 50),
               GestureDetector(
-                onTap: _isQtyValid
-                    ? onTap
-                    : () {
-                        // show snackbar
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Center(
-                                child: Text('Please fill in the quantity')),
-                          ),
-                        );
-                      },
+                onTap: () {
+                  onTap();
+                },
                 child: Container(
                   height: 50,
                   width: 200,

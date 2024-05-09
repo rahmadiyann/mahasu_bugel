@@ -81,6 +81,7 @@ flutter:
     - assets/images/mahasu.png
     - assets/images/male.png
     - assets/images/female.png
+    - assets/images/refresh.png
     - assets/images/arrowright.png
     - assets/images/box.png
     - assets/images/pinpoint.png

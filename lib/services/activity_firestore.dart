@@ -65,4 +65,33 @@ class ActivityFirestoreService {
       },
     );
   }
+
+  // delete activity by paletteId
+  Future<void> deleteActivityByPaletteId(String paletteId) async {
+    final activity =
+        await activitys.where('palette_id', isEqualTo: paletteId).get();
+    for (var i = 0; i < activity.docs.length; i++) {
+      final doc = activity.docs[i];
+      await activitys.doc(doc.id).delete();
+    }
+  }
+
+  // delete activity by productId
+  Future<void> deleteActivityByProductId(String productId) async {
+    final activity =
+        await activitys.where('product_id', isEqualTo: productId).get();
+    for (var i = 0; i < activity.docs.length; i++) {
+      final doc = activity.docs[i];
+      await activitys.doc(doc.id).delete();
+    }
+  }
+
+  // delete activity by warehouseId
+  Future<void> deleteActivityByWarehouseId(String whId) async {
+    final activity = await activitys.where('wh_id', isEqualTo: whId).get();
+    for (var i = 0; i < activity.docs.length; i++) {
+      final doc = activity.docs[i];
+      await activitys.doc(doc.id).delete();
+    }
+  }
 }

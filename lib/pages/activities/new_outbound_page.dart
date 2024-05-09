@@ -134,7 +134,7 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
           ),
         );
         // after snackbar, navigate back to the previous page
-        Navigator.pop(context);
+        Navigator.popAndPushNamed(context, '/outbound');
       } else {
         await activityService.createActivity('Outbound', productIdCtl.text,
             _selectedPaletteId, _selectedUnit, int.parse(qtyCtl.text), _whId);
@@ -160,7 +160,7 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
         );
 
         // after snackbar, navigate back to the previous page
-        Navigator.pop(context);
+        Navigator.popAndPushNamed(context, '/outbound');
       }
     }
 

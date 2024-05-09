@@ -3,10 +3,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Mahasu/pages/products/edit_product_page.dart';
-import 'package:Mahasu/pages/products/product_page.dart';
 import 'package:Mahasu/services/product_firestore.dart';
 import 'package:Mahasu/services/qr_generator.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -111,12 +109,7 @@ class _ProductPageState extends State<ProductPage> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AllProductPage(),
-                ),
-              );
+              Navigator.popAndPushNamed(context, '/products');
             },
           ),
           title: Text(
@@ -173,173 +166,179 @@ class _ProductPageState extends State<ProductPage> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final DocumentSnapshot palette = snapshot.data!;
-              final Map<String, dynamic> data =
-                  palette.data() as Map<String, dynamic>;
+              if (palette.data() == null) {
+                return Center(
+                  child: Text('No data...'),
+                );
+              } else {
+                final Map<String, dynamic> data =
+                    palette.data() as Map<String, dynamic>;
 
-              String productName = data['name'];
+                String productName = data['name'];
 
-              // prepare the products list
-              final List<Map<String, dynamic>> products =
-                  List<Map<String, dynamic>>.from(data['palettes'] ?? []);
+                // prepare the products list
+                final List<Map<String, dynamic>> products =
+                    List<Map<String, dynamic>>.from(data['palettes'] ?? []);
 
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    height: 25,
-                                    width: 25,
-                                    child: SvgPicture.asset(
-                                        'assets/vectors/allproducticon.svg',
-                                        fit: BoxFit.contain),
-                                  ),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    productName.length > 30
-                                        ? productName
-                                                .substring(0, 30)
-                                                .toUpperCase() +
-                                            '...'
-                                        : productName.toUpperCase(),
-                                    overflow: TextOverflow.clip,
-                                    maxLines: 1,
-                                    style: GoogleFonts.nunitoSans(
-                                      textStyle: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 15,
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      height: 25,
+                                      width: 25,
+                                      child: SvgPicture.asset(
+                                          'assets/vectors/allproducticon.svg',
+                                          fit: BoxFit.contain),
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      productName.length > 30
+                                          ? '${productName.substring(0, 30).toUpperCase()}...'
+                                          : productName.toUpperCase(),
+                                      overflow: TextOverflow.clip,
+                                      maxLines: 1,
+                                      style: GoogleFonts.nunitoSans(
+                                        textStyle: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 15,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: products.isNotEmpty
-                        ? ListView.builder(
-                            itemCount: products.length,
-                            itemBuilder: (context, index) {
-                              final Map<String, dynamic> product =
-                                  products[index];
-                              String paletteName = product['palette_name'];
+                    Expanded(
+                      child: products.isNotEmpty
+                          ? ListView.builder(
+                              itemCount: products.length,
+                              itemBuilder: (context, index) {
+                                final Map<String, dynamic> product =
+                                    products[index];
+                                String paletteName = product['palette_name'];
 
-                              // prepare the qty list
-                              final Map<String, dynamic> qtyList =
-                                  (product['qty_list'] as Map<String, dynamic>);
+                                // prepare the qty list
+                                final Map<String, dynamic> qtyList =
+                                    (product['qty_list']
+                                        as Map<String, dynamic>);
 
-                              return GestureDetector(
-                                onTap: () {},
-                                child: Container(
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 5,
-                                  ),
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(5),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        spreadRadius: 1,
-                                        blurRadius: 2,
-                                        offset: const Offset(0, 1),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Image.asset('assets/images/rack.png',
-                                              height: 30, width: 30),
-                                          Text(
-                                            paletteName.toUpperCase(),
-                                            style: GoogleFonts.nunitoSans(
-                                              textStyle: const TextStyle(
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 30,
+                                return GestureDetector(
+                                  onTap: () {},
+                                  child: Container(
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 5,
+                                    ),
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          spreadRadius: 1,
+                                          blurRadius: 2,
+                                          offset: const Offset(0, 1),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Image.asset(
+                                                'assets/images/rack.png',
+                                                height: 30,
+                                                width: 30),
+                                            Text(
+                                              paletteName.toUpperCase(),
+                                              style: GoogleFonts.nunitoSans(
+                                                textStyle: const TextStyle(
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 30,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 15),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          if (qtyList['Meter'] != null)
-                                            Column(children: [
-                                              Text('Meter'),
-                                              Text('${qtyList['Meter']}')
-                                            ]),
-                                          if (qtyList['Roll'] != null)
-                                            Column(children: [
-                                              Text('Roll'),
-                                              Text('${qtyList['Roll']}')
-                                            ]),
-                                          if (qtyList['Yard'] != null)
-                                            Column(children: [
-                                              Text('Yard'),
-                                              Text('${qtyList['Yard']}')
-                                            ]),
-                                          if (qtyList['SQM'] != null)
-                                            Column(children: [
-                                              Text('SQM'),
-                                              Text('${qtyList['SQM']}')
-                                            ]),
-                                          if (qtyList['Pallet'] != null)
-                                            Column(children: [
-                                              Text('Pallet'),
-                                              Text('${qtyList['Pallet']}')
-                                            ]),
-                                          if (qtyList['Sheet'] != null)
-                                            Column(children: [
-                                              Text('Sheet'),
-                                              Text('${qtyList['Sheet']}')
-                                            ]),
-                                        ],
-                                      ),
-                                    ],
+                                          ],
+                                        ),
+                                        const SizedBox(height: 15),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            if (qtyList['Meter'] != null)
+                                              Column(children: [
+                                                Text('Meter'),
+                                                Text('${qtyList['Meter']}')
+                                              ]),
+                                            if (qtyList['Roll'] != null)
+                                              Column(children: [
+                                                Text('Roll'),
+                                                Text('${qtyList['Roll']}')
+                                              ]),
+                                            if (qtyList['Yard'] != null)
+                                              Column(children: [
+                                                Text('Yard'),
+                                                Text('${qtyList['Yard']}')
+                                              ]),
+                                            if (qtyList['SQM'] != null)
+                                              Column(children: [
+                                                Text('SQM'),
+                                                Text('${qtyList['SQM']}')
+                                              ]),
+                                            if (qtyList['Pallet'] != null)
+                                              Column(children: [
+                                                Text('Pallet'),
+                                                Text('${qtyList['Pallet']}')
+                                              ]),
+                                            if (qtyList['Sheet'] != null)
+                                              Column(children: [
+                                                Text('Sheet'),
+                                                Text('${qtyList['Sheet']}')
+                                              ]),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                          )
-                        : Center(
-                            child: Text(
-                              'No data...',
-                              style: GoogleFonts.nunitoSans(
-                                textStyle: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 20,
-                                  height: 1.4,
-                                  color: Colors.black,
+                                );
+                              },
+                            )
+                          : Center(
+                              child: Text(
+                                'No data...',
+                                style: GoogleFonts.nunitoSans(
+                                  textStyle: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 20,
+                                    height: 1.4,
+                                    color: Colors.black,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                  )
-                ],
-              );
+                    )
+                  ],
+                );
+              }
             } else {
               return Center(
                 child: Text('No data...'),

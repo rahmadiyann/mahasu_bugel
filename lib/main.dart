@@ -1,3 +1,11 @@
+import 'package:Mahasu/pages/activities/inbound_page.dart';
+import 'package:Mahasu/pages/activities/outbound_page.dart';
+import 'package:Mahasu/pages/auth/login_page.dart';
+import 'package:Mahasu/pages/home_page.dart';
+import 'package:Mahasu/pages/palettes/all_palette_page.dart';
+import 'package:Mahasu/pages/products/product_page.dart';
+import 'package:Mahasu/pages/suppliers/suppliers_page.dart';
+import 'package:Mahasu/pages/warehouses/all_warehouse_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,9 +25,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: AuthCheckPage(),
-    );
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: const AuthCheckPage(),
+        routes: {
+          '/auth-check': (context) => const AuthCheckPage(),
+          '/login': (context) => const LoginPage(),
+          '/home': (context) => const HomePage(),
+          '/products': (context) => const AllProductPage(),
+          '/palettes': (context) => const allPalettePage(),
+          '/warehouses': (context) => const WarehousesPage(),
+          '/suppliers': (context) => const AllSuppliersPage(),
+          '/inbound': (context) => const InboundPage(),
+          '/outbound': (context) => const OutboundPage(),
+        });
   }
 }

@@ -1,3 +1,5 @@
+import 'package:Mahasu/services/activity_firestore.dart';
+import 'package:Mahasu/services/product_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:Mahasu/services/warehouse_firestore.dart';
 
@@ -10,6 +12,15 @@ class PaletteFirestoreService {
 
   final CollectionReference warehouses =
       FirebaseFirestore.instance.collection('warehouses');
+
+  final ProductFirestoreService productser = ProductFirestoreService();
+
+  // return warehouse name by palette id
+  Future<String> getWarehouseId(String id) async {
+    final palette = await palettes.doc(id).get();
+    final whid = palette['whid'];
+    return whid;
+  }
 
   // return warehouse name by palette id
   Future<String> getWarehouseName(String id) async {
@@ -50,7 +61,7 @@ class PaletteFirestoreService {
         'name': name,
         'whid': whId,
         'whname': whName,
-        'soStatus': 'Unconfirmed',
+        'soStatus': 'Confirmed',
         'lastStockOpname': Timestamp.now(),
         'products': []
       },
@@ -221,24 +232,44 @@ class PaletteFirestoreService {
     });
   }
 
-  Future<void> deleteProductFromPalette(String id, String productId) async {
-    final product = await palettes.doc(id).get();
-    List<Map<String, dynamic>> products =
-        List<Map<String, dynamic>>.from(product.get('products') ?? []);
+  // delete product from all palettes
+  Future<void> removeProductFromAllPalette(String productId) async {
+    final palette = await palettes.get();
 
-    for (int i = 0; i < products.length; i++) {
-      if (products[i]['productId'] == productId) {
-        products.removeAt(i); // Remove the product from the list
-        break;
+    for (var i = 0; i < palette.docs.length; i++) {
+      final products = palette.docs[i]['products'];
+      for (var j = 0; j < products.length; j++) {
+        if (products[j]['productId'] == productId) {
+          print('found!!!!');
+          // delete the product entry in the products list
+          products.removeAt(j);
+        }
       }
-    }
 
-    // Update the palette with the modified product list
-    await palettes.doc(id).update({'products': products});
+      await palettes.doc(palette.docs[i].id).update({
+        'products': products,
+      });
+    }
   }
 
   // Delete a palette
-  Future<void> deletePalette(String id) async {
+  Future<void> deletePalette(String id, String name) async {
+    print('--deletePalette--');
+    print('paletteId: $id');
+    // check if palette has products
+    final palette = await palettes.doc(id).get();
+    // remove palette from warehouse
+    await warehouseservice.removePaletteFromAllWarehouses(id, name);
+    final products = palette['products'];
+    if (products.isNotEmpty) {
+      for (var i = 0; i < products.length; i++) {
+        await productser.deletePaletteFromProduct(
+          products[i]['productId'],
+          id,
+        );
+      }
+    }
+    await ActivityFirestoreService().deleteActivityByPaletteId(id);
     await palettes.doc(id).delete();
   }
 }

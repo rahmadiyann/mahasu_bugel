@@ -1,3 +1,5 @@
+import 'package:Mahasu/services/activity_firestore.dart';
+import 'package:Mahasu/services/palette_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class WarehouseFirestoreService {
@@ -5,10 +7,12 @@ class WarehouseFirestoreService {
   final CollectionReference warehouses =
       FirebaseFirestore.instance.collection('warehouses');
 
+  final PaletteFirestoreService palletservice = PaletteFirestoreService();
+  final ActivityFirestoreService activityservice = ActivityFirestoreService();
   // Create a new warehouse
   Future<String> createWarehouse(String name) async {
     await warehouses.add(
-      {'name': name, 'palettes': []},
+      {'name': name, 'palettes': {}},
     );
     return warehouses.id;
   }
@@ -47,19 +51,23 @@ class WarehouseFirestoreService {
     );
   }
 
-  // add a palette to a warehouse in json format like {paletteId: paletteName}
+  // Add a palette to a warehouse by warehouse id
   Future<void> addPaletteToWarehouse(
       String whId, String paletteId, String paletteName) async {
-    await warehouses.doc(whId).update(
-      {
+    // get the list of palettes in the warehouse
+    final warehouse = await warehouses.doc(whId).get();
+    final palettes = warehouse['palettes'];
+    if (palettes != null) {
+      // add the paletteId:paletteName map to the palettes map
+      await warehouses.doc(whId).update({
         'palettes': FieldValue.arrayUnion([
           {paletteId: paletteName}
         ]),
-      },
-    );
+      });
+    }
   }
 
-  // Remove a palette from a warehouse by warehouse name
+  // remove palette from warehouse by warehouse id
   Future<void> removePaletteFromWarehouse(String whId, String paletteId) async {
     await warehouses.doc(whId).update(
       {
@@ -69,7 +77,33 @@ class WarehouseFirestoreService {
   }
 
   // Delete a warehouse
-  Future<void> deleteWarehouse(String id) async {
-    await warehouses.doc(id).delete();
+  // Future<void> deleteWarehouse(String id, String paletteName) async {
+  //   // get all palettes in the warehouse
+  //   final warehouse = await warehouses.doc(id).get();
+  //   final palettes = warehouse['palettes'];
+  //   // for every palette, run paletteservice.deletePalette
+  //   for (var i = 0; i < palettes.length; i++) {
+  //     String paletteId = palettes[i].keys.first;
+  //     await palletservice.deletePalette(paletteId);
+  //   }
+  //   // delete the activity by warehouse id
+  //   await activityservice.deleteActivityByWarehouseId(id);
+  //   await warehouses.doc(id).delete();
+  // }
+
+  // Remove palette if exists from all warehouses given palette id
+  Future<void> removePaletteFromAllWarehouses(
+      String paletteId, paletteName) async {
+    final warehouse = await warehouses.get();
+
+    for (var i = 0; i < warehouse.docs.length; i++) {
+      await warehouses.doc(warehouse.docs[i].id).update(
+        {
+          'palettes': FieldValue.arrayRemove([
+            {paletteId: paletteName}
+          ]),
+        },
+      );
+    }
   }
 }

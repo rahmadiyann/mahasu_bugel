@@ -196,4 +196,26 @@ class ProductFirestoreService {
   Future<void> deleteProduct(String id) async {
     await products.doc(id).delete();
   }
+
+  // delete palette from product and decrement qty
+  Future<void> deletePaletteFromProduct(
+      String productId, String paletteId) async {
+    final product = await products.doc(productId).get();
+    List<Map<String, dynamic>> palettes =
+        List<Map<String, dynamic>>.from(product.get('palettes') ?? []);
+
+    // get the qty in the palette
+    for (var i = 0; i < palettes.length; i++) {
+      if (palettes[i]['palette_id'] == paletteId) {
+        final qtyList = palettes[i]['qty_list'];
+        for (var key in qtyList.keys) {
+          await decrementProductTotalQty(productId, key, qtyList[key]);
+        }
+        palettes.removeAt(i); // Remove the palette from the list
+        break;
+      }
+    }
+    // Update the product with the modified palette list
+    await products.doc(productId).update({'palettes': palettes});
+  }
 }

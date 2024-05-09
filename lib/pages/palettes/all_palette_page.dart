@@ -2,7 +2,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Mahasu/components/button.dart';
 import 'package:Mahasu/components/myappbar.dart';
@@ -320,6 +319,7 @@ class _allPalettePageState extends State<allPalettePage> {
                       opnames.data() as Map<String, dynamic>;
                   String paletteName = data['name'];
                   String soStatus = data['soStatus'];
+                  String whName = data['whname'];
 
                   DateTime dt = (data['lastStockOpname'] as Timestamp).toDate();
 
@@ -373,6 +373,22 @@ class _allPalettePageState extends State<allPalettePage> {
                                       ),
                                     ],
                                   ),
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Image.asset(
+                                            'assets/images/warehouseicon.png',
+                                            height: 25,
+                                            width: 25),
+                                        Text(
+                                          whName.toUpperCase(),
+                                          style: GoogleFonts.nunitoSans(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ]),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [

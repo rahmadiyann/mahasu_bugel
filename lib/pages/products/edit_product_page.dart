@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
-
+import 'package:Mahasu/services/activity_firestore.dart';
+import 'package:Mahasu/services/palette_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Mahasu/components/button.dart';
 import 'package:Mahasu/components/text_field.dart';
@@ -36,6 +37,8 @@ class _EditProductPageState extends State<EditProductPage> {
       SupplierFirestoreService();
   final ProductFirestoreService productFirestoreService =
       ProductFirestoreService();
+  final PaletteFirestoreService paletteFirestoreService =
+      PaletteFirestoreService();
 
   updateButtonTap() {
     showModalBottomSheet(
@@ -182,8 +185,13 @@ class _EditProductPageState extends State<EditProductPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     MyButton(
-                      onTap: () {
-                        productFirestoreService.deleteProduct(widget.productId);
+                      onTap: () async {
+                        await paletteFirestoreService
+                            .removeProductFromAllPalette(widget.productId);
+                        await productFirestoreService
+                            .deleteProduct(widget.productId);
+                        await ActivityFirestoreService()
+                            .deleteActivityByProductId(widget.productId);
                         // show snackbar
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -191,7 +199,7 @@ class _EditProductPageState extends State<EditProductPage> {
                             duration: const Duration(seconds: 2),
                           ),
                         );
-                        Navigator.pop(context);
+                        Navigator.popAndPushNamed(context, '/products');
                       },
                       text: 'Yes',
                     ),
