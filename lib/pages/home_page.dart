@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:Mahasu/pages/auth/auth_check.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -98,7 +99,12 @@ class _HomePageState extends State<HomePage> {
                     MyButton(
                       onTap: () {
                         FirebaseAuth.instance.signOut();
-                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AuthCheckPage(),
+                          ),
+                        );
                       },
                       text: 'Yes',
                     ),
