@@ -1,0 +1,191 @@
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
+import 'package:flutter/material.dart';
+import 'package:Mahasu/components/myappbar.dart';
+import 'package:Mahasu/pages/palettes/all_palette_page.dart';
+import 'package:Mahasu/services/palette_firestore.dart';
+import 'package:Mahasu/services/warehouse_firestore.dart';
+
+class NewPalettePage extends StatefulWidget {
+  const NewPalettePage({super.key});
+
+  @override
+  State<NewPalettePage> createState() => _NewPalettePageState();
+}
+
+class Warehouses {
+  final String id;
+  final String name;
+
+  Warehouses(this.id, this.name);
+}
+
+class _NewPalettePageState extends State<NewPalettePage> {
+  final _formGlobalKey = GlobalKey<FormState>();
+
+  String hintText = 'Select Warehouse';
+
+  // controllers
+  final TextEditingController paletteNameCtl = TextEditingController();
+  final TextEditingController whIdCtl = TextEditingController();
+  final TextEditingController whNameCtl = TextEditingController();
+  final TextEditingController paletteIdCtl = TextEditingController();
+
+  bool _isPaletteNameValid = false;
+
+  // services
+  final PaletteFirestoreService paletteService = PaletteFirestoreService();
+  final WarehouseFirestoreService warehouseService =
+      WarehouseFirestoreService();
+
+  onTap() async {
+    String paletteId = await paletteService.createPalette(
+        paletteNameCtl.text, whIdCtl.text, whNameCtl.text);
+    await warehouseservice.addPaletteToWarehouse(
+        whIdCtl.text, paletteId, paletteNameCtl.text);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('New palette created'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+    paletteIdCtl.clear();
+    paletteNameCtl.clear();
+    whIdCtl.clear();
+    whNameCtl.clear();
+    Navigator.pop(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: MyAppBar(
+        title: 'New Palette',
+        isHomePage: false,
+        isAction: false,
+        backPageDestination: allPalettePage(),
+        destinationPage: NewPalettePage(),
+      ),
+      body: Form(
+        key: _formGlobalKey,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: ListView(
+            scrollDirection: Axis.vertical,
+            children: <Widget>[
+              TextField(
+                onEditingComplete: () {
+                  setState(() {
+                    _isPaletteNameValid = paletteNameCtl.text.isNotEmpty;
+                  });
+                },
+                enabled: true,
+                controller: paletteNameCtl,
+                obscureText: false,
+                decoration: InputDecoration(
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue),
+                  ),
+                  hintText: 'Palette name',
+                  hintStyle: const TextStyle(color: Colors.grey),
+                ),
+                style: const TextStyle(color: Colors.black),
+              ),
+              const SizedBox(height: 16),
+              StreamBuilder(
+                  stream: warehouseService.readWarehouse(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      List<Warehouses> warehouseList =
+                          snapshot.data!.docs.map((doc) {
+                        return Warehouses(doc.id, doc['name']);
+                      }).toList();
+
+                      return Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(5)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: DropdownButton(
+                            isExpanded: true,
+                            underline: const SizedBox(),
+                            items: warehouseList
+                                .map<DropdownMenuItem<Warehouses>>(
+                                    (supplier) => DropdownMenuItem(
+                                          value: supplier,
+                                          child: Text(supplier.name),
+                                        ))
+                                .toList(),
+                            onChanged: (Warehouses? value) {
+                              if (value != null) {
+                                setState(() {
+                                  hintText = value.name;
+                                  whNameCtl.text = value.name;
+                                  whIdCtl.text = value.id;
+                                });
+                              }
+                            },
+                            hint: Text(hintText),
+                          ),
+                        ),
+                      );
+                    } else {
+                      return const Text('No data');
+                    }
+                  }),
+              const SizedBox(height: 16),
+              GestureDetector(
+                onTap: _isPaletteNameValid
+                    ? onTap
+                    : () {
+                        // show snackbar
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Center(
+                                child: Text('Please fill in the palette name')),
+                          ),
+                        );
+                      },
+                child: Container(
+                  height: 50,
+                  width: 200,
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.green.shade400, Colors.green.shade600],
+                      begin: AlignmentDirectional.topStart,
+                      end: AlignmentDirectional.bottomEnd,
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Text(
+                        'Submit',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    paletteNameCtl.dispose();
+    whIdCtl.dispose();
+    paletteIdCtl.dispose();
+    whNameCtl.dispose();
+    super.dispose();
+  }
+}

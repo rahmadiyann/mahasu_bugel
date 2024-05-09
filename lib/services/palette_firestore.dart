@@ -1,0 +1,244 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:Mahasu/services/warehouse_firestore.dart';
+
+final WarehouseFirestoreService warehouseservice = WarehouseFirestoreService();
+
+class PaletteFirestoreService {
+  // get collection of palettes
+  final CollectionReference palettes =
+      FirebaseFirestore.instance.collection('palettes');
+
+  final CollectionReference warehouses =
+      FirebaseFirestore.instance.collection('warehouses');
+
+  // return warehouse name by palette id
+  Future<String> getWarehouseName(String id) async {
+    final palette = await palettes.doc(id).get();
+    final whName = palette['whname'];
+    return whName;
+  }
+
+  Future<List<String>> getAllPaletteIds() async {
+    try {
+      QuerySnapshot querySnapshot = await palettes.get();
+      List<String> productIds = [];
+      for (var doc in querySnapshot.docs) {
+        productIds.add(doc.id);
+      }
+      return productIds;
+    } catch (error) {
+      // Handle any errors here
+      return []; // Return an empty list in case of error
+    }
+  }
+
+  // new function to fetch palette name from a given id
+  Future<String> getPaletteName(String id) async {
+    try {
+      DocumentSnapshot doc = await palettes.doc(id).get();
+      return doc['name'];
+    } catch (error) {
+      // Handle any errors here
+      return ''; // Return an empty string in case of error
+    }
+  }
+
+  // Create a new palette
+  Future<String> createPalette(String name, String whId, String whName) async {
+    DocumentReference paletteRef = await palettes.add(
+      {
+        'name': name,
+        'whid': whId,
+        'whname': whName,
+        'soStatus': 'Unconfirmed',
+        'lastStockOpname': Timestamp.now(),
+        'products': []
+      },
+    );
+    return paletteRef.id;
+  }
+
+  // Get unconfirmed palette
+  Stream<QuerySnapshot> readUnconfirmedPalette() {
+    final unconfirmedPaletteStream =
+        palettes.where('soStatus', isEqualTo: 'Unconfirmed').snapshots();
+
+    return unconfirmedPaletteStream;
+  }
+
+// get palette id, name and whid and return as <Map<String, Map<String, String>>>
+  Future<Map<String, Map<String, String>>> getPaletteNames() async {
+    final palette = await palettes.get();
+    final paletteNames = <String, Map<String, String>>{};
+
+    for (var i = 0; i < palette.docs.length; i++) {
+      final doc = palette.docs[i];
+      paletteNames[doc.id] = {'name': doc['name'], 'whid': doc['whid']};
+    }
+
+    return paletteNames;
+  }
+
+  // Read a palette
+  Stream<QuerySnapshot> readPalette() {
+    final paletteStream = palettes.snapshots();
+
+    return paletteStream;
+  }
+
+  Stream<DocumentSnapshot> streamPaletteById(String id) {
+    return palettes.doc(id).snapshots();
+  }
+
+  // Read a palette by id
+  Future readPaletteById(String id) async {
+    final palette = await palettes.doc(id).get();
+    return palette;
+  }
+
+  // Update a palette
+  Future<void> updatePalette(
+      String id, String name, String whId, String whName) async {
+    await palettes.doc(id).update(
+      {
+        'name': name,
+        'whid': whId,
+        'whname': whName,
+      },
+    );
+  }
+
+  // Stock Opname a palette
+  Future<void> stockOpnamePalette(String id) async {
+    await palettes.doc(id).update(
+      {
+        'soStatus': 'Confirmed',
+        'lastStockOpname': DateTime.now(),
+      },
+    );
+  }
+
+  // Reset palette's stock opname status
+  Future<void> resetStockOpnamePalette(String id) async {
+    await palettes.doc(id).update(
+      {
+        'soStatus': 'Unconfirmed',
+      },
+    );
+  }
+
+  Future checkProductQtyList(String id, String productId, String unit) async {
+    final palette = await palettes.doc(id).get();
+    final products = palette['products'];
+
+    for (var i = 0; i < products.length; i++) {
+      if (products[i]['productId'] == productId &&
+          products[i]['qty_list'][unit] != null) {
+        return products[i]['qty_list'][unit];
+      }
+    }
+    return 0;
+  }
+
+  Future<void> incrementProduct(String id, String productId, String productName,
+      String unit, int qty) async {
+    final product = await palettes.doc(id).get();
+    List<Map<String, dynamic>> products =
+        List<Map<String, dynamic>>.from(product.get('products') ?? []);
+
+    bool updated = false;
+
+    for (int i = 0; i < products.length; i++) {
+      if (products[i]['productId'] == productId) {
+        // Ensure qty_list is parsed correctly
+        Map<String, dynamic> qtyList =
+            (products[i]['qty_list'] as Map<String, dynamic>);
+
+        // Update the quantity of the existing unit or add a new unit
+        qtyList[unit] = (qtyList[unit] ?? 0) + qty;
+
+        // Update the qty_list for the product
+        products[i]['qty_list'] = qtyList;
+
+        updated = true;
+        break;
+      }
+    }
+
+    if (!updated) {
+      // Add new product with qty_list containing initial unit and qty
+      products.add({
+        'productId': productId,
+        'productName': productName,
+        'qty_list': {
+          unit: qty,
+        }
+      });
+    }
+
+    await palettes.doc(id).update({
+      'products': products,
+    });
+  }
+
+  Future<void> decrementProduct(
+      String id, String productId, String unit, int qty) async {
+    final product = await palettes.doc(id).get();
+    List<Map<String, dynamic>> products =
+        List<Map<String, dynamic>>.from(product.get('products') ?? []);
+
+    bool found = false;
+    for (int i = 0; i < products.length; i++) {
+      if (products[i]['productId'] == productId) {
+        // Ensure qty_list is parsed correctly
+        Map<String, dynamic> qtyList =
+            (products[i]['qty_list'] as Map<String, dynamic>);
+
+        // Update the quantity of the existing unit or add a new unit
+        qtyList[unit] =
+            (qtyList[unit] ?? 0) - qty; // Corrected decrement operation
+
+        // Update the qty_list for the product
+        products[i]['qty_list'] = qtyList;
+
+        if (qtyList[unit] <= 0) {
+          qtyList.remove(unit);
+        }
+
+        if (qtyList.isEmpty) {
+          products.removeAt(i);
+        }
+
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {}
+
+    await palettes.doc(id).update({
+      'products': products,
+    });
+  }
+
+  Future<void> deleteProductFromPalette(String id, String productId) async {
+    final product = await palettes.doc(id).get();
+    List<Map<String, dynamic>> products =
+        List<Map<String, dynamic>>.from(product.get('products') ?? []);
+
+    for (int i = 0; i < products.length; i++) {
+      if (products[i]['productId'] == productId) {
+        products.removeAt(i); // Remove the product from the list
+        break;
+      }
+    }
+
+    // Update the palette with the modified product list
+    await palettes.doc(id).update({'products': products});
+  }
+
+  // Delete a palette
+  Future<void> deletePalette(String id) async {
+    await palettes.doc(id).delete();
+  }
+}

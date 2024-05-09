@@ -1,0 +1,241 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:Mahasu/pages/suppliers/new_supplier_page.dart';
+import 'package:Mahasu/pages/suppliers/supplier_i_page.dart';
+import 'package:Mahasu/services/supplier_firestore.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class AllSuppliersPage extends StatefulWidget {
+  const AllSuppliersPage({super.key});
+
+  @override
+  State<AllSuppliersPage> createState() => _AllSuppliersPageState();
+}
+
+class _AllSuppliersPageState extends State<AllSuppliersPage> {
+  final SupplierFirestoreService supplierservice = SupplierFirestoreService();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+          backgroundColor: Colors.grey[100],
+          // if homepage, no back button
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          title: Text(
+            'All Suppliers',
+            style: GoogleFonts.nunitoSans(
+              textStyle: const TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 20,
+                height: 1.4,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          actions: [
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NewSupplierPage(),
+                    ),
+                  );
+                },
+                child: Container(
+                  width: 70,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFAFAFA),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(0, 5.3, 7.8, 5.3),
+                        width: 12,
+                        height: 12,
+                        child: const SizedBox(
+                          width: 12,
+                          height: 12,
+                          child: Icon(
+                            Icons.add,
+                            color: Color(0xFF058B06),
+                            size: 12,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'Add',
+                        style: GoogleFonts.nunitoSans(
+                          textStyle: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                            height: 1.4,
+                            color: Color(0xFF058B06),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ]),
+      body: Center(
+        child: StreamBuilder(
+          stream: supplierservice.readSupplier(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              List supplierList = snapshot.data!.docs;
+
+              return ListView.builder(
+                itemCount: supplierList.length,
+                itemBuilder: (context, index) {
+                  DocumentSnapshot supplier = supplierList[index];
+                  String docId = supplier.id;
+
+                  Map<String, dynamic> data =
+                      supplier.data() as Map<String, dynamic>;
+
+                  String supplierName = data['name'];
+                  String supplierAddress = data['address'];
+                  String supplierPhone = data['phone'];
+
+                  // display as list tile
+
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SupplierPage(
+                            supplierId: docId,
+                            supplierName: supplierName,
+                            supplierAddress: supplierAddress,
+                            supplierPhone: supplierPhone,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      decoration: BoxDecoration(
+                        border:
+                            Border.all(color: Colors.grey.shade400, width: 1),
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/vectors/suppliericon.svg',
+                                  height: 15,
+                                  width: 15,
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  supplierName,
+                                  style: GoogleFonts.nunitoSans(
+                                    textStyle: const TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 16,
+                                      height: 1.4,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/images/pinpoint.png',
+                                      height: 15,
+                                      width: 15,
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      supplierAddress,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.nunitoSans(
+                                        textStyle: const TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14,
+                                          height: 1.4,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Icon(
+                                      Icons.phone,
+                                      size: 15,
+                                      color: Colors.black,
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      supplierPhone,
+                                      style: GoogleFonts.nunitoSans(
+                                        textStyle: const TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14,
+                                          height: 1.4,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            } else {
+              return const Text('No data');
+            }
+          },
+        ),
+      ),
+    );
+  }
+}
