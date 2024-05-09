@@ -398,6 +398,8 @@ class _NewInboundPageState extends State<NewInboundPage> {
                   setState(() {
                     _isQtyValid = qtyCtl.text.isNotEmpty;
                   });
+                  // pop the keyboard
+                  FocusScope.of(context).unfocus();
                 },
                 keyboardType: TextInputType.number,
                 enabled: true,

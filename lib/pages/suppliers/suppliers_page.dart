@@ -114,6 +114,8 @@ class _AllSuppliersPageState extends State<AllSuppliersPage> {
                   String supplierName = data['name'];
                   String supplierAddress = data['address'];
                   String supplierPhone = data['phone'];
+                  String supplierContact = data['contact'];
+                  bool isContactMale = supplierContact.contains('Mr.');
 
                   // display as list tile
 
@@ -146,27 +148,63 @@ class _AllSuppliersPageState extends State<AllSuppliersPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                SvgPicture.asset(
-                                  'assets/vectors/suppliericon.svg',
-                                  height: 15,
-                                  width: 15,
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  supplierName,
-                                  style: GoogleFonts.nunitoSans(
-                                    textStyle: const TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 16,
-                                      height: 1.4,
-                                      color: Colors.black,
+                                Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/vectors/suppliericon.svg',
+                                      height: 15,
+                                      width: 15,
                                     ),
-                                  ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      supplierName.length > 15
+                                          ? supplierName.substring(0, 15) +
+                                              '...'
+                                          : supplierName,
+                                      style: GoogleFonts.nunitoSans(
+                                        textStyle: const TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 16,
+                                          height: 1.4,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    isContactMale
+                                        ? Image.asset(
+                                            'assets/images/male.png',
+                                            height: 15,
+                                            width: 15,
+                                          )
+                                        : Image.asset(
+                                            'assets/images/female.png',
+                                            height: 15,
+                                            width: 15,
+                                          ),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      supplierContact,
+                                      style: GoogleFonts.nunitoSans(
+                                        textStyle: const TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 16,
+                                          height: 1.4,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
                               ],
                             ),
                             const SizedBox(height: 20),
@@ -184,7 +222,10 @@ class _AllSuppliersPageState extends State<AllSuppliersPage> {
                                       width: 5,
                                     ),
                                     Text(
-                                      supplierAddress,
+                                      supplierAddress.length > 15
+                                          ? supplierAddress.substring(0, 15) +
+                                              '...'
+                                          : supplierAddress,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.nunitoSans(
                                         textStyle: const TextStyle(

@@ -74,7 +74,7 @@ class _NewPalettePageState extends State<NewPalettePage> {
             scrollDirection: Axis.vertical,
             children: <Widget>[
               TextField(
-                onEditingComplete: () {
+                onChanged: (value) {
                   setState(() {
                     _isPaletteNameValid = paletteNameCtl.text.isNotEmpty;
                   });

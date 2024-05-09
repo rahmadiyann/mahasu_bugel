@@ -448,21 +448,6 @@ class _AllProductPageState extends State<AllProductPage> {
                                       ),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10),
-                                    child: Row(
-                                      children: [
-                                        SizedBox(
-                                          height: 20,
-                                          width: 20,
-                                          child: SvgPicture.asset(
-                                              'assets/vectors/suppliericon.svg',
-                                              fit: BoxFit.contain),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
                                 ],
                               ),
                               Padding(
