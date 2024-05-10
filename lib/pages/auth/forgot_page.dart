@@ -17,17 +17,43 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   // controllers
   final TextEditingController emailCtl = TextEditingController();
 
-  forgotPassword() {
+  forgotPassword() async {
     // show snackbar
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Center(
-            child: Text('A password reset link has been sent to your email')),
-      ),
-    );
-    FirebaseAuth.instance.sendPasswordResetEmail(email: emailCtl.text);
-    // redirect login page
-    Navigator.pop(context);
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: emailCtl.text);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Center(
+            child: Text(
+                'If email is registered, a password reset link is sent to your email.'),
+          ),
+        ),
+      );
+      // redirect login page
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'invalid-credential') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Center(child: Text('Invalid email address')),
+          ),
+        );
+      } else if (e.code == 'user-not-found') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Center(child: Text('User not found')),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Center(
+              child: Text(e.code),
+            ),
+          ),
+        );
+      }
+    }
   }
 
   @override

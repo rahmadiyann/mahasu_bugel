@@ -34,6 +34,12 @@ class _HomePageState extends State<HomePage> {
   final ProductFirestoreService productservice = ProductFirestoreService();
   final SupplierFirestoreService supplierservice = SupplierFirestoreService();
   final ActivityFirestoreService activityservice = ActivityFirestoreService();
+  // Get the current date
+  DateTime startOfDay = DateTime(
+      DateTime.now().year, DateTime.now().month, DateTime.now().day, 0, 0, 0);
+  DateTime endOfDay = DateTime(DateTime.now().year, DateTime.now().month,
+      DateTime.now().day, 23, 59, 59);
+  bool _isFiltered = false;
 
   logout() async {
     showModalBottomSheet(
@@ -144,14 +150,33 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  selectDateRange() async {
+    final dateTimeRange = await showDateRangePicker(
+      context: context,
+      initialEntryMode: DatePickerEntryMode.calendar,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030),
+    );
+
+    setState(
+      () {
+        if (dateTimeRange != null) {
+          startOfDay = dateTimeRange.start;
+          endOfDay = DateTime(dateTimeRange.end.year, dateTimeRange.end.month,
+              dateTimeRange.end.day, 23, 59, 59, 999, 999);
+          _isFiltered = true;
+        } else {
+          startOfDay = DateTime.now();
+          endOfDay = DateTime(DateTime.now().year, DateTime.now().month,
+              DateTime.now().day, 23, 59, 59);
+          _isFiltered = false;
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Get the current date
-    DateTime today = DateTime.now();
-    DateTime startOfDay = DateTime(today.year, today.month, today.day, 0, 0, 0);
-    DateTime endOfDay =
-        DateTime(today.year, today.month, today.day, 23, 59, 59);
-
     return Scaffold(
       // use F5f5f5 as background color
       backgroundColor: Color(0xFFF5F5F5),
@@ -279,50 +304,88 @@ class _HomePageState extends State<HomePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Padding(
+                GestureDetector(
+                  onTap: () {
+                    selectDateRange();
+                  },
+                  child: Row(
+                    children: [
+                      Padding(
                         padding: EdgeInsets.all(8),
                         child: SvgPicture.asset(
                           'assets/vectors/calendaricon.svg',
                           height: 25,
                           width: 25,
-                        )),
-                    Text(
-                      'Today',
-                      style: GoogleFonts.nunitoSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Color.fromARGB(255, 148, 146, 146),
+                        ),
                       ),
-                    ),
-                    Text(
-                      // format (DD/MM/YYYY) with month name and add 0 if day is less than 10
-                      ' ${DateTime.now().day < 10 ? '0' : ''}${DateTime.now().day} ${monthName[DateTime.now().month]} ${DateTime.now().year}',
-                      style: GoogleFonts.nunitoSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Color.fromARGB(255, 148, 146, 146),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(children: [
-                  // Refresh icon
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {});
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Image.asset(
-                        'assets/images/refresh.png',
-                        height: 25,
-                        width: 25,
-                      ),
-                    ),
+                      (startOfDay.day == DateTime.now().day &&
+                              startOfDay.month == DateTime.now().month &&
+                              startOfDay.year == DateTime.now().year)
+                          ? Text(
+                              'Today',
+                              style: GoogleFonts.nunitoSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: Color.fromARGB(255, 148, 146, 146),
+                              ),
+                            )
+                          : Row(
+                              children: [
+                                Text(
+                                  // format (DD/MM/YYYY) with month name and add 0 if day is less than 10
+                                  '${startOfDay.day < 10 ? '0' : ''}${startOfDay.day} ${monthName[startOfDay.month]} ${startOfDay.year}',
+                                  style: GoogleFonts.nunitoSans(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color.fromARGB(255, 148, 146, 146),
+                                  ),
+                                ),
+                                Text(' - '),
+                                Text(
+                                  // format (DD/MM/YYYY) with month name and add 0 if day is less than 10
+                                  '${endOfDay.day < 10 ? '0' : ''}${endOfDay.day} ${monthName[endOfDay.month]} ${endOfDay.year}',
+                                  style: GoogleFonts.nunitoSans(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color.fromARGB(255, 148, 146, 146),
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ],
                   ),
-                ])
+                ),
+                _isFiltered
+                    ? GestureDetector(
+                        onTap: () {
+                          setState(
+                            () {
+                              startOfDay = DateTime(
+                                  DateTime.now().year,
+                                  DateTime.now().month,
+                                  DateTime.now().day,
+                                  0,
+                                  0,
+                                  0);
+                              ;
+                              endOfDay = DateTime(
+                                  DateTime.now().year,
+                                  DateTime.now().month,
+                                  DateTime.now().day,
+                                  23,
+                                  59,
+                                  59);
+                              _isFiltered = false;
+                            },
+                          );
+                        },
+                        child: Image.asset(
+                          'assets/images/clearfilter.png',
+                          height: 25,
+                          width: 25,
+                        ),
+                      )
+                    : Container(),
                 // GestureDetector(
                 //   onTap: () {
                 //     // download excel

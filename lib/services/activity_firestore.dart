@@ -19,18 +19,35 @@ class ActivityFirestoreService {
   }
 
   Stream<QuerySnapshot> filteredActivityStream(
-      DateTime startOfDay, DateTime endOfDay) {
-    final startOfDayTimestamp =
-        Timestamp.fromMillisecondsSinceEpoch(startOfDay.millisecondsSinceEpoch);
-    final endOfDayTimestamp =
-        Timestamp.fromMillisecondsSinceEpoch(endOfDay.millisecondsSinceEpoch);
+      DateTime? startOfDay, DateTime? endOfDay) {
+    if (startOfDay == null || endOfDay == null) {
+      DateTime today = DateTime.now();
+      DateTime startOfDay =
+          DateTime(today.year, today.month, today.day, 0, 0, 0);
+      DateTime endOfDay =
+          DateTime(today.year, today.month, today.day, 23, 59, 59);
+      final startOfDayTimestamp = Timestamp.fromMillisecondsSinceEpoch(
+          startOfDay.millisecondsSinceEpoch);
+      final endOfDayTimestamp =
+          Timestamp.fromMillisecondsSinceEpoch(endOfDay.millisecondsSinceEpoch);
+      final activities = activitys
+          .where('timestamp', isGreaterThanOrEqualTo: startOfDayTimestamp)
+          .where('timestamp', isLessThanOrEqualTo: endOfDayTimestamp)
+          .snapshots();
 
-    final activities = activitys
-        .where('timestamp', isGreaterThanOrEqualTo: startOfDayTimestamp)
-        .where('timestamp', isLessThanOrEqualTo: endOfDayTimestamp)
-        .snapshots();
+      return activities;
+    } else {
+      final startOfDayTimestamp = Timestamp.fromMillisecondsSinceEpoch(
+          startOfDay.millisecondsSinceEpoch);
+      final endOfDayTimestamp =
+          Timestamp.fromMillisecondsSinceEpoch(endOfDay.millisecondsSinceEpoch);
+      final activities = activitys
+          .where('timestamp', isGreaterThanOrEqualTo: startOfDayTimestamp)
+          .where('timestamp', isLessThanOrEqualTo: endOfDayTimestamp)
+          .snapshots();
 
-    return activities;
+      return activities;
+    }
   }
 
   // Read inbound activity
