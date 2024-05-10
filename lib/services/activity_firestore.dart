@@ -25,13 +25,12 @@ class ActivityFirestoreService {
     final endOfDayTimestamp =
         Timestamp.fromMillisecondsSinceEpoch(endOfDay.millisecondsSinceEpoch);
 
-    return readActivity().where((snapshot) =>
-        // Access the timestamp field from QueryDocumentSnapshot within QuerySnapshot
-        snapshot.docs
-            .where((doc) =>
-                doc['timestamp']?.compareTo(startOfDayTimestamp) >= 0 &&
-                doc['timestamp']?.compareTo(endOfDayTimestamp) <= 0)
-            .isNotEmpty);
+    final activities = activitys
+        .where('timestamp', isGreaterThanOrEqualTo: startOfDayTimestamp)
+        .where('timestamp', isLessThanOrEqualTo: endOfDayTimestamp)
+        .snapshots();
+
+    return activities;
   }
 
   // Read inbound activity

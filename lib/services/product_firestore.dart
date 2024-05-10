@@ -45,22 +45,17 @@ class ProductFirestoreService {
   // Increment product total qty
   Future<void> incrementProductTotalQty(String id, String unit, int qty) async {
     final product = await products.doc(id).get();
-    int currentQty = product[unit.toLowerCase()];
-    
+
     int totalQty = product[unit.toLowerCase()] + qty;
-   
 
     await products.doc(id).update({unit.toLowerCase(): totalQty});
   }
 
   // Increment product total qty
   Future<void> decrementProductTotalQty(String id, String unit, int qty) async {
-    print('decrementing');
     final product = await products.doc(id).get();
-    int currentQty = product[unit.toLowerCase()];
-   
+
     int totalQty = product[unit.toLowerCase()] - qty;
-    
 
     await products.doc(id).update({unit.toLowerCase(): totalQty});
   }
