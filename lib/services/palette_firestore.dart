@@ -77,6 +77,13 @@ class PaletteFirestoreService {
     return unconfirmedPaletteStream;
   }
 
+  //given palette id, return its whid
+  Future<String> getwhidbypaletteid(String paletteId) async {
+    final palette = await palettes.doc(paletteId).get();
+    final whid = palette['whid'];
+    return whid;
+  }
+
 // get palette id, name and whid and return as <Map<String, Map<String, String>>>
   Future<Map<String, Map<String, String>>> getPaletteNames() async {
     final palette = await palettes.get();
@@ -88,6 +95,13 @@ class PaletteFirestoreService {
     }
 
     return paletteNames;
+  }
+
+  // get paletteWhId by paletteId
+  Future<String> getPaletteWhId(String id) async {
+    final palette = await palettes.doc(id).get();
+    final whId = palette['whid'];
+    return whId;
   }
 
   // Read a palette

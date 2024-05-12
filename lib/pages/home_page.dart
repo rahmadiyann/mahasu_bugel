@@ -1,5 +1,5 @@
 // ignore_for_file: prefer_const_constructors
-
+import 'package:Mahasu/components/download_activity.dart';
 import 'package:Mahasu/pages/auth/auth_check.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -284,7 +284,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -297,6 +297,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
+              DownloadExcelButton(),
             ],
           ),
           Padding(
@@ -367,7 +368,6 @@ class _HomePageState extends State<HomePage> {
                                   0,
                                   0,
                                   0);
-                              ;
                               endOfDay = DateTime(
                                   DateTime.now().year,
                                   DateTime.now().month,
@@ -449,8 +449,6 @@ class _HomePageState extends State<HomePage> {
                         margin:
                             EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                         decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Colors.grey.shade400, width: 1),
                             borderRadius: BorderRadius.circular(10),
                             color: Colors.white,
                             boxShadow: [

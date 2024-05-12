@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:Mahasu/pages/suppliers/new_supplier_page.dart';
 import 'package:Mahasu/pages/suppliers/supplier_i_page.dart';
 import 'package:Mahasu/services/supplier_firestore.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';

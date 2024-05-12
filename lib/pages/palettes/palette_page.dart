@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Mahasu/pages/palettes/all_palette_page.dart';
 import 'package:Mahasu/pages/palettes/update_palette_page.dart';
-import 'package:Mahasu/pages/products/product_i_page.dart';
 import 'package:Mahasu/services/palette_firestore.dart';
 import 'package:Mahasu/services/qr_generator.dart';
 import 'package:flutter_svg/svg.dart';
@@ -257,7 +256,6 @@ class _PalettePageState extends State<PalettePage> {
                                   final Map<String, dynamic> product =
                                       products[index];
                                   String productName = product['productName'];
-                                  String productId = product['productId'];
 
                                   // prepare the qty list
                                   final Map<String, dynamic> qtyList =

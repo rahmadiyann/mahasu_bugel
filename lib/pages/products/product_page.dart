@@ -1,6 +1,9 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously
+import 'package:Mahasu/components/download_product.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Mahasu/pages/products/new_product_page.dart';
 import 'package:Mahasu/pages/products/product_i_page.dart';
@@ -274,226 +277,236 @@ class _AllProductPageState extends State<AllProductPage> {
         child: const Icon(Icons.qr_code_scanner),
       ),
       body: Center(
-        child: StreamBuilder(
-          stream: productService.readProduct(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              List productList = snapshot.data!.docs;
+        child: Column(
+          children: [
+            DownloadProductButton(),
+            Expanded(
+              child: StreamBuilder(
+                stream: productService.readProduct(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    List productList = snapshot.data!.docs;
 
-              // sort by created_at
-              productList.sort((a, b) {
-                return a['created_at'].compareTo(b['created_at']);
-              });
+                    // sort by created_at
+                    productList.sort((a, b) {
+                      return a['created_at'].compareTo(b['created_at']);
+                    });
 
-              return ListView.builder(
-                itemCount: productList.length,
-                itemBuilder: (context, index) {
-                  DocumentSnapshot product = productList[index];
-                  String docId = product.id;
+                    return ListView.builder(
+                      itemCount: productList.length,
+                      itemBuilder: (context, index) {
+                        DocumentSnapshot product = productList[index];
+                        String docId = product.id;
 
-                  Map<String, dynamic> data =
-                      product.data() as Map<String, dynamic>;
-                  String name = data['name'];
+                        Map<String, dynamic> data =
+                            product.data() as Map<String, dynamic>;
+                        String name = data['name'];
 
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductPage(
-                            productId: docId,
-                          ),
-                        ),
-                      );
-                      // showDialog(
-                      //   context: context,
-                      //   builder: (context) => AlertDialog(
-                      //       content: Column(
-                      //         children: [
-                      //           TextField(
-                      //             controller: _nameController..text = name,
-                      //             decoration:
-                      //                 const InputDecoration(labelText: 'Name'),
-                      //           ),
-                      //           TextField(
-                      //             controller: _supplierNameController
-                      //               ..text = data['supplier']['name'],
-                      //             decoration: const InputDecoration(
-                      //                 labelText: 'Supplier Name'),
-                      //             enabled: false,
-                      //           ),
-                      //           const SizedBox(height: 10),
-                      //           // Dropdown field of suppliers
-                      //           StreamBuilder(
-                      //             stream: supplierService.readSupplier(),
-                      //             builder: (context, snapshot) {
-                      //               if (snapshot.hasData) {
-                      //                 List<Supplier> supplierList =
-                      //                     snapshot.data!.docs.map((doc) {
-                      //                   return Supplier(doc.id, doc['name']);
-                      //                 }).toList();
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductPage(
+                                  productId: docId,
+                                ),
+                              ),
+                            );
+                            // showDialog(
+                            //   context: context,
+                            //   builder: (context) => AlertDialog(
+                            //       content: Column(
+                            //         children: [
+                            //           TextField(
+                            //             controller: _nameController..text = name,
+                            //             decoration:
+                            //                 const InputDecoration(labelText: 'Name'),
+                            //           ),
+                            //           TextField(
+                            //             controller: _supplierNameController
+                            //               ..text = data['supplier']['name'],
+                            //             decoration: const InputDecoration(
+                            //                 labelText: 'Supplier Name'),
+                            //             enabled: false,
+                            //           ),
+                            //           const SizedBox(height: 10),
+                            //           // Dropdown field of suppliers
+                            //           StreamBuilder(
+                            //             stream: supplierService.readSupplier(),
+                            //             builder: (context, snapshot) {
+                            //               if (snapshot.hasData) {
+                            //                 List<Supplier> supplierList =
+                            //                     snapshot.data!.docs.map((doc) {
+                            //                   return Supplier(doc.id, doc['name']);
+                            //                 }).toList();
 
-                      //                 return DropdownButton(
-                      //                   items: supplierList
-                      //                       .map<DropdownMenuItem<Supplier>>(
-                      //                           (supplier) => DropdownMenuItem(
-                      //                                 value: supplier,
-                      //                                 child:
-                      //                                     Text(supplier.name),
-                      //                               ))
-                      //                       .toList(),
-                      //                   onChanged: (Supplier? value) {
-                      //                     if (value != null) {
-                      //                       setState(() {
-                      //                         _supplierNameController.text =
-                      //                             value.name;
-                      //                         _supplierIdController.text =
-                      //                             value.id;
-                      //                       });
-                      //                     }
-                      //                   },
-                      //                   hint: const Text('Select Supplier'),
-                      //                 );
-                      //               } else {
-                      //                 return const Text('No data');
-                      //               }
-                      //             },
-                      //           ),
-                      //         ],
-                      //       ),
-                      //       actions: [
-                      //         ElevatedButton(
-                      //           onPressed: () async {
-                      //             await productService.updateProduct(
-                      //                 docId,
-                      //                 _nameController.text,
-                      //                 _supplierIdController.text,
-                      //                 _supplierNameController.text);
-                      //             await supplierService
-                      //                 .removeProductFromSupplier(
-                      //               data['supplier']['id'],
-                      //               docId,
-                      //             );
-                      //             await supplierService.addProductToSupplier(
-                      //                 _supplierIdController.text,
-                      //                 docId,
-                      //                 _nameController.text);
-                      //             _nameController.clear();
-                      //             _productIdcontroller.clear();
-                      //             _supplierNameController.clear();
-                      //             _supplierIdController.clear();
-                      //             // snackbar
-                      //             ScaffoldMessenger.of(context).showSnackBar(
-                      //               const SnackBar(
-                      //                 content: Text('Product updated'),
-                      //                 duration: Duration(seconds: 2),
-                      //               ),
-                      //             );
-                      //             Navigator.of(context).pop();
-                      //           },
-                      //           child: const Text('Update Product'),
-                      //         )
-                      //       ]),
-                      // );
-                    },
-                    child: Container(
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Color.fromARGB(255, 146, 143, 143),
-                          width: 1,
-                        ),
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Color.fromARGB(255, 255, 255, 255),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    margin: const EdgeInsets.fromLTRB(
-                                        10, 15, 10, 10),
-                                    child: SvgPicture.asset(
-                                      'assets/vectors/allproducticon.svg',
-                                      width: 20,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    // Use Expanded for the product name Text widget
-                                    child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          0, 8, 20, 0),
-                                      child: Text(
-                                        name,
-                                        style: GoogleFonts.nunitoSans(
-                                          textStyle: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                            height: 1.4,
-                                            color: Colors.black,
+                            //                 return DropdownButton(
+                            //                   items: supplierList
+                            //                       .map<DropdownMenuItem<Supplier>>(
+                            //                           (supplier) => DropdownMenuItem(
+                            //                                 value: supplier,
+                            //                                 child:
+                            //                                     Text(supplier.name),
+                            //                               ))
+                            //                       .toList(),
+                            //                   onChanged: (Supplier? value) {
+                            //                     if (value != null) {
+                            //                       setState(() {
+                            //                         _supplierNameController.text =
+                            //                             value.name;
+                            //                         _supplierIdController.text =
+                            //                             value.id;
+                            //                       });
+                            //                     }
+                            //                   },
+                            //                   hint: const Text('Select Supplier'),
+                            //                 );
+                            //               } else {
+                            //                 return const Text('No data');
+                            //               }
+                            //             },
+                            //           ),
+                            //         ],
+                            //       ),
+                            //       actions: [
+                            //         ElevatedButton(
+                            //           onPressed: () async {
+                            //             await productService.updateProduct(
+                            //                 docId,
+                            //                 _nameController.text,
+                            //                 _supplierIdController.text,
+                            //                 _supplierNameController.text);
+                            //             await supplierService
+                            //                 .removeProductFromSupplier(
+                            //               data['supplier']['id'],
+                            //               docId,
+                            //             );
+                            //             await supplierService.addProductToSupplier(
+                            //                 _supplierIdController.text,
+                            //                 docId,
+                            //                 _nameController.text);
+                            //             _nameController.clear();
+                            //             _productIdcontroller.clear();
+                            //             _supplierNameController.clear();
+                            //             _supplierIdController.clear();
+                            //             // snackbar
+                            //             ScaffoldMessenger.of(context).showSnackBar(
+                            //               const SnackBar(
+                            //                 content: Text('Product updated'),
+                            //                 duration: Duration(seconds: 2),
+                            //               ),
+                            //             );
+                            //             Navigator.of(context).pop();
+                            //           },
+                            //           child: const Text('Update Product'),
+                            //         )
+                            //       ]),
+                            // );
+                          },
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 10),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Color.fromARGB(255, 146, 143, 143),
+                                width: 1,
+                              ),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: Color.fromARGB(
+                                                255, 255, 255, 255),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          margin: const EdgeInsets.fromLTRB(
+                                              10, 15, 10, 10),
+                                          child: SvgPicture.asset(
+                                            'assets/vectors/allproducticon.svg',
+                                            width: 20,
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 5),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'ID: $docId',
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        _capturePng(
-                                          textToGenerate: docId,
-                                          type: 'product',
-                                        );
-                                      },
-                                      child: Container(
-                                        margin: const EdgeInsets.all(5),
-                                        decoration: BoxDecoration(
-                                          color: Color(0xFFFAFAFA),
-                                          borderRadius:
-                                              BorderRadius.circular(5),
+                                        Expanded(
+                                          // Use Expanded for the product name Text widget
+                                          child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 8, 20, 0),
+                                            child: Text(
+                                              name,
+                                              style: GoogleFonts.nunitoSans(
+                                                textStyle: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  height: 1.4,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                        child: Icon(
-                                          Icons.qr_code,
-                                          color: Color(0xFF058B06),
-                                          size: 30,
-                                        ),
-                                      ),
+                                      ],
                                     ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'ID: $docId',
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              _capturePng(
+                                                textToGenerate: docId,
+                                                type: 'product',
+                                              );
+                                            },
+                                            child: Container(
+                                              margin: const EdgeInsets.all(5),
+                                              decoration: BoxDecoration(
+                                                color: Color(0xFFFAFAFA),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: Icon(
+                                                Icons.qr_code,
+                                                color: Color(0xFF058B06),
+                                                size: 30,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
                                   ],
                                 ),
-                              )
-                            ],
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                  );
+                        );
+                      },
+                    );
+                  } else {
+                    return const Center(child: Text('No Data'));
+                  }
                 },
-              );
-            } else {
-              return const Center(child: Text('No Data'));
-            }
-          },
+              ),
+            ),
+          ],
         ),
       ),
     );

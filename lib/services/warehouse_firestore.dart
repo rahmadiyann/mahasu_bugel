@@ -30,6 +30,12 @@ class WarehouseFirestoreService {
     return palette;
   }
 
+  //get warehouse name by id
+  Future<String> getWarehouseNameById(String id) async {
+    final warehouse = await warehouses.doc(id).get();
+    return warehouse['name'];
+  }
+
   // get warehouse names and ids and return as a map
   Future<Map<String, String>> getWarehouseNames() async {
     final warehouse = await warehouses.get();

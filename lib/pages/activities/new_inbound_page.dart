@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Mahasu/components/myappbar.dart';
 import 'package:Mahasu/components/text_field.dart';
@@ -98,9 +99,24 @@ class _NewInboundPageState extends State<NewInboundPage> {
     // }
 
     onTap() async {
+      String? operatorEmail = FirebaseAuth.instance.currentUser!.email;
+      if (qtyCtl.text == '') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please fill in the quantity'),
+          ),
+        );
+        return;
+      }
       // print(_paletteName);
-      activityService.createActivity('Inbound', productIdCtl.text,
-          _selectedPaletteId, _selectedUnit, int.parse(qtyCtl.text), _whId);
+      activityService.createActivity(
+          'Inbound',
+          productIdCtl.text,
+          _selectedPaletteId,
+          _selectedUnit,
+          int.parse(qtyCtl.text),
+          _whId,
+          operatorEmail!);
 
       await productService.incrementProduct(
         productIdCtl.text,
@@ -433,9 +449,7 @@ class _NewInboundPageState extends State<NewInboundPage> {
                   enabled: true),
               const SizedBox(height: 50),
               GestureDetector(
-                onTap: () {
-                  onTap();
-                },
+                onTap: onTap,
                 child: Container(
                   height: 50,
                   width: 200,
@@ -449,12 +463,9 @@ class _NewInboundPageState extends State<NewInboundPage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Text(
-                        'Submit',
-                        style: const TextStyle(color: Colors.white),
-                      ),
+                    child: Text(
+                      'Add Inbound',
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
                 ),

@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Mahasu/components/myappbar.dart';
 import 'package:Mahasu/components/text_field.dart';
@@ -25,25 +26,35 @@ class Product {
   Product({required this.name, required this.supplier});
 }
 
+class Palette {
+  final String id;
+  final String name;
+  final Map<String, dynamic> qtyList;
+
+  Palette({required this.id, required this.name, required this.qtyList});
+}
+
+class Unit {
+  final String name;
+
+  Unit({required this.name});
+}
+
 class _NewOutboundPageState extends State<NewOutboundPage> {
   final ActivityFirestoreService activityService = ActivityFirestoreService();
   final ProductFirestoreService productService = ProductFirestoreService();
   final SupplierFirestoreService supplierservice = SupplierFirestoreService();
   final PaletteFirestoreService paletteservice = PaletteFirestoreService();
+  final _formGlobalKey = GlobalKey<FormState>();
+
   late TextEditingController productNameCtl = TextEditingController();
   late TextEditingController supplierNameCtl = TextEditingController();
-  final _formGlobalKey = GlobalKey<FormState>();
-  String _selectedUnit = "Meters";
-  final List<String> _unitList = [
-    "Meters",
-    "Yards",
-    "Rolls",
-    'SQM',
-    "Pallets",
-    "Sheets"
-  ];
-  late String _selectedPaletteId = '';
-  late String _whId = '';
+  String _selectedUnit = '';
+  String _selectedPaletteId = '';
+  late List qtyList = [];
+  String paletteHintText = 'Select palette';
+  String unitHintText = 'Select unit';
+  bool _isLoading = false;
 
   // using palette service, make a list of palette names and remember its id
   @override
@@ -53,11 +64,6 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
     supplierNameCtl = TextEditingController();
 
     fetchData();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   void fetchData() async {
@@ -97,6 +103,17 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
     // }
 
     onTap() async {
+      _isLoading = true;
+      String _whId = await paletteservice.getPaletteWhId(_selectedPaletteId);
+      String? operatorEmail = await FirebaseAuth.instance.currentUser!.email;
+      if (qtyCtl.text == '') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please fill in the quantity'),
+          ),
+        );
+        return;
+      }
       int currentQty = await productService.checkProductQtyList(
           productIdCtl.text, _selectedPaletteId, _selectedUnit);
       if (currentQty < int.parse(qtyCtl.text)) {
@@ -106,8 +123,14 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
           ),
         );
       } else if (currentQty - int.parse(qtyCtl.text) == 0) {
-        await activityService.createActivity('Outbound', productIdCtl.text,
-            _selectedPaletteId, _selectedUnit, int.parse(qtyCtl.text), _whId);
+        await activityService.createActivity(
+            'Outbound',
+            productIdCtl.text,
+            _selectedPaletteId,
+            _selectedUnit,
+            int.parse(qtyCtl.text),
+            _whId,
+            operatorEmail!);
 
         await productService.decrementProductQtyList(productIdCtl.text,
             _selectedPaletteId, _selectedUnit, int.parse(qtyCtl.text));
@@ -126,7 +149,7 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
         descCtl.clear();
         qtyCtl.clear();
         // while processing, show loading indicator
-
+        _isLoading = false;
         // after processing, show snackbar
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -136,8 +159,15 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
         // after snackbar, navigate back to the previous page
         Navigator.popAndPushNamed(context, '/outbound');
       } else {
-        await activityService.createActivity('Outbound', productIdCtl.text,
-            _selectedPaletteId, _selectedUnit, int.parse(qtyCtl.text), _whId);
+        _isLoading = true;
+        await activityService.createActivity(
+            'Outbound',
+            productIdCtl.text,
+            _selectedPaletteId,
+            _selectedUnit,
+            int.parse(qtyCtl.text),
+            _whId,
+            operatorEmail!);
 
         await productService.decrementProductQtyList(productIdCtl.text,
             _selectedPaletteId, _selectedUnit, int.parse(qtyCtl.text));
@@ -156,7 +186,7 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
         descCtl.clear();
         qtyCtl.clear();
         // while processing, show loading indicator
-
+        _isLoading = false;
         // after processing, show snackbar
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -240,58 +270,7 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
                   ),
                 ),
               ),
-              // MyTextField(
-              //     controller: productIdCtl,
-              //     hintText: "Product ID",
-              //     obscureText: false,
-              //     enabled: false),
-              // const SizedBox(height: 30),
-              // Container(
-              //   margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
-              //   child: Align(
-              //     alignment: Alignment.topLeft,
-              //     child: Text(
-              //       'Product Name',
-              //       style: GoogleFonts.getFont(
-              //         'Nunito Sans',
-              //         fontWeight: FontWeight.w200,
-              //         fontSize: 14,
-              //         height: 1.3,
-              //         color: Color(0xFF1E232C),
-              //       ),
-              //     ),
-              //   ),
-              // ),
-              // MyTextField(
-              //     controller: productNameCtl,
-              //     hintText: "Product Name",
-              //     obscureText: false,
-              //     enabled: false),
-              // const SizedBox(height: 30),
-              // Container(
-              //   margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
-              //   child: Align(
-              //     alignment: Alignment.topLeft,
-              //     child: Text(
-              //       'Supplier Name ',
-              //       style: GoogleFonts.getFont(
-              //         'Nunito Sans',
-              //         fontWeight: FontWeight.w200,
-              //         fontSize: 14,
-              //         height: 1.3,
-              //         color: Color(0xFF1E232C),
-              //       ),
-              //     ),
-              //   ),
-              // ),
-              // MyTextField(
-              //     controller: supplierNameCtl,
-              //     hintText: "Supplier Name",
-              //     obscureText: false,
-              //     enabled: false),
-              const SizedBox(height: 30),
-              // Dropdown for palette but use the palette list from the palette Service,
-              // and remember the selected palette id
+              SizedBox(height: 30),
               Container(
                 margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
                 child: Align(
@@ -308,177 +287,224 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
                   ),
                 ),
               ),
-              FutureBuilder<Map<String, Map<String, String>>>(
-                future: paletteservice.getPaletteNames(),
-                builder: (context, snapshot) {
+              FutureBuilder(
+                future: productService.getPalettesByProductId(widget.productId),
+                builder: (context,
+                    AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
+                    return CircularProgressIndicator();
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
+                  } else if (!snapshot.hasData) {
+                    return Text('No data available');
                   } else {
-                    final paletteNames = snapshot.data!;
+                    final palettesList = snapshot.data!;
 
-                    if (_selectedPaletteId.isEmpty && paletteNames.isNotEmpty) {
-                      _selectedPaletteId = paletteNames.keys.first;
-                      final whid = paletteNames[_selectedPaletteId]!['whid'];
-                      _whId = whid!;
-                    }
+                    List<Palette> paletteList = palettesList
+                        .map(
+                          (e) => Palette(
+                              id: e['palette_id'] as String,
+                              name: e['palette_name'] as String,
+                              qtyList: e['qty_list'] as Map<String, dynamic>),
+                        )
+                        .toList();
 
-                    return DropdownButtonFormField<String>(
-                      value: _selectedPaletteId,
-                      items: paletteNames.entries.map((entry) {
-                        final innerMap = entry.value;
-                        final paletteName = innerMap['name'];
-                        return DropdownMenuItem<String>(
-                          value: entry.key,
-                          child: Text(paletteName!),
-                        );
-                      }).toList(),
-                      onChanged: (newValue) {
-                        setState(() {
-                          _selectedPaletteId = newValue!;
-                          final whid = paletteNames[newValue]!['whid'];
-                          _whId = whid!;
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
+                    return Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: DropdownButton(
+                              isExpanded: true,
+                              underline: const SizedBox(),
+                              items: paletteList
+                                  .map<DropdownMenuItem<Palette>>(
+                                    (palette) => DropdownMenuItem(
+                                      value: palette,
+                                      child: Text(palette.name),
+                                    ),
+                                  )
+                                  .toList(),
+                              onChanged: (Palette? value) {
+                                if (value != null) {
+                                  setState(() {
+                                    _selectedPaletteId = value.id;
+                                    paletteHintText = value.name;
+                                    qtyList = value.qtyList.entries
+                                        .map((e) => {
+                                              'unit': e.key,
+                                              'qty': e.value,
+                                            })
+                                        .toList();
+                                  });
+                                }
+                              },
+                              hint: Text(paletteHintText),
+                            ),
+                          ),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue),
+                        const SizedBox(height: 30),
+                        // Dropdown for unit
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              'Unit ',
+                              style: GoogleFonts.getFont(
+                                'Nunito Sans',
+                                fontWeight: FontWeight.w200,
+                                fontSize: 14,
+                                height: 1.3,
+                                color: Color(0xFF1E232C),
+                              ),
+                            ),
+                          ),
                         ),
-                        hintText: "Unit",
-                        hintStyle: TextStyle(color: Colors.grey),
-                      ),
+                        _selectedPaletteId.isEmpty
+                            ? const SizedBox()
+                            : Column(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: DropdownButton(
+                                        isExpanded: true,
+                                        underline: const SizedBox(),
+                                        items: qtyList
+                                            .map<
+                                                DropdownMenuItem<
+                                                    Map<String, dynamic>>>(
+                                              (qty) => DropdownMenuItem(
+                                                value: qty,
+                                                child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(qty['unit']),
+                                                      Text(
+                                                          qty['qty'].toString())
+                                                    ]),
+                                              ),
+                                            )
+                                            .toList(),
+                                        onChanged:
+                                            (Map<String, dynamic>? value) {
+                                          if (value != null) {
+                                            setState(() {
+                                              unitHintText = value['unit'];
+                                              _selectedUnit = value['unit'];
+                                            });
+                                          }
+                                        },
+                                        hint: Text(unitHintText),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 30),
+                                  Container(
+                                    margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
+                                    child: Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        'Quantity ',
+                                        style: GoogleFonts.getFont(
+                                          'Nunito Sans',
+                                          fontWeight: FontWeight.w200,
+                                          fontSize: 14,
+                                          height: 1.3,
+                                          color: Color(0xFF1E232C),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  TextField(
+                                    keyboardType: TextInputType.number,
+                                    enabled: true,
+                                    controller: qtyCtl,
+                                    obscureText: false,
+                                    decoration: InputDecoration(
+                                      enabledBorder: const OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.grey),
+                                      ),
+                                      focusedBorder: const OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.blue),
+                                      ),
+                                      hintText: 'Quantity',
+                                      hintStyle:
+                                          const TextStyle(color: Colors.grey),
+                                    ),
+                                    style: const TextStyle(color: Colors.black),
+                                  ),
+                                  const SizedBox(height: 30),
+                                  Container(
+                                    margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
+                                    child: Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        'Description ',
+                                        style: GoogleFonts.getFont(
+                                          'Nunito Sans',
+                                          fontWeight: FontWeight.w200,
+                                          fontSize: 14,
+                                          height: 1.3,
+                                          color: Color(0xFF1E232C),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  MyTextField(
+                                      controller: descCtl,
+                                      hintText: "Description",
+                                      obscureText: false,
+                                      enabled: true),
+                                  const SizedBox(height: 50),
+                                  GestureDetector(
+                                    onTap: onTap,
+                                    child: Container(
+                                      height: 50,
+                                      width: 200,
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Colors.green.shade400,
+                                            Colors.green.shade600
+                                          ],
+                                          begin: AlignmentDirectional.topStart,
+                                          end: AlignmentDirectional.bottomEnd,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          _isLoading
+                                              ? 'Processing...'
+                                              : 'Add Outbound',
+                                          style: const TextStyle(
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                      ],
                     );
                   }
                 },
-              ),
-
-              const SizedBox(height: 30),
-              // Dropdown for unit
-              Container(
-                margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    'Unit ',
-                    style: GoogleFonts.getFont(
-                      'Nunito Sans',
-                      fontWeight: FontWeight.w200,
-                      fontSize: 14,
-                      height: 1.3,
-                      color: Color(0xFF1E232C),
-                    ),
-                  ),
-                ),
-              ),
-              DropdownButtonFormField<String>(
-                value: _selectedUnit,
-                items: _unitList
-                    .map((e) => DropdownMenuItem<String>(
-                          value: e,
-                          child: Text(e),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedUnit = value!;
-                  });
-                },
-                decoration: const InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue),
-                  ),
-                  hintText: "Unit",
-                  hintStyle: TextStyle(color: Colors.grey),
-                ),
-              ),
-              const SizedBox(height: 30),
-              Container(
-                margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    'Quantity ',
-                    style: GoogleFonts.getFont(
-                      'Nunito Sans',
-                      fontWeight: FontWeight.w200,
-                      fontSize: 14,
-                      height: 1.3,
-                      color: Color(0xFF1E232C),
-                    ),
-                  ),
-                ),
-              ),
-              TextField(
-                keyboardType: TextInputType.number,
-                enabled: true,
-                controller: qtyCtl,
-                obscureText: false,
-                decoration: InputDecoration(
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue),
-                  ),
-                  hintText: 'Quantity',
-                  hintStyle: const TextStyle(color: Colors.grey),
-                ),
-                style: const TextStyle(color: Colors.black),
-              ),
-              const SizedBox(height: 30),
-              Container(
-                margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    'Description ',
-                    style: GoogleFonts.getFont(
-                      'Nunito Sans',
-                      fontWeight: FontWeight.w200,
-                      fontSize: 14,
-                      height: 1.3,
-                      color: Color(0xFF1E232C),
-                    ),
-                  ),
-                ),
-              ),
-              MyTextField(
-                  controller: descCtl,
-                  hintText: "Description",
-                  obscureText: false,
-                  enabled: true),
-              const SizedBox(height: 50),
-              GestureDetector(
-                onTap: onTap,
-                child: Container(
-                  height: 50,
-                  width: 200,
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.green.shade400, Colors.green.shade600],
-                      begin: AlignmentDirectional.topStart,
-                      end: AlignmentDirectional.bottomEnd,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Text(
-                        'Submit',
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ),
               ),
             ],
           ),

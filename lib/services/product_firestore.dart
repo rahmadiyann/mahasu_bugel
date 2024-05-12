@@ -65,12 +65,41 @@ class ProductFirestoreService {
     return paletteStream;
   }
 
+  // read all product and return as a list
+  Future<List<Map<String, dynamic>>> readAllProduct() async {
+    final products = await this.products.get();
+    List<Map<String, dynamic>> productList = [];
+    for (var i = 0; i < products.docs.length; i++) {
+      final doc = products.docs[i];
+      productList.add(doc.data() as Map<String, dynamic>);
+    }
+    return productList;
+  }
+
   // Read product by id
   Future<DocumentSnapshot> readProductById(String id) async {
     final product = await products.doc(id).get();
 
     return product;
   }
+
+  // get productname by id
+  Future<String> getProductNameById(String id) async {
+    final product = await products.doc(id).get();
+    return product.get('name');
+  }
+
+  // get palettes by productid
+  Future<List<Map<String, dynamic>>> getPalettesByProductId(String id) async {
+    final product = await products.doc(id).get();
+    if (product.get('palettes') == null) {
+      return [];
+    } else {
+      return List<Map<String, dynamic>>.from(product.get('palettes') ?? []);
+    }
+  }
+
+  // get qty_list of palette given palette_id
 
   // Stream builder product by id
   Stream<DocumentSnapshot> streamProductById(String id) {

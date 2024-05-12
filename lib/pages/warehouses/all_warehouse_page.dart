@@ -32,6 +32,14 @@ class _WarehousesPageState extends State<WarehousesPage> {
         actions: [
           ElevatedButton(
               onPressed: () {
+                if (_nameController.text == '') {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please fill in the quantity'),
+                    ),
+                  );
+                  return;
+                }
                 warehouseservice.createWarehouse(_nameController.text);
                 _nameController.clear();
                 Navigator.of(context).pop();

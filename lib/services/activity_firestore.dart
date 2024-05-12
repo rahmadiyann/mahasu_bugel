@@ -18,6 +18,17 @@ class ActivityFirestoreService {
     return activityStream;
   }
 
+  // read all activity and return as a list
+  Future<List<Map<String, dynamic>>> readAllActivity() async {
+    final activity = await activitys.get();
+    List<Map<String, dynamic>> activityList = [];
+    for (var i = 0; i < activity.docs.length; i++) {
+      final doc = activity.docs[i];
+      activityList.add(doc.data() as Map<String, dynamic>);
+    }
+    return activityList;
+  }
+
   Stream<QuerySnapshot> filteredActivityStream(
       DateTime? startOfDay, DateTime? endOfDay) {
     if (startOfDay == null || endOfDay == null) {
@@ -68,7 +79,7 @@ class ActivityFirestoreService {
 
   // Create a new activity
   Future<void> createActivity(String type, String productId, String paletteId,
-      String unit, int qty, String whId) async {
+      String unit, int qty, String whId, String operator) async {
     await activitys.add(
       {
         'type': type,
@@ -78,6 +89,7 @@ class ActivityFirestoreService {
         'unit': unit,
         'qty': qty,
         'timestamp': DateTime.now(),
+        'operator': operator
       },
     );
   }

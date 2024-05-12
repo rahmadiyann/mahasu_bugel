@@ -1,3 +1,4 @@
+import 'package:Mahasu/components/download_activity.dart';
 import 'package:Mahasu/pages/activities/inbound_page.dart';
 import 'package:Mahasu/pages/activities/outbound_page.dart';
 import 'package:Mahasu/pages/auth/login_page.dart';
@@ -5,6 +6,7 @@ import 'package:Mahasu/pages/home_page.dart';
 import 'package:Mahasu/pages/palettes/all_palette_page.dart';
 import 'package:Mahasu/pages/products/product_page.dart';
 import 'package:Mahasu/pages/suppliers/suppliers_page.dart';
+import 'package:Mahasu/pages/testingpages/newoutboundpage.dart';
 import 'package:Mahasu/pages/warehouses/all_warehouse_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

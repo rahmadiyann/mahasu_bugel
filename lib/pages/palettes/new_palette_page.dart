@@ -30,14 +30,23 @@ class _NewPalettePageState extends State<NewPalettePage> {
   final TextEditingController whNameCtl = TextEditingController();
   final TextEditingController paletteIdCtl = TextEditingController();
 
-  bool _isPaletteNameValid = false;
-
   // services
   final PaletteFirestoreService paletteService = PaletteFirestoreService();
   final WarehouseFirestoreService warehouseService =
       WarehouseFirestoreService();
 
   onTap() async {
+    if (paletteNameCtl.text == '' ||
+        whIdCtl.text == '' ||
+        whNameCtl.text == '') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill in all the fields'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
     String paletteId = await paletteService.createPalette(
         paletteNameCtl.text, whIdCtl.text, whNameCtl.text);
     await warehouseservice.addPaletteToWarehouse(
@@ -80,11 +89,6 @@ class _NewPalettePageState extends State<NewPalettePage> {
               scrollDirection: Axis.vertical,
               children: <Widget>[
                 TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      _isPaletteNameValid = paletteNameCtl.text.isNotEmpty;
-                    });
-                  },
                   enabled: true,
                   controller: paletteNameCtl,
                   obscureText: false,
@@ -145,18 +149,7 @@ class _NewPalettePageState extends State<NewPalettePage> {
                     }),
                 const SizedBox(height: 16),
                 GestureDetector(
-                  onTap: _isPaletteNameValid
-                      ? onTap
-                      : () {
-                          // show snackbar
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Center(
-                                  child:
-                                      Text('Please fill in the palette name')),
-                            ),
-                          );
-                        },
+                  onTap: onTap,
                   child: Container(
                     height: 50,
                     width: 200,
