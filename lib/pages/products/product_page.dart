@@ -11,6 +11,7 @@ import 'package:Mahasu/services/product_firestore.dart';
 import 'package:Mahasu/services/qr_generator.dart';
 import 'package:Mahasu/services/supplier_firestore.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fuzzy/fuzzy.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AllProductPage extends StatefulWidget {
@@ -30,6 +31,64 @@ class Supplier {
 class _AllProductPageState extends State<AllProductPage> {
   final SupplierFirestoreService supplierService = SupplierFirestoreService();
   final ProductFirestoreService productService = ProductFirestoreService();
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+  List<DocumentSnapshot> _products = [];
+  List<DocumentSnapshot> _filteredProducts = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+    _loadProducts();
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    _filterProducts(_searchController.text);
+  }
+
+  Future<void> _loadProducts() async {
+    productService.readProduct().listen((snapshot) {
+      setState(() {
+        _products = snapshot.docs;
+        _filteredProducts = _products;
+        _isLoading = false;
+      });
+    });
+  }
+
+  void _filterProducts(String query) {
+    if (query.isEmpty) {
+      setState(() {
+        _filteredProducts = _products;
+      });
+    } else {
+      final productNames =
+          _products.map((doc) => doc['name'].toString()).toList();
+      final fuse = Fuzzy(productNames);
+      final results = fuse.search(query);
+      final filtered = results.map((result) {
+        final productName = result.item;
+        return _products.firstWhere((doc) => doc['name'] == productName);
+      }).toList();
+      setState(() {
+        _filteredProducts = filtered;
+      });
+    }
+  }
+
+  void _unfocusTextField() {
+    _focusNode.unfocus();
+  }
 
   Future<void> _capturePng({
     required String textToGenerate,
@@ -277,27 +336,46 @@ class _AllProductPageState extends State<AllProductPage> {
         child: const Icon(Icons.qr_code_scanner),
       ),
       body: Center(
-        child: Column(
-          children: [
-            DownloadProductButton(),
-            Expanded(
-              child: StreamBuilder(
-                stream: productService.readProduct(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    List productList = snapshot.data!.docs;
-
-                    // sort by created_at
-                    productList.sort((a, b) {
-                      return a['created_at'].compareTo(b['created_at']);
-                    });
-
-                    return ListView.builder(
-                      itemCount: productList.length,
+        child: _isLoading
+            ? CircularProgressIndicator()
+            : Column(
+                children: [
+                  DownloadProductButton(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 15),
+                    child: TextField(
+                      focusNode: _focusNode,
+                      onSubmitted: (value) {
+                        _unfocusTextField();
+                        _filterProducts(value);
+                      },
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        labelText: 'Search Products',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        prefixIcon: Icon(Icons.search),
+                        // trailing icon to clear text only if text is present
+                        suffixIcon: _searchController.text.isNotEmpty
+                            ? IconButton(
+                                icon: Icon(Icons.clear),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  _filterProducts('');
+                                },
+                              )
+                            : null,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: _filteredProducts.length,
                       itemBuilder: (context, index) {
-                        DocumentSnapshot product = productList[index];
+                        DocumentSnapshot product = _filteredProducts[index];
                         String docId = product.id;
-
                         Map<String, dynamic> data =
                             product.data() as Map<String, dynamic>;
                         String name = data['name'];
@@ -312,96 +390,6 @@ class _AllProductPageState extends State<AllProductPage> {
                                 ),
                               ),
                             );
-                            // showDialog(
-                            //   context: context,
-                            //   builder: (context) => AlertDialog(
-                            //       content: Column(
-                            //         children: [
-                            //           TextField(
-                            //             controller: _nameController..text = name,
-                            //             decoration:
-                            //                 const InputDecoration(labelText: 'Name'),
-                            //           ),
-                            //           TextField(
-                            //             controller: _supplierNameController
-                            //               ..text = data['supplier']['name'],
-                            //             decoration: const InputDecoration(
-                            //                 labelText: 'Supplier Name'),
-                            //             enabled: false,
-                            //           ),
-                            //           const SizedBox(height: 10),
-                            //           // Dropdown field of suppliers
-                            //           StreamBuilder(
-                            //             stream: supplierService.readSupplier(),
-                            //             builder: (context, snapshot) {
-                            //               if (snapshot.hasData) {
-                            //                 List<Supplier> supplierList =
-                            //                     snapshot.data!.docs.map((doc) {
-                            //                   return Supplier(doc.id, doc['name']);
-                            //                 }).toList();
-
-                            //                 return DropdownButton(
-                            //                   items: supplierList
-                            //                       .map<DropdownMenuItem<Supplier>>(
-                            //                           (supplier) => DropdownMenuItem(
-                            //                                 value: supplier,
-                            //                                 child:
-                            //                                     Text(supplier.name),
-                            //                               ))
-                            //                       .toList(),
-                            //                   onChanged: (Supplier? value) {
-                            //                     if (value != null) {
-                            //                       setState(() {
-                            //                         _supplierNameController.text =
-                            //                             value.name;
-                            //                         _supplierIdController.text =
-                            //                             value.id;
-                            //                       });
-                            //                     }
-                            //                   },
-                            //                   hint: const Text('Select Supplier'),
-                            //                 );
-                            //               } else {
-                            //                 return const Text('No data');
-                            //               }
-                            //             },
-                            //           ),
-                            //         ],
-                            //       ),
-                            //       actions: [
-                            //         ElevatedButton(
-                            //           onPressed: () async {
-                            //             await productService.updateProduct(
-                            //                 docId,
-                            //                 _nameController.text,
-                            //                 _supplierIdController.text,
-                            //                 _supplierNameController.text);
-                            //             await supplierService
-                            //                 .removeProductFromSupplier(
-                            //               data['supplier']['id'],
-                            //               docId,
-                            //             );
-                            //             await supplierService.addProductToSupplier(
-                            //                 _supplierIdController.text,
-                            //                 docId,
-                            //                 _nameController.text);
-                            //             _nameController.clear();
-                            //             _productIdcontroller.clear();
-                            //             _supplierNameController.clear();
-                            //             _supplierIdController.clear();
-                            //             // snackbar
-                            //             ScaffoldMessenger.of(context).showSnackBar(
-                            //               const SnackBar(
-                            //                 content: Text('Product updated'),
-                            //                 duration: Duration(seconds: 2),
-                            //               ),
-                            //             );
-                            //             Navigator.of(context).pop();
-                            //           },
-                            //           child: const Text('Update Product'),
-                            //         )
-                            //       ]),
-                            // );
                           },
                           child: Container(
                             margin: EdgeInsets.symmetric(
@@ -439,7 +427,6 @@ class _AllProductPageState extends State<AllProductPage> {
                                           ),
                                         ),
                                         Expanded(
-                                          // Use Expanded for the product name Text widget
                                           child: Padding(
                                             padding: const EdgeInsets.fromLTRB(
                                                 0, 8, 20, 0),
@@ -499,15 +486,10 @@ class _AllProductPageState extends State<AllProductPage> {
                           ),
                         );
                       },
-                    );
-                  } else {
-                    return const Center(child: Text('No Data'));
-                  }
-                },
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

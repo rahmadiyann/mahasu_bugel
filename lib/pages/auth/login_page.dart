@@ -189,6 +189,9 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       );
+                      setState(() {
+                        _isLoading = false;
+                      });
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -197,6 +200,9 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       );
+                      setState(() {
+                        _isLoading = false;
+                      });
                     }
                   }
                 },

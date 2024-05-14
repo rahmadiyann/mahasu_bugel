@@ -52,6 +52,7 @@ dependencies:
   syncfusion_flutter_datepicker: ^25.2.3
   excel: ^4.0.2
   path: ^1.9.0
+  fuzzy: ^0.5.1
 
 dev_dependencies:
   flutter_test:

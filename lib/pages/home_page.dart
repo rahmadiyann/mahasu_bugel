@@ -231,7 +231,7 @@ class _HomePageState extends State<HomePage> {
             child: GridView.count(
               padding: const EdgeInsets.all(10),
               crossAxisCount: 3,
-              physics: NeverScrollableScrollPhysics(),
+              scrollDirection: Axis.vertical,
               children: [
                 MyPreviewCard(
                   ontap: () {

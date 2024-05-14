@@ -210,8 +210,8 @@ class _ProductPageState extends State<ProductPage> {
                                     ),
                                     SizedBox(width: 4),
                                     Text(
-                                      productName.length > 20
-                                          ? '${productName.substring(0, 20).toUpperCase()}...'
+                                      productName.length > 30
+                                          ? '${productName.substring(0, 30).toUpperCase()}...'
                                           : productName.toUpperCase(),
                                       overflow: TextOverflow.clip,
                                       maxLines: 1,
