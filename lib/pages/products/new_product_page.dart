@@ -30,8 +30,6 @@ class _NewProductPageState extends State<NewProductPage> {
   final TextEditingController supplierNameCtl = TextEditingController();
   final TextEditingController supplierIdCtl = TextEditingController();
 
-  bool _isProductNameValid = false;
-
   // services
   final ProductFirestoreService productService = ProductFirestoreService();
   final SupplierFirestoreService supplierService = SupplierFirestoreService();
@@ -74,11 +72,6 @@ class _NewProductPageState extends State<NewProductPage> {
             scrollDirection: Axis.vertical,
             children: <Widget>[
               TextField(
-                onEditingComplete: () {
-                  setState(() {
-                    _isProductNameValid = productNameCtl.text.isNotEmpty;
-                  });
-                },
                 keyboardType: TextInputType.number,
                 enabled: true,
                 controller: productNameCtl,
@@ -140,14 +133,17 @@ class _NewProductPageState extends State<NewProductPage> {
                   }),
               const SizedBox(height: 16),
               GestureDetector(
-                onTap: _isProductNameValid
+                onTap: (productNameCtl.text.isNotEmpty &&
+                        supplierNameCtl.text.isNotEmpty &&
+                        supplierIdCtl.text.isNotEmpty)
                     ? onTap
                     : () {
                         // show snackbar
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Center(
-                                child: Text('Please fill in the product name')),
+                              child: Text('Please fill in the required fields'),
+                            ),
                           ),
                         );
                       },

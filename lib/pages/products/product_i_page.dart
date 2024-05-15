@@ -111,7 +111,7 @@ class _ProductPageState extends State<ProductPage> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.popAndPushNamed(context, '/products');
+              Navigator.pop(context);
             },
           ),
           title: Text(
@@ -210,8 +210,8 @@ class _ProductPageState extends State<ProductPage> {
                                     ),
                                     SizedBox(width: 4),
                                     Text(
-                                      productName.length > 30
-                                          ? '${productName.substring(0, 30).toUpperCase()}...'
+                                      productName.length > 25
+                                          ? '${productName.substring(0, 25).toUpperCase()}...'
                                           : productName.toUpperCase(),
                                       overflow: TextOverflow.clip,
                                       maxLines: 1,

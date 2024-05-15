@@ -30,12 +30,6 @@ class _NewSupplierPageState extends State<NewSupplierPage> {
   final TextEditingController supplierContactCtl = TextEditingController();
   final TextEditingController supplierAddressCtl = TextEditingController();
 
-  // validation
-  bool _isSupplierNameValid = false;
-  bool _isSupplierContactValid = false;
-  bool _isSupplierPhoneValid = false;
-  bool _isSupplierAddressValid = false;
-
   // services
   final SupplierFirestoreService supplierService = SupplierFirestoreService();
 
@@ -82,11 +76,6 @@ class _NewSupplierPageState extends State<NewSupplierPage> {
             scrollDirection: Axis.vertical,
             children: <Widget>[
               TextField(
-                onEditingComplete: () {
-                  setState(() {
-                    _isSupplierNameValid = supplierNameCtl.text.isNotEmpty;
-                  });
-                },
                 enabled: true,
                 controller: supplierNameCtl,
                 obscureText: false,
@@ -104,12 +93,6 @@ class _NewSupplierPageState extends State<NewSupplierPage> {
               ),
               const SizedBox(height: 16),
               TextField(
-                onEditingComplete: () {
-                  setState(() {
-                    _isSupplierAddressValid =
-                        supplierAddressCtl.text.isNotEmpty;
-                  });
-                },
                 enabled: true,
                 controller: supplierAddressCtl,
                 obscureText: false,
@@ -127,12 +110,6 @@ class _NewSupplierPageState extends State<NewSupplierPage> {
               ),
               const SizedBox(height: 16),
               TextField(
-                onEditingComplete: () {
-                  setState(() {
-                    _isSupplierContactValid =
-                        supplierContactCtl.text.isNotEmpty;
-                  });
-                },
                 enabled: true,
                 controller: supplierContactCtl,
                 obscureText: false,
@@ -150,11 +127,6 @@ class _NewSupplierPageState extends State<NewSupplierPage> {
               ),
               const SizedBox(height: 16),
               TextField(
-                onEditingComplete: () {
-                  setState(() {
-                    _isSupplierPhoneValid = supplierPhoneCtl.text.isNotEmpty;
-                  });
-                },
                 enabled: true,
                 controller: supplierPhoneCtl,
                 obscureText: false,
@@ -172,10 +144,10 @@ class _NewSupplierPageState extends State<NewSupplierPage> {
               ),
               const SizedBox(height: 16),
               MyButton(
-                onTap: (_isSupplierAddressValid &&
-                        _isSupplierNameValid &&
-                        _isSupplierContactValid &&
-                        _isSupplierPhoneValid)
+                onTap: (supplierNameCtl.text.isNotEmpty &&
+                        supplierNameCtl.text.isNotEmpty &&
+                        supplierAddressCtl.text.isNotEmpty &&
+                        supplierPhoneCtl.text.isNotEmpty)
                     ? onTap
                     : () {
                         // show snackbar

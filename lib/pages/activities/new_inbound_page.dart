@@ -88,16 +88,6 @@ class _NewInboundPageState extends State<NewInboundPage> {
     final TextEditingController descCtl = TextEditingController();
     final TextEditingController qtyCtl = TextEditingController();
 
-    // tap() {
-    //   print('product id: ${productIdCtl.text}');
-    //   print('product name: ${productNameCtl.text}');
-    //   print('supplier name: ${supplierNameCtl.text}');
-    //   print('description: ${descCtl.text}');
-    //   print('selected palette id: $_selectedPaletteId');
-    //   print('selected unit: $_selectedUnit');
-    //   print('qty: ${qtyCtl.text}');
-    // }
-
     onTap() async {
       String? operatorEmail = FirebaseAuth.instance.currentUser!.email;
       if (qtyCtl.text == '') {
@@ -231,58 +221,7 @@ class _NewInboundPageState extends State<NewInboundPage> {
                   ),
                 ),
               ),
-              // MyTextField(
-              //     controller: productIdCtl,
-              //     hintText: "Product ID",
-              //     obscureText: false,
-              //     enabled: false),
-              // const SizedBox(height: 30),
-              // Container(
-              //   margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
-              //   child: Align(
-              //     alignment: Alignment.topLeft,
-              //     child: Text(
-              //       'Product Name',
-              //       style: GoogleFonts.getFont(
-              //         'Nunito Sans',
-              //         fontWeight: FontWeight.w200,
-              //         fontSize: 14,
-              //         height: 1.3,
-              //         color: Color(0xFF1E232C),
-              //       ),
-              //     ),
-              //   ),
-              // ),
-              // MyTextField(
-              //     controller: productNameCtl,
-              //     hintText: "Product Name",
-              //     obscureText: false,
-              //     enabled: false),
-              // const SizedBox(height: 30),
-              // Container(
-              //   margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
-              //   child: Align(
-              //     alignment: Alignment.topLeft,
-              //     child: Text(
-              //       'Supplier Name ',
-              //       style: GoogleFonts.getFont(
-              //         'Nunito Sans',
-              //         fontWeight: FontWeight.w200,
-              //         fontSize: 14,
-              //         height: 1.3,
-              //         color: Color(0xFF1E232C),
-              //       ),
-              //     ),
-              //   ),
-              // ),
-              // MyTextField(
-              //     controller: supplierNameCtl,
-              //     hintText: "Supplier Name",
-              //     obscureText: false,
-              //     enabled: false),
               const SizedBox(height: 30),
-              // Dropdown for palette but use the palette list from the palette Service,
-              // and remember the selected palette id
               Container(
                 margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
                 child: Align(
@@ -449,7 +388,20 @@ class _NewInboundPageState extends State<NewInboundPage> {
                   enabled: true),
               const SizedBox(height: 50),
               GestureDetector(
-                onTap: onTap,
+                onTap: (_selectedUnit.isNotEmpty &&
+                        _selectedPaletteId.isNotEmpty &&
+                        qtyCtl.text.isNotEmpty)
+                    ? onTap
+                    : () {
+                        // show snackbar
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Center(
+                              child: Text('Please fill in the required fields'),
+                            ),
+                          ),
+                        );
+                      },
                 child: Container(
                   height: 50,
                   width: 200,

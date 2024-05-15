@@ -122,6 +122,11 @@ class _InboundPageState extends State<InboundPage> {
     }
   }
 
+  Future<bool> checkPaletteExist() async {
+    final palette = await paletteservice.getAllPalette();
+    return palette.docs.isNotEmpty;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,10 +137,21 @@ class _InboundPageState extends State<InboundPage> {
         isAction: false,
         destinationPage: InboundPage(),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: scanBarcode,
-        backgroundColor: Colors.grey,
-        child: const Icon(Icons.qr_code_scanner),
+      floatingActionButton: FutureBuilder<bool>(
+        future: checkPaletteExist(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          } else if (snapshot.hasData && snapshot.data!) {
+            return FloatingActionButton(
+              onPressed: scanBarcode,
+              backgroundColor: Colors.grey,
+              child: const Icon(Icons.qr_code_scanner),
+            );
+          } else {
+            return Container(); // Return an empty container if no palettes exist
+          }
+        },
       ),
       body: Center(
         child: StreamBuilder(

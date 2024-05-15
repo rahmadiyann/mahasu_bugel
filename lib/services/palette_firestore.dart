@@ -22,6 +22,11 @@ class PaletteFirestoreService {
     return whid;
   }
 
+  // check if theres any document in the collection
+  Future<QuerySnapshot> getAllPalette() {
+    return palettes.get();
+  }
+
   // return warehouse name by palette id
   Future<String> getWarehouseName(String id) async {
     final palette = await palettes.doc(id).get();

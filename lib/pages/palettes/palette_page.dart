@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:Mahasu/pages/products/product_i_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Mahasu/pages/palettes/all_palette_page.dart';
@@ -122,7 +123,7 @@ class _PalettePageState extends State<PalettePage> {
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                Navigator.popAndPushNamed(context, '/palettes');
+                Navigator.pop(context);
               },
             ),
             title: Text(
@@ -256,207 +257,87 @@ class _PalettePageState extends State<PalettePage> {
                                   final Map<String, dynamic> product =
                                       products[index];
                                   String productName = product['productName'];
+                                  String productId = product['productId'];
 
                                   // prepare the qty list
                                   final Map<String, dynamic> qtyList =
                                       (product['qty_list']
                                           as Map<String, dynamic>);
 
-                                  return Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 5,
-                                    ),
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(5),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.withOpacity(0.5),
-                                          spreadRadius: 1,
-                                          blurRadius: 2,
-                                          offset: const Offset(0, 1),
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ProductPage(
+                                            productId: productId,
+                                          ),
                                         ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              SizedBox(
-                                                height: 25,
-                                                width: 25,
-                                                child: SvgPicture.asset(
-                                                    'assets/vectors/allproducticon.svg',
-                                                    fit: BoxFit.contain),
-                                              ),
-                                              SizedBox(width: 10),
-                                              Expanded(
-                                                child: Text(
-                                                  productName.toUpperCase(),
-                                                  overflow: TextOverflow.clip,
-                                                  style: GoogleFonts.nunitoSans(
-                                                    textStyle: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize: 15,
+                                      );
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 5,
+                                      ),
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(5),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.5),
+                                            spreadRadius: 1,
+                                            blurRadius: 2,
+                                            offset: const Offset(0, 1),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                SizedBox(
+                                                  height: 25,
+                                                  width: 25,
+                                                  child: SvgPicture.asset(
+                                                      'assets/vectors/allproducticon.svg',
+                                                      fit: BoxFit.contain),
+                                                ),
+                                                SizedBox(width: 10),
+                                                Expanded(
+                                                  child: Text(
+                                                    productName.toUpperCase(),
+                                                    overflow: TextOverflow.clip,
+                                                    style:
+                                                        GoogleFonts.nunitoSans(
+                                                      textStyle:
+                                                          const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        fontSize: 15,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(height: 15),
-                                        Column(
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                if (qtyList['Meters'] != null)
-                                                  Container(
-                                                    height: 70,
-                                                    width: 80,
-                                                    decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                          color: Colors.white,
-                                                          width: 1),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5),
-                                                      color:
-                                                          Colors.green.shade200,
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Text(
-                                                            'Meters',
-                                                            style: GoogleFonts
-                                                                .nunitoSans(
-                                                              textStyle:
-                                                                  const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                fontSize: 16,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                              '${qtyList['Meters']}')
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                if (qtyList['Yards'] != null)
-                                                  Container(
-                                                    height: 70,
-                                                    width: 80,
-                                                    decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                          color: Colors.white,
-                                                          width: 1),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5),
-                                                      color: Colors
-                                                          .yellow.shade200,
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Text(
-                                                            'Yards',
-                                                            style: GoogleFonts
-                                                                .nunitoSans(
-                                                              textStyle:
-                                                                  const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                fontSize: 16,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                              '${qtyList['Yards']}')
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                if (qtyList['Rolls'] != null)
-                                                  Container(
-                                                    height: 70,
-                                                    width: 80,
-                                                    decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                          color: Colors.white,
-                                                          width: 1),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5),
-                                                      color:
-                                                          Colors.blue.shade200,
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Text(
-                                                            'Rolls',
-                                                            style: GoogleFonts
-                                                                .nunitoSans(
-                                                              textStyle:
-                                                                  const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                fontSize: 16,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                              '${qtyList['Rolls']}')
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
                                               ],
                                             ),
-                                            Row(
+                                          ),
+                                          const SizedBox(height: 15),
+                                          Column(
+                                            children: [
+                                              Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: [
-                                                  if (qtyList['Pallets'] !=
-                                                      null)
+                                                  if (qtyList['Meters'] != null)
                                                     Container(
                                                       height: 70,
                                                       width: 80,
@@ -467,8 +348,8 @@ class _PalettePageState extends State<PalettePage> {
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(5),
-                                                        color: Color.fromARGB(
-                                                            255, 223, 144, 249),
+                                                        color: Colors
+                                                            .green.shade200,
                                                       ),
                                                       child: Padding(
                                                         padding:
@@ -480,7 +361,7 @@ class _PalettePageState extends State<PalettePage> {
                                                                   .spaceBetween,
                                                           children: [
                                                             Text(
-                                                              'Pallets',
+                                                              'Meters',
                                                               style: GoogleFonts
                                                                   .nunitoSans(
                                                                 textStyle:
@@ -493,12 +374,12 @@ class _PalettePageState extends State<PalettePage> {
                                                               ),
                                                             ),
                                                             Text(
-                                                                '${qtyList['Pallets']}')
+                                                                '${qtyList['Meters']}')
                                                           ],
                                                         ),
                                                       ),
                                                     ),
-                                                  if (qtyList['SQM'] != null)
+                                                  if (qtyList['Yards'] != null)
                                                     Container(
                                                       height: 70,
                                                       width: 80,
@@ -509,9 +390,8 @@ class _PalettePageState extends State<PalettePage> {
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(5),
-                                                        color: const Color
-                                                            .fromARGB(
-                                                            255, 144, 249, 247),
+                                                        color: Colors
+                                                            .yellow.shade200,
                                                       ),
                                                       child: Padding(
                                                         padding:
@@ -523,7 +403,7 @@ class _PalettePageState extends State<PalettePage> {
                                                                   .spaceBetween,
                                                           children: [
                                                             Text(
-                                                              'SQM',
+                                                              'Yards',
                                                               style: GoogleFonts
                                                                   .nunitoSans(
                                                                 textStyle:
@@ -536,12 +416,12 @@ class _PalettePageState extends State<PalettePage> {
                                                               ),
                                                             ),
                                                             Text(
-                                                                '${qtyList['SQM']}')
+                                                                '${qtyList['Yards']}')
                                                           ],
                                                         ),
                                                       ),
                                                     ),
-                                                  if (qtyList['Sheets'] != null)
+                                                  if (qtyList['Rolls'] != null)
                                                     Container(
                                                       height: 70,
                                                       width: 80,
@@ -552,9 +432,8 @@ class _PalettePageState extends State<PalettePage> {
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(5),
-                                                        color: const Color
-                                                            .fromARGB(
-                                                            255, 249, 224, 144),
+                                                        color: Colors
+                                                            .blue.shade200,
                                                       ),
                                                       child: Padding(
                                                         padding:
@@ -566,7 +445,7 @@ class _PalettePageState extends State<PalettePage> {
                                                                   .spaceBetween,
                                                           children: [
                                                             Text(
-                                                              'Sheets',
+                                                              'Rolls',
                                                               style: GoogleFonts
                                                                   .nunitoSans(
                                                                 textStyle:
@@ -579,15 +458,165 @@ class _PalettePageState extends State<PalettePage> {
                                                               ),
                                                             ),
                                                             Text(
-                                                                '${qtyList['Sheets']}')
+                                                                '${qtyList['Rolls']}')
                                                           ],
                                                         ),
                                                       ),
                                                     ),
-                                                ]),
-                                          ],
-                                        ),
-                                      ],
+                                                ],
+                                              ),
+                                              Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    if (qtyList['Pallets'] !=
+                                                        null)
+                                                      Container(
+                                                        height: 70,
+                                                        width: 80,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          border: Border.all(
+                                                              color:
+                                                                  Colors.white,
+                                                              width: 1),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                          color: Color.fromARGB(
+                                                              255,
+                                                              223,
+                                                              144,
+                                                              249),
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                'Pallets',
+                                                                style: GoogleFonts
+                                                                    .nunitoSans(
+                                                                  textStyle:
+                                                                      const TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    fontSize:
+                                                                        16,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                  '${qtyList['Pallets']}')
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    if (qtyList['SQM'] != null)
+                                                      Container(
+                                                        height: 70,
+                                                        width: 80,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          border: Border.all(
+                                                              color:
+                                                                  Colors.white,
+                                                              width: 1),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                          color: const Color
+                                                              .fromARGB(255,
+                                                              144, 249, 247),
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                'SQM',
+                                                                style: GoogleFonts
+                                                                    .nunitoSans(
+                                                                  textStyle:
+                                                                      const TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    fontSize:
+                                                                        16,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                  '${qtyList['SQM']}')
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    if (qtyList['Sheets'] !=
+                                                        null)
+                                                      Container(
+                                                        height: 70,
+                                                        width: 80,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          border: Border.all(
+                                                              color:
+                                                                  Colors.white,
+                                                              width: 1),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                          color: const Color
+                                                              .fromARGB(255,
+                                                              249, 224, 144),
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                'Sheets',
+                                                                style: GoogleFonts
+                                                                    .nunitoSans(
+                                                                  textStyle:
+                                                                      const TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    fontSize:
+                                                                        16,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                  '${qtyList['Sheets']}')
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                  ]),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   );
                                 },

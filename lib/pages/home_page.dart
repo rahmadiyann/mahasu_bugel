@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:Mahasu/components/download_activity.dart';
 import 'package:Mahasu/pages/auth/auth_check.dart';
+import 'package:Mahasu/pages/products/product_i_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -160,13 +161,15 @@ class _HomePageState extends State<HomePage> {
 
     setState(
       () {
+        print(dateTimeRange);
         if (dateTimeRange != null) {
           startOfDay = dateTimeRange.start;
           endOfDay = DateTime(dateTimeRange.end.year, dateTimeRange.end.month,
               dateTimeRange.end.day, 23, 59, 59, 999, 999);
           _isFiltered = true;
         } else {
-          startOfDay = DateTime.now();
+          startOfDay = DateTime(DateTime.now().year, DateTime.now().month,
+              DateTime.now().day, 0, 0, 0);
           endOfDay = DateTime(DateTime.now().year, DateTime.now().month,
               DateTime.now().day, 23, 59, 59);
           _isFiltered = false;
@@ -300,6 +303,7 @@ class _HomePageState extends State<HomePage> {
               DownloadExcelButton(),
             ],
           ),
+          SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Row(
@@ -379,39 +383,16 @@ class _HomePageState extends State<HomePage> {
                             },
                           );
                         },
-                        child: Image.asset(
-                          'assets/images/clearfilter.png',
-                          height: 25,
-                          width: 25,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset(
+                            'assets/images/clearfilter.png',
+                            height: 20,
+                            width: 20,
+                          ),
                         ),
                       )
                     : Container(),
-                // GestureDetector(
-                //   onTap: () {
-                //     // download excel
-                //     print('tapped');
-                //   },
-                //   child: Row(
-                //     children: [
-                //       Text(
-                //         'Download',
-                //         style: GoogleFonts.nunitoSans(
-                //           fontSize: 16,
-                //           fontWeight: FontWeight.w700,
-                //           color: Color.fromARGB(255, 148, 146, 146),
-                //         ),
-                //       ),
-                //       Padding(
-                //         padding: EdgeInsets.fromLTRB(5, 0, 5, 5),
-                //         child: SvgPicture.asset(
-                //           'assets/vectors/downloadicon.svg',
-                //           height: 25,
-                //           width: 25,
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // )
               ],
             ),
           ),
@@ -445,55 +426,219 @@ class _HomePageState extends State<HomePage> {
                       int qty = data['qty'];
                       Timestamp timestamp = data['timestamp'];
 
-                      return Container(
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 1,
-                                blurRadius: 2,
-                                offset: const Offset(0, 3),
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductPage(
+                                productId: productId,
                               ),
-                            ]),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Flexible(
-                                      child: FutureBuilder(
-                                        future: productservice
-                                            .readProductById(productId),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 1,
+                                  blurRadius: 2,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ]),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Flexible(
+                                        child: FutureBuilder(
+                                          future: productservice
+                                              .readProductById(productId),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              DocumentSnapshot product =
+                                                  snapshot.data
+                                                      as DocumentSnapshot;
+
+                                              if (product.data() == null) {
+                                                return Text('Loading...');
+                                              } else {
+                                                Map<String, dynamic>
+                                                    productData = product.data()
+                                                        as Map<String, dynamic>;
+                                                String name =
+                                                    productData['name'];
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    name,
+                                                    style:
+                                                        GoogleFonts.nunitoSans(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: Color(0xFF000000),
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+                                            } else {
+                                              return Text('Loading...');
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(12.0),
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 5, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: type == 'Inbound'
+                                                ? Colors.green
+                                                : Colors.yellow,
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                type == 'Inbound'
+                                                    ? Colors.green.shade400
+                                                    : Colors.yellow.shade400,
+                                                type == 'Inbound'
+                                                    ? Colors.green.shade300
+                                                    : Colors.yellow.shade300,
+                                              ],
+                                            ),
+                                          ),
+                                          child: Text(
+                                            type,
+                                            style: TextStyle(
+                                              color: type == 'Inbound'
+                                                  ? Colors.green.shade900
+                                                  : Colors.yellow.shade900,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'QTY: ',
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        Text(
+                                          '$qty $unit',
+                                          style: TextStyle(
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      FutureBuilder(
+                                        future: paletteservice
+                                            .readPaletteById(paletteId),
                                         builder: (context, snapshot) {
                                           if (snapshot.hasData) {
-                                            DocumentSnapshot product = snapshot
+                                            DocumentSnapshot palette = snapshot
                                                 .data as DocumentSnapshot;
-
-                                            if (product.data() == null) {
-                                              return Text('Loading...');
-                                            } else {
-                                              Map<String, dynamic> productData =
-                                                  product.data()
+                                            if (palette.exists) {
+                                              Map<String, dynamic> paletteData =
+                                                  palette.data()
                                                       as Map<String, dynamic>;
-                                              String name = productData['name'];
+                                              String name = paletteData['name'];
                                               return Padding(
                                                 padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  name,
-                                                  style: GoogleFonts.nunitoSans(
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: Color(0xFF000000),
-                                                  ),
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8),
+                                                child: Row(
+                                                  children: [
+                                                    Image.asset(
+                                                      'assets/images/rack.png',
+                                                      height: 15,
+                                                      width: 15,
+                                                    ),
+                                                    Text(
+                                                      name.toUpperCase(),
+                                                      style: TextStyle(
+                                                          color: Colors.grey,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            } else {
+                                              return Text('Loading...');
+                                            }
+                                          } else {
+                                            return Text('Loading...');
+                                          }
+                                        },
+                                      ),
+                                      FutureBuilder(
+                                        future: warehouseservice
+                                            .readWarehouseById(warehouseId),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.hasData) {
+                                            DocumentSnapshot warehouse =
+                                                snapshot.data
+                                                    as DocumentSnapshot;
+                                            if (warehouse.data() == null) {
+                                              return Text('Loading...');
+                                            } else {
+                                              Map<String, dynamic>
+                                                  warehouseData =
+                                                  warehouse.data()
+                                                      as Map<String, dynamic>;
+                                              String name =
+                                                  warehouseData['name'];
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Image.asset(
+                                                      'assets/images/warehouseicon.png',
+                                                      height: 15,
+                                                      width: 15,
+                                                    ),
+                                                    Text(
+                                                      name.toUpperCase(),
+                                                      style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               );
                                             }
@@ -502,185 +647,42 @@ class _HomePageState extends State<HomePage> {
                                           }
                                         },
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(12.0),
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 5, vertical: 2),
-                                        decoration: BoxDecoration(
-                                          color: type == 'Inbound'
-                                              ? Colors.green
-                                              : Colors.yellow,
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              type == 'Inbound'
-                                                  ? Colors.green.shade400
-                                                  : Colors.yellow.shade400,
-                                              type == 'Inbound'
-                                                  ? Colors.green.shade300
-                                                  : Colors.yellow.shade300,
-                                            ],
-                                          ),
-                                        ),
-                                        child: Text(
-                                          type,
-                                          style: TextStyle(
-                                            color: type == 'Inbound'
-                                                ? Colors.green.shade900
-                                                : Colors.yellow.shade900,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 8),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'QTY: ',
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                      Text(
-                                        '$qty $unit',
-                                        style: TextStyle(
+                                    ],
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.symmetric(vertical: 8),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 8.0, right: 8.0),
+                                          child: Icon(
+                                            Icons.access_time,
                                             color: Colors.grey,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    FutureBuilder(
-                                      future: paletteservice
-                                          .readPaletteById(paletteId),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          DocumentSnapshot palette =
-                                              snapshot.data as DocumentSnapshot;
-                                          if (palette.exists) {
-                                            Map<String, dynamic> paletteData =
-                                                palette.data()
-                                                    as Map<String, dynamic>;
-                                            String name = paletteData['name'];
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8),
-                                              child: Row(
-                                                children: [
-                                                  Image.asset(
-                                                    'assets/images/rack.png',
-                                                    height: 15,
-                                                    width: 15,
-                                                  ),
-                                                  Text(
-                                                    name.toUpperCase(),
-                                                    style: TextStyle(
-                                                        color: Colors.grey,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          } else {
-                                            return Text('Loading...');
-                                          }
-                                        } else {
-                                          return Text('Loading...');
-                                        }
-                                      },
-                                    ),
-                                    FutureBuilder(
-                                      future: warehouseservice
-                                          .readWarehouseById(warehouseId),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          DocumentSnapshot warehouse =
-                                              snapshot.data as DocumentSnapshot;
-                                          if (warehouse.data() == null) {
-                                            return Text('Loading...');
-                                          } else {
-                                            Map<String, dynamic> warehouseData =
-                                                warehouse.data()
-                                                    as Map<String, dynamic>;
-                                            String name = warehouseData['name'];
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Image.asset(
-                                                    'assets/images/warehouseicon.png',
-                                                    height: 15,
-                                                    width: 15,
-                                                  ),
-                                                  Text(
-                                                    name.toUpperCase(),
-                                                    style: TextStyle(
-                                                      color: Colors.grey,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          }
-                                        } else {
-                                          return Text('Loading...');
-                                        }
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                  margin: EdgeInsets.symmetric(vertical: 8),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 8.0, right: 8.0),
-                                        child: Icon(
-                                          Icons.access_time,
-                                          color: Colors.grey,
+                                          ),
                                         ),
-                                      ),
-                                      Text(
-                                        '${timestamp.toDate().hour.toString().padLeft(2, '0')}:${timestamp.toDate().minute.toString().padLeft(2, '0')}:${timestamp.toDate().second.toString().padLeft(2, '0')}',
-                                        style: TextStyle(
-                                          color: Colors.grey,
+                                        Text(
+                                          '${timestamp.toDate().hour.toString().padLeft(2, '0')}:${timestamp.toDate().minute.toString().padLeft(2, '0')}:${timestamp.toDate().second.toString().padLeft(2, '0')}',
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                          ),
                                         ),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: 12),
-                                        height: 1,
-                                        width: 1,
-                                        color: Colors.grey[400],
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            )
-                          ],
+                                        Container(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 12),
+                                          height: 1,
+                                          width: 1,
+                                          color: Colors.grey[400],
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
                         ),
                       );
                     }).toList(),

@@ -92,16 +92,6 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
     final TextEditingController descCtl = TextEditingController();
     final TextEditingController qtyCtl = TextEditingController();
 
-    // tap() {
-    //   print('product id: ${productIdCtl.text}');
-    //   print('product name: ${productNameCtl.text}');
-    //   print('supplier name: ${supplierNameCtl.text}');
-    //   print('description: ${descCtl.text}');
-    //   print('selected palette id: $_selectedPaletteId');
-    //   print('selected unit: $_selectedUnit');
-    //   print('qty: ${qtyCtl.text}');
-    // }
-
     onTap() async {
       _isLoading = true;
       String _whId = await paletteservice.getPaletteWhId(_selectedPaletteId);
@@ -471,7 +461,22 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
                                       enabled: true),
                                   const SizedBox(height: 50),
                                   GestureDetector(
-                                    onTap: onTap,
+                                    onTap: (_selectedUnit.isNotEmpty &&
+                                            _selectedPaletteId.isNotEmpty &&
+                                            qtyCtl.text.isNotEmpty)
+                                        ? onTap
+                                        : () {
+                                            // show snackbar
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                content: Center(
+                                                  child: Text(
+                                                      'Please fill in the required fields'),
+                                                ),
+                                              ),
+                                            );
+                                          },
                                     child: Container(
                                       height: 50,
                                       width: 200,
