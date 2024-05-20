@@ -282,12 +282,7 @@ class _AllProductPageState extends State<AllProductPage> {
               margin: EdgeInsets.symmetric(horizontal: 10),
               child: GestureDetector(
                 onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => NewProductPage(),
-                    ),
-                  );
+                  Navigator.pushNamed(context, '/new-product');
                 },
                 child: Container(
                   width: 70,

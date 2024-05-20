@@ -144,6 +144,7 @@ class _WarehousesPageState extends State<WarehousesPage> {
                             itemBuilder: (context, paletteIndex) {
                               Map<String, dynamic> palette =
                                   palettes[paletteIndex];
+
                               return GestureDetector(
                                 onTap: () {
                                   // Navigate to the palette page

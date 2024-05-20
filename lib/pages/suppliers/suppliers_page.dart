@@ -50,12 +50,7 @@ class _AllSuppliersPageState extends State<AllSuppliersPage> {
               margin: EdgeInsets.symmetric(horizontal: 10),
               child: GestureDetector(
                 onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => NewSupplierPage(),
-                    ),
-                  );
+                  Navigator.pushNamed(context, '/new-supplier');
                 },
                 child: Container(
                   width: 70,

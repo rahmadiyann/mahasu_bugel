@@ -284,11 +284,74 @@ class _allPalettePageState extends State<allPalettePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: MyAppBar(
-        isHomePage: false,
-        title: 'Palettes',
-        isAction: true,
-        destinationPage: const NewPalettePage(),
+      appBar: AppBar(
+        backgroundColor: Colors.grey[100],
+        // if homepage, no back button
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          'All Palettes',
+          style: GoogleFonts.nunitoSans(
+            textStyle: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 20,
+              height: 1.4,
+              color: Colors.black,
+            ),
+          ),
+        ),
+        actions: [
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 10),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/new-palette');
+              },
+              child: Container(
+                width: 70,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: Color(0xFFFAFAFA),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(0, 5.3, 7.8, 5.3),
+                      width: 12,
+                      height: 12,
+                      child: const SizedBox(
+                        width: 12,
+                        height: 12,
+                        child: Icon(
+                          Icons.add,
+                          color: Color(0xFF058B06),
+                          size: 12,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      'Add',
+                      style: GoogleFonts.nunitoSans(
+                        textStyle: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                          height: 1.4,
+                          color: Color(0xFF058B06),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {

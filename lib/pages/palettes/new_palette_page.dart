@@ -4,6 +4,7 @@ import 'package:Mahasu/components/myappbar.dart';
 import 'package:Mahasu/pages/palettes/all_palette_page.dart';
 import 'package:Mahasu/services/palette_firestore.dart';
 import 'package:Mahasu/services/warehouse_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class NewPalettePage extends StatefulWidget {
   const NewPalettePage({super.key});
@@ -74,12 +75,26 @@ class _NewPalettePageState extends State<NewPalettePage> {
         Navigator.popAndPushNamed(context, '/palettes');
       },
       child: Scaffold(
-        appBar: MyAppBar(
-          title: 'New Palette',
-          isHomePage: false,
-          isAction: false,
-          backPageDestination: allPalettePage(),
-          destinationPage: NewPalettePage(),
+        appBar: AppBar(
+          backgroundColor: Colors.grey[100],
+          // if homepage, no back button
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          title: Text(
+            'New Palette',
+            style: GoogleFonts.nunitoSans(
+              textStyle: const TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 20,
+                height: 1.4,
+                color: Colors.black,
+              ),
+            ),
+          ),
         ),
         body: Form(
           key: _formGlobalKey,

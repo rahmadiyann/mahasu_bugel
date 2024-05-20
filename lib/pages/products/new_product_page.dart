@@ -72,7 +72,6 @@ class _NewProductPageState extends State<NewProductPage> {
             scrollDirection: Axis.vertical,
             children: <Widget>[
               TextField(
-                keyboardType: TextInputType.number,
                 enabled: true,
                 controller: productNameCtl,
                 obscureText: false,

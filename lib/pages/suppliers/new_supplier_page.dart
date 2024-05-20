@@ -4,6 +4,7 @@ import 'package:Mahasu/components/button.dart';
 import 'package:Mahasu/components/myappbar.dart';
 import 'package:Mahasu/pages/suppliers/suppliers_page.dart';
 import 'package:Mahasu/services/supplier_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class NewSupplierPage extends StatefulWidget {
   const NewSupplierPage({super.key});
@@ -61,12 +62,26 @@ class _NewSupplierPageState extends State<NewSupplierPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(
-        title: 'New Supplier',
-        isHomePage: false,
-        isAction: false,
-        backPageDestination: AllSuppliersPage(),
-        destinationPage: NewSupplierPage(),
+      appBar: AppBar(
+        backgroundColor: Colors.grey[100],
+        // if homepage, no back button
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          'Add new supplier',
+          style: GoogleFonts.nunitoSans(
+            textStyle: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 20,
+              height: 1.4,
+              color: Colors.black,
+            ),
+          ),
+        ),
       ),
       body: Form(
         key: _formGlobalKey,
