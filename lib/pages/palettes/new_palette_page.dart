@@ -1,4 +1,6 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously
+import 'package:Mahasu/services/transaction_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Mahasu/components/myappbar.dart';
 import 'package:Mahasu/pages/palettes/all_palette_page.dart';
@@ -35,8 +37,12 @@ class _NewPalettePageState extends State<NewPalettePage> {
   final PaletteFirestoreService paletteService = PaletteFirestoreService();
   final WarehouseFirestoreService warehouseService =
       WarehouseFirestoreService();
+  final TransactionFirestoreService transactionservice =
+      TransactionFirestoreService();
 
   onTap() async {
+    String? operatorEmail = FirebaseAuth.instance.currentUser!.email;
+
     if (paletteNameCtl.text == '' ||
         whIdCtl.text == '' ||
         whNameCtl.text == '') {
@@ -48,6 +54,8 @@ class _NewPalettePageState extends State<NewPalettePage> {
       );
       return;
     }
+    await transactionservice.createTransaction(
+        operatorEmail!, 'Create Palette');
     String paletteId = await paletteService.createPalette(
         paletteNameCtl.text, whIdCtl.text, whNameCtl.text);
     await warehouseservice.addPaletteToWarehouse(

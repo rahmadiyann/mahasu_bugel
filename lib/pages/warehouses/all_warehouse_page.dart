@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors, unused_local_variable
 
+import 'package:Mahasu/services/transaction_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Mahasu/components/myappbar.dart';
 import 'package:Mahasu/pages/palettes/palette_page.dart';
@@ -18,6 +20,9 @@ class WarehousesPage extends StatefulWidget {
 class _WarehousesPageState extends State<WarehousesPage> {
   final WarehouseFirestoreService warehouseservice =
       WarehouseFirestoreService();
+  final TransactionFirestoreService transactionservice =
+      TransactionFirestoreService();
+
   final TextEditingController _nameController = TextEditingController();
   final int initialDisplayCount = 5;
   Map<String, bool> showAllPalettes =
@@ -34,6 +39,7 @@ class _WarehousesPageState extends State<WarehousesPage> {
         actions: [
           ElevatedButton(
             onPressed: () {
+              String? operatorEmail = FirebaseAuth.instance.currentUser!.email;
               if (_nameController.text == '') {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -42,6 +48,8 @@ class _WarehousesPageState extends State<WarehousesPage> {
                 );
                 return;
               }
+              transactionservice.createTransaction(
+                  operatorEmail!, 'Create warehouse');
               warehouseservice.createWarehouse(_nameController.text);
               _nameController.clear();
               Navigator.of(context).pop();

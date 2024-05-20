@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:Mahasu/services/transaction_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Mahasu/components/button.dart';
 import 'package:Mahasu/components/text_field.dart';
@@ -32,6 +34,8 @@ class _EditSupplierPageState extends State<EditSupplierPage> {
   // Services
   final SupplierFirestoreService supplierFirestoreService =
       SupplierFirestoreService();
+  final TransactionFirestoreService transactionservice =
+      TransactionFirestoreService();
 
   // initialize controllers to be set to the values of the page parameters
   @override
@@ -104,6 +108,12 @@ class _EditSupplierPageState extends State<EditSupplierPage> {
                     ),
                     MyButton(
                       onTap: () {
+                        String? operatorEmail =
+                            FirebaseAuth.instance.currentUser!.email;
+                        transactionservice.createTransaction(
+                          operatorEmail!,
+                          'update supplier',
+                        );
                         supplierFirestoreService.updateSupplier(
                             widget.supplierId,
                             supplierNameController.text,
@@ -194,6 +204,12 @@ class _EditSupplierPageState extends State<EditSupplierPage> {
                     ),
                     MyButton(
                       onTap: () {
+                        String? operatorEmail =
+                            FirebaseAuth.instance.currentUser!.email;
+                        transactionservice.createTransaction(
+                          operatorEmail!,
+                          'delete supplier',
+                        );
                         supplierFirestoreService
                             .deleteSupplier(widget.supplierId);
                         // show snackbar

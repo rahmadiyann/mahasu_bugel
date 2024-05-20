@@ -2,6 +2,8 @@
 import 'package:Mahasu/components/button.dart';
 import 'package:Mahasu/pages/palettes/all_palette_page.dart';
 import 'package:Mahasu/pages/palettes/palette_page.dart';
+import 'package:Mahasu/services/transaction_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Mahasu/services/palette_firestore.dart';
 import 'package:Mahasu/services/warehouse_firestore.dart';
@@ -50,6 +52,8 @@ class _UpdatePalettePageState extends State<UpdatePalettePage> {
   final PaletteFirestoreService paletteService = PaletteFirestoreService();
   final WarehouseFirestoreService warehouseService =
       WarehouseFirestoreService();
+  final TransactionFirestoreService transactionservice =
+      TransactionFirestoreService();
 
   updateButtonTap() {
     // print(_selectedWarehouse);
@@ -114,6 +118,8 @@ class _UpdatePalettePageState extends State<UpdatePalettePage> {
                     ),
                     MyButton(
                       onTap: () {
+                        String? operatorEmail =
+                            FirebaseAuth.instance.currentUser!.email;
                         // print(widget.oldWhId);
                         paletteService.updatePalette(
                           widget.paletteId,
@@ -121,6 +127,8 @@ class _UpdatePalettePageState extends State<UpdatePalettePage> {
                           newwhIdCtl.text,
                           whNameCtl.text,
                         );
+                        transactionservice.createTransaction(
+                            operatorEmail!, 'Update Palette');
                         warehouseService.removePaletteFromWarehouse(
                             widget.oldWhId, widget.paletteId);
                         warehouseService.addPaletteToWarehouse(newwhIdCtl.text,
@@ -220,6 +228,10 @@ class _UpdatePalettePageState extends State<UpdatePalettePage> {
                     ),
                     MyButton(
                       onTap: () async {
+                        String? operatorEmail =
+                            FirebaseAuth.instance.currentUser!.email;
+                        await transactionservice.createTransaction(
+                            operatorEmail!, 'Delete Palette');
                         await paletteService.deletePalette(
                           widget.paletteId,
                           paletteNameCtl.text,

@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
+import 'package:Mahasu/services/transaction_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Mahasu/components/myappbar.dart';
@@ -31,6 +32,8 @@ class _NewInboundPageState extends State<NewInboundPage> {
   final ProductFirestoreService productService = ProductFirestoreService();
   final SupplierFirestoreService supplierservice = SupplierFirestoreService();
   final PaletteFirestoreService paletteservice = PaletteFirestoreService();
+  final TransactionFirestoreService transactionservice =
+      TransactionFirestoreService();
   late TextEditingController productNameCtl = TextEditingController();
   late TextEditingController supplierNameCtl = TextEditingController();
   final _formGlobalKey = GlobalKey<FormState>();
@@ -98,6 +101,8 @@ class _NewInboundPageState extends State<NewInboundPage> {
         );
         return;
       }
+      transactionservice.createTransaction(operatorEmail!, 'New inbound');
+
       // print(_paletteName);
       activityService.createActivity(
           'Inbound',

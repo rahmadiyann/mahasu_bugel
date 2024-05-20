@@ -1,4 +1,6 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously
+import 'package:Mahasu/services/transaction_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Mahasu/components/myappbar.dart';
 import 'package:Mahasu/pages/products/product_page.dart';
@@ -33,8 +35,13 @@ class _NewProductPageState extends State<NewProductPage> {
   // services
   final ProductFirestoreService productService = ProductFirestoreService();
   final SupplierFirestoreService supplierService = SupplierFirestoreService();
+  final TransactionFirestoreService transactionservice =
+      TransactionFirestoreService();
 
   onTap() async {
+    String? operatorEmail = FirebaseAuth.instance.currentUser!.email;
+    await transactionservice.createTransaction(
+        operatorEmail!, 'Create product');
     String productId = await productService.createProduct(
         productNameCtl.text, supplierIdCtl.text, supplierNameCtl.text);
     await supplierService.addProductToSupplier(

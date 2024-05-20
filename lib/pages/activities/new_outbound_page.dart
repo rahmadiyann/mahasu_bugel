@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
+import 'package:Mahasu/services/transaction_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Mahasu/components/myappbar.dart';
@@ -45,6 +46,8 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
   final ProductFirestoreService productService = ProductFirestoreService();
   final SupplierFirestoreService supplierservice = SupplierFirestoreService();
   final PaletteFirestoreService paletteservice = PaletteFirestoreService();
+  final TransactionFirestoreService transactionService =
+      TransactionFirestoreService();
   final _formGlobalKey = GlobalKey<FormState>();
 
   late TextEditingController productNameCtl = TextEditingController();
@@ -113,6 +116,8 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
           ),
         );
       } else if (currentQty - int.parse(qtyCtl.text) == 0) {
+        await transactionService.createTransaction(
+            operatorEmail!, 'New outbound');
         await activityService.createActivity(
             'Outbound',
             productIdCtl.text,
@@ -150,6 +155,8 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
         Navigator.popAndPushNamed(context, '/outbound');
       } else {
         _isLoading = true;
+        await transactionService.createTransaction(
+            operatorEmail!, 'New outbound');
         await activityService.createActivity(
             'Outbound',
             productIdCtl.text,

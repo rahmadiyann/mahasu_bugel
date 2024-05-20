@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:Mahasu/services/activity_firestore.dart';
 import 'package:Mahasu/services/palette_firestore.dart';
+import 'package:Mahasu/services/transaction_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Mahasu/components/button.dart';
 import 'package:Mahasu/components/text_field.dart';
@@ -39,6 +41,8 @@ class _EditProductPageState extends State<EditProductPage> {
       ProductFirestoreService();
   final PaletteFirestoreService paletteFirestoreService =
       PaletteFirestoreService();
+  final TransactionFirestoreService transactionFirestoreService =
+      TransactionFirestoreService();
 
   updateButtonTap() {
     showModalBottomSheet(
@@ -96,6 +100,10 @@ class _EditProductPageState extends State<EditProductPage> {
                   children: [
                     MyButton(
                       onTap: () {
+                        String? operatorEmail =
+                            FirebaseAuth.instance.currentUser!.email;
+                        transactionFirestoreService.createTransaction(
+                            operatorEmail!, 'Update product');
                         productFirestoreService.updateProduct(
                             widget.productId,
                             productNameController.text,
@@ -186,6 +194,10 @@ class _EditProductPageState extends State<EditProductPage> {
                   children: [
                     MyButton(
                       onTap: () async {
+                        String? operatorEmail =
+                            FirebaseAuth.instance.currentUser!.email;
+                        await transactionFirestoreService.createTransaction(
+                            operatorEmail!, 'Delete product');
                         await paletteFirestoreService
                             .removeProductFromAllPalette(widget.productId);
                         await productFirestoreService
