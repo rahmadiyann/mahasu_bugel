@@ -2,8 +2,6 @@
 import 'package:Mahasu/services/transaction_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:Mahasu/components/myappbar.dart';
-import 'package:Mahasu/pages/palettes/all_palette_page.dart';
 import 'package:Mahasu/services/palette_firestore.dart';
 import 'package:Mahasu/services/warehouse_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';

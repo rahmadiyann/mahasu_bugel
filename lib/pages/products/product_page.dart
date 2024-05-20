@@ -1,11 +1,8 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 import 'package:Mahasu/components/download_product.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:Mahasu/pages/products/new_product_page.dart';
 import 'package:Mahasu/pages/products/product_i_page.dart';
 import 'package:Mahasu/services/product_firestore.dart';
 import 'package:Mahasu/services/qr_generator.dart';

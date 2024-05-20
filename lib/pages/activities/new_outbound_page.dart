@@ -125,7 +125,7 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
             _selectedUnit,
             int.parse(qtyCtl.text),
             _whId,
-            operatorEmail!);
+            operatorEmail);
 
         await productService.decrementProductQtyList(productIdCtl.text,
             _selectedPaletteId, _selectedUnit, int.parse(qtyCtl.text));
@@ -164,7 +164,7 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
             _selectedUnit,
             int.parse(qtyCtl.text),
             _whId,
-            operatorEmail!);
+            operatorEmail);
 
         await productService.decrementProductQtyList(productIdCtl.text,
             _selectedPaletteId, _selectedUnit, int.parse(qtyCtl.text));

@@ -3,11 +3,8 @@
 import 'package:Mahasu/pages/products/product_i_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Mahasu/components/button.dart';
-import 'package:Mahasu/components/myappbar.dart';
-import 'package:Mahasu/pages/palettes/new_palette_page.dart';
 import 'package:Mahasu/pages/palettes/palette_page.dart';
 import 'package:Mahasu/services/activity_firestore.dart';
 import 'package:Mahasu/services/palette_firestore.dart';

@@ -111,7 +111,7 @@ class _NewInboundPageState extends State<NewInboundPage> {
           _selectedUnit,
           int.parse(qtyCtl.text),
           _whId,
-          operatorEmail!);
+          operatorEmail);
 
       await productService.incrementProduct(
         productIdCtl.text,
