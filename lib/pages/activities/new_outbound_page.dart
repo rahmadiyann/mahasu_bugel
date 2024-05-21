@@ -99,10 +99,28 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
       _isLoading = true;
       String _whId = await paletteservice.getPaletteWhId(_selectedPaletteId);
       String? operatorEmail = await FirebaseAuth.instance.currentUser!.email;
-      if (qtyCtl.text == '') {
+      // print(qtyCtl.text);
+      // print(_selectedPaletteId);
+      // print(_selectedUnit);
+      // print(descCtl.text);
+      // if any of the text field is empty, show snackbar and show which field is empty
+      if (qtyCtl.text.isEmpty ||
+          _selectedPaletteId.isEmpty ||
+          _selectedUnit.isEmpty) {
+        var emptyField = [];
+        if (qtyCtl.text.isEmpty) {
+          emptyField.add('Quantity');
+        }
+        if (_selectedPaletteId.isEmpty) {
+          emptyField.add('Palette');
+        }
+        if (_selectedUnit.isEmpty) {
+          emptyField.add('Unit');
+        }
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please fill in the quantity'),
+          SnackBar(
+            content: Text(
+                'Please fill in the following field(s): ${emptyField.join(', ')}'),
           ),
         );
         return;
@@ -468,22 +486,7 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
                                       enabled: true),
                                   const SizedBox(height: 50),
                                   GestureDetector(
-                                    onTap: (_selectedUnit.isNotEmpty &&
-                                            _selectedPaletteId.isNotEmpty &&
-                                            qtyCtl.text.isNotEmpty)
-                                        ? onTap
-                                        : () {
-                                            // show snackbar
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              const SnackBar(
-                                                content: Center(
-                                                  child: Text(
-                                                      'Please fill in the required fields'),
-                                                ),
-                                              ),
-                                            );
-                                          },
+                                    onTap: onTap,
                                     child: Container(
                                       height: 50,
                                       width: 200,
