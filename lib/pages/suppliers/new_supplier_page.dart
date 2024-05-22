@@ -39,6 +39,32 @@ class _NewSupplierPageState extends State<NewSupplierPage> {
 
   onTap() async {
     String? operatorEmail = FirebaseAuth.instance.currentUser!.email;
+
+    if (supplierNameCtl.text.isEmpty ||
+        supplierPhoneCtl.text.isEmpty ||
+        supplierAddressCtl.text.isEmpty ||
+        supplierContactCtl.text.isEmpty) {
+      var emptyFields = [];
+      if (supplierNameCtl.text.isEmpty) {
+        emptyFields.add('Supplier name');
+      }
+      if (supplierPhoneCtl.text.isEmpty) {
+        emptyFields.add('Supplier phone number');
+      }
+      if (supplierAddressCtl.text.isEmpty) {
+        emptyFields.add('Supplier address');
+      }
+      if (supplierContactCtl.text.isEmpty) {
+        emptyFields.add('Supplier contact name');
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              'Please fill in the following field(s): ${emptyFields.join(', ')}'),
+        ),
+      );
+      return;
+    }
     await transactionservice.createTransaction(
         operatorEmail!, 'Create supplier');
     supplierService.createSupplier(
@@ -165,20 +191,7 @@ class _NewSupplierPageState extends State<NewSupplierPage> {
               ),
               const SizedBox(height: 16),
               MyButton(
-                onTap: (supplierNameCtl.text.isNotEmpty &&
-                        supplierNameCtl.text.isNotEmpty &&
-                        supplierAddressCtl.text.isNotEmpty &&
-                        supplierPhoneCtl.text.isNotEmpty)
-                    ? onTap
-                    : () {
-                        // show snackbar
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Center(
-                                child: Text('Please fill in all the fields')),
-                          ),
-                        );
-                      },
+                onTap: onTap,
                 text: 'Create new supplier',
               )
             ],

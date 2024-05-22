@@ -53,6 +53,7 @@ dependencies:
   excel: ^4.0.2
   path: ^1.9.0
   fuzzy: ^0.5.1
+  image: ^4.1.7
 
 dev_dependencies:
   flutter_test:

@@ -286,22 +286,22 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
                 ),
               ),
               SizedBox(height: 30),
-              Container(
-                margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    'Palette ',
-                    style: GoogleFonts.getFont(
-                      'Nunito Sans',
-                      fontWeight: FontWeight.w200,
-                      fontSize: 14,
-                      height: 1.3,
-                      color: Color(0xFF1E232C),
-                    ),
-                  ),
-                ),
-              ),
+              // Container(
+              //   margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
+              //   child: Align(
+              //     alignment: Alignment.topLeft,
+              //     child: Text(
+              //       'Palette ',
+              //       style: GoogleFonts.getFont(
+              //         'Nunito Sans',
+              //         fontWeight: FontWeight.w200,
+              //         fontSize: 14,
+              //         height: 1.3,
+              //         color: Color(0xFF1E232C),
+              //       ),
+              //     ),
+              //   ),
+              // ),
               FutureBuilder(
                 future: productService.getPalettesByProductId(widget.productId),
                 builder: (context,
@@ -315,6 +315,11 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
                   } else {
                     final palettesList = snapshot.data!;
 
+                    if (palettesList.isEmpty) {
+                      return Center(
+                        child: const Text('No stock for this product'),
+                      );
+                    }
                     List<Palette> paletteList = palettesList
                         .map(
                           (e) => Palette(
@@ -327,13 +332,29 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
                     return Column(
                       children: [
                         Container(
+                          margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              'Palette ',
+                              style: GoogleFonts.getFont(
+                                'Nunito Sans',
+                                fontWeight: FontWeight.w200,
+                                fontSize: 14,
+                                height: 1.3,
+                                color: Color(0xFF1E232C),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.grey),
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: DropdownButton(
+                            child: DropdownButton<Palette>(
                               isExpanded: true,
                               underline: const SizedBox(),
                               items: paletteList
@@ -343,7 +364,15 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
                                       child: Text(palette.name),
                                     ),
                                   )
-                                  .toList(),
+                                  .toList()
+                                ..sort(
+                                  (a, b) {
+                                    final aText = a.child as Text;
+                                    final bText = b.child as Text;
+                                    return int.parse(aText.data!)
+                                        .compareTo(int.parse(bText.data!));
+                                  },
+                                ),
                               onChanged: (Palette? value) {
                                 if (value != null) {
                                   setState(() {
@@ -364,22 +393,24 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
                         ),
                         const SizedBox(height: 30),
                         // Dropdown for unit
-                        Container(
-                          margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              'Unit ',
-                              style: GoogleFonts.getFont(
-                                'Nunito Sans',
-                                fontWeight: FontWeight.w200,
-                                fontSize: 14,
-                                height: 1.3,
-                                color: Color(0xFF1E232C),
+                        _selectedPaletteId.isEmpty
+                            ? Container()
+                            : Container(
+                                margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
+                                child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    'Unit ',
+                                    style: GoogleFonts.getFont(
+                                      'Nunito Sans',
+                                      fontWeight: FontWeight.w200,
+                                      fontSize: 14,
+                                      height: 1.3,
+                                      color: Color(0xFF1E232C),
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
                         _selectedPaletteId.isEmpty
                             ? const SizedBox()
                             : Column(
@@ -426,94 +457,110 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
                                     ),
                                   ),
                                   const SizedBox(height: 30),
-                                  Container(
-                                    margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
-                                    child: Align(
-                                      alignment: Alignment.topLeft,
-                                      child: Text(
-                                        'Quantity ',
-                                        style: GoogleFonts.getFont(
-                                          'Nunito Sans',
-                                          fontWeight: FontWeight.w200,
-                                          fontSize: 14,
-                                          height: 1.3,
-                                          color: Color(0xFF1E232C),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  TextField(
-                                    keyboardType: TextInputType.number,
-                                    enabled: true,
-                                    controller: qtyCtl,
-                                    obscureText: false,
-                                    decoration: InputDecoration(
-                                      enabledBorder: const OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.grey),
-                                      ),
-                                      focusedBorder: const OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.blue),
-                                      ),
-                                      hintText: 'Quantity',
-                                      hintStyle:
-                                          const TextStyle(color: Colors.grey),
-                                    ),
-                                    style: const TextStyle(color: Colors.black),
-                                  ),
-                                  const SizedBox(height: 30),
-                                  Container(
-                                    margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
-                                    child: Align(
-                                      alignment: Alignment.topLeft,
-                                      child: Text(
-                                        'Description ',
-                                        style: GoogleFonts.getFont(
-                                          'Nunito Sans',
-                                          fontWeight: FontWeight.w200,
-                                          fontSize: 14,
-                                          height: 1.3,
-                                          color: Color(0xFF1E232C),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  MyTextField(
-                                      controller: descCtl,
-                                      hintText: "Description",
-                                      obscureText: false,
-                                      enabled: true),
-                                  const SizedBox(height: 50),
-                                  GestureDetector(
-                                    onTap: onTap,
-                                    child: Container(
-                                      height: 50,
-                                      width: 200,
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 10),
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            Colors.green.shade400,
-                                            Colors.green.shade600
+                                  _selectedUnit.isEmpty
+                                      ? Container()
+                                      : Column(
+                                          children: [
+                                            Container(
+                                              margin: EdgeInsets.fromLTRB(
+                                                  0, 0, 0, 8),
+                                              child: Align(
+                                                alignment: Alignment.topLeft,
+                                                child: Text(
+                                                  'Quantity ',
+                                                  style: GoogleFonts.getFont(
+                                                    'Nunito Sans',
+                                                    fontWeight: FontWeight.w200,
+                                                    fontSize: 14,
+                                                    height: 1.3,
+                                                    color: Color(0xFF1E232C),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            TextField(
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              enabled: true,
+                                              controller: qtyCtl,
+                                              obscureText: false,
+                                              decoration: InputDecoration(
+                                                enabledBorder:
+                                                    const OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey),
+                                                ),
+                                                focusedBorder:
+                                                    const OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.blue),
+                                                ),
+                                                hintText: 'Quantity',
+                                                hintStyle: const TextStyle(
+                                                    color: Colors.grey),
+                                              ),
+                                              style: const TextStyle(
+                                                  color: Colors.black),
+                                            ),
+                                            const SizedBox(height: 30),
+                                            Container(
+                                              margin: EdgeInsets.fromLTRB(
+                                                  0, 0, 0, 8),
+                                              child: Align(
+                                                alignment: Alignment.topLeft,
+                                                child: Text(
+                                                  'Description ',
+                                                  style: GoogleFonts.getFont(
+                                                    'Nunito Sans',
+                                                    fontWeight: FontWeight.w200,
+                                                    fontSize: 14,
+                                                    height: 1.3,
+                                                    color: Color(0xFF1E232C),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            MyTextField(
+                                                controller: descCtl,
+                                                hintText: "Description",
+                                                obscureText: false,
+                                                enabled: true),
+                                            const SizedBox(height: 50),
+                                            GestureDetector(
+                                              onTap: onTap,
+                                              child: Container(
+                                                height: 50,
+                                                width: 200,
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 10),
+                                                decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                    colors: [
+                                                      Colors.green.shade400,
+                                                      Colors.green.shade600
+                                                    ],
+                                                    begin: AlignmentDirectional
+                                                        .topStart,
+                                                    end: AlignmentDirectional
+                                                        .bottomEnd,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                child: Center(
+                                                  child: Text(
+                                                    _isLoading
+                                                        ? 'Processing...'
+                                                        : 'Add Outbound',
+                                                    style: const TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
                                           ],
-                                          begin: AlignmentDirectional.topStart,
-                                          end: AlignmentDirectional.bottomEnd,
                                         ),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          _isLoading
-                                              ? 'Processing...'
-                                              : 'Add Outbound',
-                                          style: const TextStyle(
-                                              color: Colors.white),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
                                 ],
                               ),
                       ],

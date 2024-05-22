@@ -36,6 +36,8 @@ class ProductFirestoreService {
         'yards': 0,
         'sqm': 0,
         'pallets': 0,
+        'kgm': 0,
+        'bags': 0,
         'sheets': 0
       },
     );

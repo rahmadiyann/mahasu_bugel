@@ -33,16 +33,18 @@ class _ProductPageState extends State<ProductPage> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Container(
-                  color: Colors.white,
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ));
+                color: Colors.white,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
             } else if (snapshot.hasError) {
               return Container(
-                  color: Colors.white,
-                  child: Center(
-                    child: Flexible(child: Text('Error: ${snapshot.error}')),
-                  ));
+                color: Colors.white,
+                child: Center(
+                  child: Flexible(child: Text('Error: ${snapshot.error}')),
+                ),
+              );
             } else if (snapshot.hasData) {
               return Container(
                 color: Colors.white,
@@ -58,8 +60,7 @@ class _ProductPageState extends State<ProductPage> {
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: // Display the QR code image from the returned URL
-                            Image.network(
+                        child: Image.network(
                           snapshot.data!,
                           width: 200,
                           height: 200,
@@ -106,62 +107,62 @@ class _ProductPageState extends State<ProductPage> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-          backgroundColor: Colors.grey[100],
-          // if homepage, no back button
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: Text(
-            'Product Detail',
-            style: GoogleFonts.nunitoSans(
-              textStyle: const TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 20,
-                height: 1.4,
-                color: Colors.black,
-              ),
+        backgroundColor: Colors.grey[100],
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          'Product Detail',
+          style: GoogleFonts.nunitoSans(
+            textStyle: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 20,
+              height: 1.4,
+              color: Colors.black,
             ),
           ),
-          actions: [
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          EditProductPage(productId: widget.productId),
-                    ),
-                  );
-                },
-                child: Container(
-                  width: 70,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: Color(0xFFFAFAFA),
-                    borderRadius: BorderRadius.circular(5),
+        ),
+        actions: [
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 10),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        EditProductPage(productId: widget.productId),
                   ),
-                  child: Center(
-                    child: Text(
-                      'EDIT',
-                      style: GoogleFonts.nunitoSans(
-                        textStyle: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                          height: 1.4,
-                          color: Color(0xFF058B06),
-                        ),
+                );
+              },
+              child: Container(
+                width: 70,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: Color(0xFFFAFAFA),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Center(
+                  child: Text(
+                    'EDIT',
+                    style: GoogleFonts.nunitoSans(
+                      textStyle: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        height: 1.4,
+                        color: Color(0xFF058B06),
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-          ]),
+          ),
+        ],
+      ),
       body: Center(
         child: StreamBuilder(
           stream: productservice.streamProductById(widget.productId),
@@ -183,8 +184,9 @@ class _ProductPageState extends State<ProductPage> {
                 int sqmQty = data['sqm'];
                 int palletsQty = data['pallets'];
                 int sheetsQty = data['sheets'];
+                int kgmQty = data['kgm'];
+                int bagsQty = data['bags'];
 
-                // prepare the products list
                 final List<Map<String, dynamic>> products =
                     List<Map<String, dynamic>>.from(data['palettes'] ?? []);
 
@@ -205,8 +207,9 @@ class _ProductPageState extends State<ProductPage> {
                                       height: 25,
                                       width: 25,
                                       child: SvgPicture.asset(
-                                          'assets/vectors/allproducticon.svg',
-                                          fit: BoxFit.contain),
+                                        'assets/vectors/allproducticon.svg',
+                                        fit: BoxFit.contain,
+                                      ),
                                     ),
                                     SizedBox(width: 4),
                                     Text(
@@ -249,9 +252,7 @@ class _ProductPageState extends State<ProductPage> {
                               ),
                             ],
                           ),
-                          SizedBox(
-                            height: 20,
-                          ),
+                          SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -271,6 +272,12 @@ class _ProductPageState extends State<ProductPage> {
                                 unit: 'SQM',
                                 text: sqmQty.toString(),
                               ),
+                            ],
+                          ),
+                          SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
                               TotalQtyCard(
                                 unit: 'Pallets',
                                 text: palletsQty.toString(),
@@ -279,8 +286,16 @@ class _ProductPageState extends State<ProductPage> {
                                 unit: 'Sheets',
                                 text: sheetsQty.toString(),
                               ),
+                              TotalQtyCard(
+                                unit: 'KGM',
+                                text: kgmQty.toString(),
+                              ),
+                              TotalQtyCard(
+                                unit: 'Bags',
+                                text: bagsQty.toString(),
+                              ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -300,22 +315,20 @@ class _ProductPageState extends State<ProductPage> {
                                 String paletteId = product['palette_id'];
                                 String paletteName = product['palette_name'];
 
-                                // prepare the qty list
                                 final Map<String, dynamic> qtyList =
                                     (product['qty_list']
                                         as Map<String, dynamic>);
 
-                                // present the palette name and its qty list
                                 return GestureDetector(
                                   onTap: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) {
-                                        return PalettePage(
+                                      MaterialPageRoute(
+                                        builder: (context) => PalettePage(
                                           productId: paletteId,
                                           paletteName: paletteName,
-                                        );
-                                      }),
+                                        ),
+                                      ),
                                     );
                                   },
                                   child: Container(
@@ -417,6 +430,13 @@ class _ProductPageState extends State<ProductPage> {
                                                 text: (qtyList['sqm'] ?? 0)
                                                     .toString(),
                                               ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 10),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
                                               TotalQtyCard(
                                                 unit: 'Pallets',
                                                 text: (qtyList['pallets'] ?? 0)
@@ -425,6 +445,16 @@ class _ProductPageState extends State<ProductPage> {
                                               TotalQtyCard(
                                                 unit: 'Sheets',
                                                 text: (qtyList['sheets'] ?? 0)
+                                                    .toString(),
+                                              ),
+                                              TotalQtyCard(
+                                                unit: 'KGM',
+                                                text: (qtyList['KGM'] ?? 0)
+                                                    .toString(),
+                                              ),
+                                              TotalQtyCard(
+                                                unit: 'Bags',
+                                                text: (qtyList['Bags'] ?? 0)
                                                     .toString(),
                                               ),
                                             ],
@@ -449,7 +479,7 @@ class _ProductPageState extends State<ProductPage> {
                                 ),
                               ),
                             ),
-                    )
+                    ),
                   ],
                 );
               }

@@ -68,7 +68,8 @@ class PaletteFirestoreService {
         'whname': whName,
         'soStatus': 'Confirmed',
         'lastStockOpname': Timestamp.now(),
-        'products': []
+        'products': [],
+        'createdAt': Timestamp.now()
       },
     );
     return paletteRef.id;

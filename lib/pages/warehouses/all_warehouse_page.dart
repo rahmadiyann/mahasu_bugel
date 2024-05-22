@@ -98,6 +98,13 @@ class _WarehousesPageState extends State<WarehousesPage> {
                     showAllPalettes[docId] = false;
                   }
 
+                  // Sort palettes numerically by their names
+                  palettes.sort((a, b) {
+                    int aValue = int.parse(a.values.first);
+                    int bValue = int.parse(b.values.first);
+                    return aValue.compareTo(bValue);
+                  });
+
                   return Container(
                     margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                     decoration: BoxDecoration(

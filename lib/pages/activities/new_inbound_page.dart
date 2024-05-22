@@ -44,7 +44,9 @@ class _NewInboundPageState extends State<NewInboundPage> {
     "Rolls",
     'SQM',
     "Pallets",
-    "Sheets"
+    "Sheets",
+    "KGM",
+    "Bags"
   ];
   late String _selectedPaletteId = '';
   late String _whId = '';
@@ -93,7 +95,7 @@ class _NewInboundPageState extends State<NewInboundPage> {
 
     onTap() async {
       String? operatorEmail = FirebaseAuth.instance.currentUser!.email;
-      if (qtyCtl.text == '') {
+      if (qtyCtl.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Please fill in the quantity'),
@@ -269,7 +271,15 @@ class _NewInboundPageState extends State<NewInboundPage> {
                           value: entry.key,
                           child: Text(paletteName!),
                         );
-                      }).toList(),
+                      }).toList()
+                        ..sort(
+                          (a, b) {
+                            final aText = a.child as Text;
+                            final bText = b.child as Text;
+                            return int.parse(aText.data!)
+                                .compareTo(int.parse(bText.data!));
+                          },
+                        ),
                       onChanged: (newValue) {
                         setState(() {
                           _selectedPaletteId = newValue!;
@@ -393,20 +403,7 @@ class _NewInboundPageState extends State<NewInboundPage> {
                   enabled: true),
               const SizedBox(height: 50),
               GestureDetector(
-                onTap: (_selectedUnit.isNotEmpty &&
-                        _selectedPaletteId.isNotEmpty &&
-                        qtyCtl.text.isNotEmpty)
-                    ? onTap
-                    : () {
-                        // show snackbar
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Center(
-                              child: Text('Please fill in the required fields'),
-                            ),
-                          ),
-                        );
-                      },
+                onTap: onTap,
                 child: Container(
                   height: 50,
                   width: 200,

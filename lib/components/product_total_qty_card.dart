@@ -7,6 +7,8 @@ class TotalQtyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 60,
+      width: 70,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(5),
@@ -22,6 +24,8 @@ class TotalQtyCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(6.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(unit),
             Text(

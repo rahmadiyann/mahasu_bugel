@@ -572,6 +572,9 @@ class _allPalettePageState extends State<allPalettePage> {
                                               ),
                                             ),
                                             Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 Row(
                                                   mainAxisAlignment:
@@ -624,7 +627,24 @@ class _allPalettePageState extends State<allPalettePage> {
                                                       Text(
                                                           'Pallets: ${product['qty_list']['Pallets']}'),
                                                   ],
-                                                )
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    if (product['qty_list']
+                                                            ['KGM'] !=
+                                                        null)
+                                                      Text(
+                                                          'KGM: ${product['qty_list']['KGM']}'),
+                                                    if (product['qty_list']
+                                                            ['Bags'] !=
+                                                        null)
+                                                      Text(
+                                                          'Bags: ${product['qty_list']['Bags']}'),
+                                                  ],
+                                                ),
                                               ],
                                             ),
                                           ],
