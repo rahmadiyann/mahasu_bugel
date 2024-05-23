@@ -1,66 +1,91 @@
-// ignore_for_file: unnecessary_null_comparison
-
+import 'dart:io';
 import 'dart:typed_data';
-
+import 'dart:ui';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image/image.dart' as img;
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:path/path.dart' as Path;
+import 'package:path/path.dart' as p;
+import 'package:image/image.dart' as img;
 
-Future<String> generateQRCode(String qrCodeText, String type) async {
-  try {
-    // Reference to the file in Firebase Storage
-    final firebaseStorageRef = FirebaseStorage.instance
-        .ref()
-        .child('$type/${Path.basename(qrCodeText)}.jpg');
+Future<String> uploadQrCodeImage(String type, String code) async {
+  // Ensure Firebase is initialized
+  await Firebase.initializeApp();
 
-    try {
-      // Check if the file already exists in Firebase Storage
-      final metadata = await firebaseStorageRef.getMetadata();
-      if (metadata != null && metadata.size! > 0) {
-        // If the file exists, return the download URL
-        final downloadUrl = await firebaseStorageRef.getDownloadURL();
-        return downloadUrl;
-      }
-    } catch (storageError) {
-      if (storageError is FirebaseException &&
-          storageError.code == 'object-not-found') {
-        // If the file does not exist, proceed to generate and upload the QR code
-      } else {
-        // Rethrow the error if it's not "object-not-found"
-        rethrow;
-      }
-    }
-
-    // Generate QR code image
-    final qrImage = await QrPainter(
-      data: qrCodeText,
-      version: QrVersions.auto,
-      gapless: false,
-      errorCorrectionLevel: QrErrorCorrectLevel.Q,
-    ).toImageData(300);
-
-    if (qrImage == null) {
-      throw Exception("QR code image generation failed");
-    }
-
-    // Convert QR code image to JPEG bytes
-    final qrImageBytes = qrImage.buffer.asUint8List();
-    final img.Image? qrImageDecoded = img.decodeImage(qrImageBytes);
-    if (qrImageDecoded == null) {
-      throw Exception("QR code image decoding failed");
-    }
-    final jpegData = Uint8List.fromList(img.encodeJpg(qrImageDecoded));
-
-    // Upload image to Firebase Storage
-    final uploadTask = firebaseStorageRef.putData(jpegData);
-
-    // Get download URL
-    final TaskSnapshot storageSnapshot = await uploadTask;
-    final downloadUrl = await storageSnapshot.ref.getDownloadURL();
-
-    return downloadUrl;
-  } catch (error) {
-    return error.toString();
+  // Validate type
+  if (type != 'products' && type != 'palettes') {
+    throw ArgumentError('Invalid type. Must be "products" or "palettes".');
   }
+
+  // Generate QR code image
+  final qrValidationResult = QrValidator.validate(
+    data: code,
+    version: QrVersions.auto,
+    errorCorrectionLevel: QrErrorCorrectLevel.L,
+  );
+  if (qrValidationResult.status != QrValidationStatus.valid) {
+    throw Exception('Invalid QR code data');
+  }
+  final qrCode = qrValidationResult.qrCode!;
+
+  // Create a canvas for the QR code
+  final painter = QrPainter.withQr(
+    qr: qrCode,
+    color: const Color(0xFF000000),
+    emptyColor: const Color(0xFFFFFFFF),
+    gapless: true,
+  );
+
+  final tempDir = await getTemporaryDirectory();
+  final qrFilePath = p.join(tempDir.path, 'qr_code.png');
+  final qrFile = File(qrFilePath);
+
+  final pictureRecorder = PictureRecorder();
+  final canvas = Canvas(pictureRecorder);
+  const size = 200.0;
+  painter.paint(canvas, const Size(size, size));
+  final picture = pictureRecorder.endRecording();
+  final imgBytes = await picture
+      .toImage(size.toInt(), size.toInt())
+      .then((image) => image.toByteData(format: ImageByteFormat.png))
+      .then((byteData) => byteData!.buffer.asUint8List());
+
+  // Write the PNG file
+  await qrFile.writeAsBytes(imgBytes);
+
+  // Convert PNG to JPG
+  final decodedImg = img.decodeImage(imgBytes);
+  if (decodedImg == null) {
+    throw Exception('Failed to decode image');
+  }
+  final jpgBytes = img.encodeJpg(decodedImg);
+
+  final jpgFilePath = p.join(tempDir.path, 'qr_code.jpg');
+  final jpgFile = File(jpgFilePath);
+  await jpgFile.writeAsBytes(jpgBytes);
+
+  // Create Firebase Storage instance
+  final storage = FirebaseStorage.instance;
+
+  // Check if file already exists
+  final fileName = '${type}-${code}.jpg';
+  final storagePath = '$type/$fileName';
+  final ref = storage.ref().child(storagePath);
+  try {
+    final downloadUrl = await ref.getDownloadURL();
+    return downloadUrl; // File already exists, return the download link
+  } catch (e) {
+    // File does not exist, proceed to upload
+  }
+
+  // Upload the file to Firebase Storage
+  final uploadTask = await ref.putFile(jpgFile);
+  final downloadUrl = await uploadTask.ref.getDownloadURL();
+
+  // Clean up temporary files
+  await qrFile.delete();
+  await jpgFile.delete();
+
+  return downloadUrl;
 }

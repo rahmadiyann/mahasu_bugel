@@ -54,6 +54,7 @@ dependencies:
   path: ^1.9.0
   fuzzy: ^0.5.1
   image: ^4.1.7
+  pretty_qr_code: ^3.3.0
 
 dev_dependencies:
   flutter_test:

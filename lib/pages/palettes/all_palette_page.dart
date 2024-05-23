@@ -35,7 +35,7 @@ class _allPalettePageState extends State<allPalettePage> {
       showModalBottomSheet(
         context: context,
         builder: (context) => FutureBuilder<dynamic>(
-          future: generateQRCode(textToGenerate, type),
+          future: uploadQrCodeImage(type, textToGenerate),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Container(
