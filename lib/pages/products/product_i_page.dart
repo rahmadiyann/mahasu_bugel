@@ -6,9 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Mahasu/pages/products/edit_product_page.dart';
 import 'package:Mahasu/services/product_firestore.dart';
-import 'package:Mahasu/services/qr_generator.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
 
 class ProductPage extends StatefulWidget {
   final String productId;
@@ -21,85 +21,53 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage> {
   final ProductFirestoreService productservice = ProductFirestoreService();
 
-  Future<void> getQR({
-    required String textToGenerate,
-    required String type,
-  }) async {
-    try {
-      showModalBottomSheet(
-        context: context,
-        builder: (context) => FutureBuilder<dynamic>(
-          future: uploadQrCodeImage(type, textToGenerate),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container(
-                color: Colors.white,
-                child: Center(
-                  child: CircularProgressIndicator(),
+  void showQRCodeModal(BuildContext context, String textToGenerate) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            SizedBox(height: 20),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color.fromRGBO(251, 210, 154, 1),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  height: 200,
+                  width: 200,
+                  child: PrettyQrView.data(
+                    data: textToGenerate,
+                    errorCorrectLevel: QrErrorCorrectLevel.H,
+                  ),
                 ),
-              );
-            } else if (snapshot.hasError) {
-              return Container(
-                color: Colors.white,
-                child: Center(
-                  child: Flexible(child: Text('Error: ${snapshot.error}')),
+              ),
+            ),
+            SizedBox(height: 30),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              height: 100,
+              width: 300,
+              alignment: Alignment.topCenter,
+              child: Text(
+                'QR Code',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.nunitoSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
-              );
-            } else if (snapshot.hasData) {
-              return Container(
-                color: Colors.white,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(height: 20),
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color.fromRGBO(251, 210, 154, 1),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.network(
-                          snapshot.data!,
-                          width: 200,
-                          height: 200,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 30),
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      height: 100,
-                      width: 300,
-                      alignment: Alignment.topCenter,
-                      child: Text(
-                        'QR Code',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.nunitoSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                  ],
-                ),
-              );
-            } else {
-              return Container(
-                color: Colors.white,
-                child: Center(
-                  child: Text('No data'),
-                ),
-              );
-            }
-          },
+              ),
+            ),
+            SizedBox(height: 20),
+          ],
         ),
-      );
-    } catch (e) {
-      rethrow;
-    }
+      ),
+    );
   }
 
   @override
@@ -230,9 +198,9 @@ class _ProductPageState extends State<ProductPage> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  getQR(
-                                    textToGenerate: widget.productId,
-                                    type: 'product',
+                                  showQRCodeModal(
+                                    context,
+                                    widget.productId,
                                   );
                                 },
                                 child: Container(
@@ -381,10 +349,8 @@ class _ProductPageState extends State<ProductPage> {
                                               ),
                                               GestureDetector(
                                                 onTap: () {
-                                                  getQR(
-                                                    textToGenerate: paletteName,
-                                                    type: 'palette',
-                                                  );
+                                                  showQRCodeModal(
+                                                      context, paletteName);
                                                 },
                                                 child: Container(
                                                   width: 30,

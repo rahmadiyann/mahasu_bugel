@@ -8,9 +8,9 @@ import 'package:Mahasu/components/button.dart';
 import 'package:Mahasu/pages/palettes/palette_page.dart';
 import 'package:Mahasu/services/activity_firestore.dart';
 import 'package:Mahasu/services/palette_firestore.dart';
-import 'package:Mahasu/services/qr_generator.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
 
 class allPalettePage extends StatefulWidget {
   const allPalettePage({super.key});
@@ -27,84 +27,53 @@ class _allPalettePageState extends State<allPalettePage> {
   //   return Scaffold();
   // }
 
-  Future<void> _capturePng({
-    required String textToGenerate,
-    required String type,
-  }) async {
-    try {
-      showModalBottomSheet(
-        context: context,
-        builder: (context) => FutureBuilder<dynamic>(
-          future: uploadQrCodeImage(type, textToGenerate),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container(
-                  color: Colors.white,
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ));
-            } else if (snapshot.hasError) {
-              return Container(
-                  color: Colors.white,
-                  child: Center(
-                    child: Text('Error: ${snapshot.error}'),
-                  ));
-            } else if (snapshot.hasData) {
-              return Container(
-                color: Colors.white,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(height: 20),
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color.fromRGBO(251, 210, 154, 1),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: // Display the QR code image from the returned URL
-                            Image.network(
-                          snapshot.data!,
-                          width: 200,
-                          height: 200,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 30),
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      height: 100,
-                      width: 300,
-                      alignment: Alignment.topCenter,
-                      child: Text(
-                        'QR Code',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.nunitoSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                  ],
+  void showQRCodeModal(BuildContext context, String textToGenerate) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            SizedBox(height: 20),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color.fromRGBO(251, 210, 154, 1),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  height: 200,
+                  width: 200,
+                  child: PrettyQrView.data(
+                    data: textToGenerate,
+                    errorCorrectLevel: QrErrorCorrectLevel.H,
+                  ),
                 ),
-              );
-            } else {
-              return Container(
-                color: Colors.white,
-                child: Center(
-                  child: Text('No data'),
+              ),
+            ),
+            SizedBox(height: 30),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              height: 100,
+              width: 300,
+              alignment: Alignment.topCenter,
+              child: Text(
+                'QR Code',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.nunitoSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
-              );
-            }
-          },
+              ),
+            ),
+            SizedBox(height: 20),
+          ],
         ),
-      );
-    } catch (e) {
-      rethrow;
-    }
+      ),
+    );
   }
 
   Future<void> scanBarcode() async {
@@ -476,9 +445,7 @@ class _allPalettePageState extends State<allPalettePage> {
                                       ),
                                       GestureDetector(
                                         onTap: () {
-                                          _capturePng(
-                                              textToGenerate: docId,
-                                              type: 'palette');
+                                          showQRCodeModal(context, docId);
                                         },
                                         child: Container(
                                           padding: const EdgeInsets.all(5),

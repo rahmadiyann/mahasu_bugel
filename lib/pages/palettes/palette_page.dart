@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:Mahasu/pages/palettes/all_palette_page.dart';
 import 'package:Mahasu/pages/palettes/update_palette_page.dart';
 import 'package:Mahasu/services/palette_firestore.dart';
-import 'package:Mahasu/services/qr_generator.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
 
 class PalettePage extends StatefulWidget {
   final String productId;
@@ -24,84 +24,53 @@ class PalettePage extends StatefulWidget {
 class _PalettePageState extends State<PalettePage> {
   final PaletteFirestoreService paletteService = PaletteFirestoreService();
 
-  Future<void> getQR({
-    required String textToGenerate,
-    required String type,
-  }) async {
-    try {
-      showModalBottomSheet(
-        context: context,
-        builder: (context) => FutureBuilder<dynamic>(
-          future: uploadQrCodeImage(type, textToGenerate),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container(
-                  color: Colors.white,
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ));
-            } else if (snapshot.hasError) {
-              return Container(
-                  color: Colors.white,
-                  child: Center(
-                    child: Flexible(child: Text('Error: ${snapshot.error}')),
-                  ));
-            } else if (snapshot.hasData) {
-              return Container(
-                color: Colors.white,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(height: 20),
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color.fromRGBO(251, 210, 154, 1),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: // Display the QR code image from the returned URL
-                            Image.network(
-                          snapshot.data!,
-                          width: 200,
-                          height: 200,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 30),
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      height: 100,
-                      width: 300,
-                      alignment: Alignment.topCenter,
-                      child: Text(
-                        'QR Code',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.nunitoSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                  ],
+  void showQRCodeModal(BuildContext context, String textToGenerate) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            SizedBox(height: 20),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color.fromRGBO(251, 210, 154, 1),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  height: 200,
+                  width: 200,
+                  child: PrettyQrView.data(
+                    data: textToGenerate,
+                    errorCorrectLevel: QrErrorCorrectLevel.H,
+                  ),
                 ),
-              );
-            } else {
-              return Container(
-                color: Colors.white,
-                child: Center(
-                  child: Text('No data'),
+              ),
+            ),
+            SizedBox(height: 30),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              height: 100,
+              width: 300,
+              alignment: Alignment.topCenter,
+              child: Text(
+                'QR Code',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.nunitoSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
-              );
-            }
-          },
+              ),
+            ),
+            SizedBox(height: 20),
+          ],
         ),
-      );
-    } catch (e) {
-      rethrow;
-    }
+      ),
+    );
   }
 
   @override
@@ -215,14 +184,14 @@ class _PalettePageState extends State<PalettePage> {
                                   Row(
                                     children: [
                                       Image.asset('assets/images/rack.png',
-                                          height: 30, width: 30),
+                                          height: 20, width: 20),
                                       SizedBox(width: 4),
                                       Text(
                                         productName.toUpperCase(),
                                         style: GoogleFonts.nunitoSans(
                                           textStyle: const TextStyle(
                                             fontWeight: FontWeight.w600,
-                                            fontSize: 30,
+                                            fontSize: 20,
                                           ),
                                         ),
                                       ),
@@ -231,15 +200,15 @@ class _PalettePageState extends State<PalettePage> {
                                   Row(children: [
                                     Image.asset(
                                         'assets/images/warehouseicon.png',
-                                        height: 30,
-                                        width: 30),
+                                        height: 20,
+                                        width: 20),
                                     SizedBox(width: 4),
                                     Text(
                                       whName.toUpperCase(),
                                       style: GoogleFonts.nunitoSans(
                                         textStyle: const TextStyle(
                                           fontWeight: FontWeight.w600,
-                                          fontSize: 30,
+                                          fontSize: 20,
                                         ),
                                       ),
                                     ),
