@@ -564,16 +564,22 @@ class _allPalettePageState extends State<allPalettePage> {
                                                           MainAxisAlignment
                                                               .spaceBetween,
                                                       children: [
-                                                        if (product['qty_list']
-                                                                ['Meters'] !=
-                                                            null)
+                                                        if (product['qty_list'][
+                                                                    'Meters'] !=
+                                                                null ||
+                                                            product['qty_list'][
+                                                                    'meters'] !=
+                                                                null)
                                                           Text(
-                                                              'Meters: ${product['qty_list']['Meters']}'),
+                                                              'Meters: ${product['qty_list']['Meters'] ?? product['qty_list']['meters']}'),
                                                         if (product['qty_list']
-                                                                ['Rolls'] !=
-                                                            null)
+                                                                    ['Rolls'] !=
+                                                                null ||
+                                                            product['qty_list']
+                                                                    ['rolls'] !=
+                                                                null)
                                                           Text(
-                                                              'Rolls: ${product['qty_list']['Rolls']}'),
+                                                              'Rolls: ${product['qty_list']['Rolls'] ?? product['qty_list']['rolls']}'),
                                                       ],
                                                     ),
                                                     Row(
@@ -582,15 +588,21 @@ class _allPalettePageState extends State<allPalettePage> {
                                                               .spaceBetween,
                                                       children: [
                                                         if (product['qty_list']
-                                                                ['Yards'] !=
-                                                            null)
+                                                                    ['Yards'] !=
+                                                                null ||
+                                                            product['qty_list']
+                                                                    ['yards'] !=
+                                                                null)
                                                           Text(
-                                                              'Yards: ${product['qty_list']['Yards']}'),
-                                                        if (product['qty_list']
-                                                                ['Sheets'] !=
-                                                            null)
+                                                              'Yards: ${product['qty_list']['Yards'] ?? product['qty_list']['yards']}'),
+                                                        if (product['qty_list'][
+                                                                    'Sheets'] !=
+                                                                null ||
+                                                            product['qty_list'][
+                                                                    'sheets'] !=
+                                                                null)
                                                           Text(
-                                                              'Sheets: ${product['qty_list']['Sheets']}'),
+                                                              'Sheets: ${product['qty_list']['Sheets'] ?? product['qty_list']['sheets']}'),
                                                       ],
                                                     ),
                                                     Row(
@@ -599,15 +611,21 @@ class _allPalettePageState extends State<allPalettePage> {
                                                               .spaceBetween,
                                                       children: [
                                                         if (product['qty_list']
-                                                                ['SQM'] !=
-                                                            null)
+                                                                    ['SQM'] !=
+                                                                null ||
+                                                            product['qty_list']
+                                                                    ['sqm'] !=
+                                                                null)
                                                           Text(
-                                                              'SQM: ${product['qty_list']['SQM']}'),
-                                                        if (product['qty_list']
-                                                                ['Pallets'] !=
-                                                            null)
+                                                              'SQM: ${product['qty_list']['SQM'] ?? product['qty_list']['sqm']}'),
+                                                        if (product['qty_list'][
+                                                                    'Pallets'] !=
+                                                                null ||
+                                                            product['qty_list'][
+                                                                    'pallets'] !=
+                                                                null)
                                                           Text(
-                                                              'Pallets: ${product['qty_list']['Pallets']}'),
+                                                              'Pallets: ${product['qty_list']['Pallets'] ?? product['qty_list']['pallets']}'),
                                                       ],
                                                     ),
                                                     Row(
@@ -616,15 +634,21 @@ class _allPalettePageState extends State<allPalettePage> {
                                                               .spaceBetween,
                                                       children: [
                                                         if (product['qty_list']
-                                                                ['KGM'] !=
-                                                            null)
+                                                                    ['KGM'] !=
+                                                                null ||
+                                                            product['qty_list']
+                                                                    ['kgm'] !=
+                                                                null)
                                                           Text(
-                                                              'KGM: ${product['qty_list']['KGM']}'),
+                                                              'KGM: ${product['qty_list']['KGM'] ?? product['qty_list']['kgm']}'),
                                                         if (product['qty_list']
-                                                                ['Bags'] !=
-                                                            null)
+                                                                    ['Bags'] !=
+                                                                null ||
+                                                            product['qty_list']
+                                                                    ['bags'] !=
+                                                                null)
                                                           Text(
-                                                              'Bags: ${product['qty_list']['Bags']}'),
+                                                              'Bags: ${product['qty_list']['Bags'] ?? product['qty_list']['bags']}'),
                                                       ],
                                                     ),
                                                   ],
