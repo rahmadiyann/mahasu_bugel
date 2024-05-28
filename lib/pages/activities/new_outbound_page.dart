@@ -125,6 +125,7 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
         );
         return;
       }
+      _selectedUnit = _selectedUnit.toLowerCase();
       int currentQty = await productService.checkProductQtyList(
           productIdCtl.text, _selectedPaletteId, _selectedUnit);
       if (currentQty < int.parse(qtyCtl.text)) {

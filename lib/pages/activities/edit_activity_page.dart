@@ -41,6 +41,16 @@ class _EditActivityPageState extends State<EditActivityPage> {
     loadProduct();
   }
 
+  @override
+  void dispose() {
+    _qtyController.dispose();
+    _productNameController.dispose();
+    _paletteNameController.dispose();
+    _warehouseNameController.dispose();
+    _oldQtyController.dispose();
+    super.dispose();
+  }
+
   // fetch data
   Future<void> loadProduct() async {
     final activity = activityService.readActivityById(widget.activityId);
@@ -131,27 +141,38 @@ class _EditActivityPageState extends State<EditActivityPage> {
                             text: 'No',
                           ),
                           MyButton(
-                            onTap: () {
+                            onTap: () async {
                               String? operatorEmail =
                                   FirebaseAuth.instance.currentUser!.email;
                               // print(widget.oldWhId);
-                              activityService.updateActivityByActivityId(
+                              String message = await activityService
+                                  .updateActivityByActivityId(
                                 widget.activityId,
                                 int.parse(_qtyController.text),
                               );
-                              transactionService.createTransaction(
-                                  operatorEmail!,
-                                  "Update Activity",
-                                  widget.activityId);
-                              // show snackbar
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Product updated'),
-                                  duration: Duration(seconds: 2),
-                                ),
-                              );
-                              Navigator.pop(context);
-                              Navigator.pop(context);
+                              if (message == 'Success') {
+                                transactionService.createTransaction(
+                                    operatorEmail!,
+                                    "Update Activity",
+                                    widget.activityId);
+                                // show snackbar
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Product updated'),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              } else {
+                                Navigator.pop(context);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(message),
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                              }
                             },
                             text: 'Yes',
                           ),
@@ -388,15 +409,5 @@ class _EditActivityPageState extends State<EditActivityPage> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _qtyController.dispose();
-    _productNameController.dispose();
-    _paletteNameController.dispose();
-    _warehouseNameController.dispose();
-    _oldQtyController.dispose();
-    super.dispose();
   }
 }

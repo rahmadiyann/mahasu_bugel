@@ -167,8 +167,11 @@ class ActivityFirestoreService {
       await activitys.doc(activityId).update({'qty': newQty});
       return 'Success';
     }
-    int currentQty =
-        await paletteService.checkProductQtyList(paletteId, productId, oldUnit);
+    int currentQty = await paletteService.checkProductQtyList(
+      paletteId,
+      productId,
+      oldUnit,
+    );
     if (currentQty < newQty) {
       return 'Not enough QTY';
     }

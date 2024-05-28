@@ -104,6 +104,8 @@ class _NewInboundPageState extends State<NewInboundPage> {
         return;
       }
 
+      _selectedUnit = _selectedUnit.toLowerCase();
+
       // print(_paletteName);
       final docId = await activityService.createActivity(
           'Inbound',
