@@ -565,15 +565,15 @@ class _allPalettePageState extends State<allPalettePage> {
                                                               .spaceBetween,
                                                       children: [
                                                         if (product['qty_list']
-                                                                ['Meters'] !=
+                                                                ['meters'] !=
                                                             null)
                                                           Text(
-                                                              'Meters: ${product['qty_list']['Meters']}'),
+                                                              'Meters: ${product['qty_list']['meters']}'),
                                                         if (product['qty_list']
-                                                                ['Rolls'] !=
+                                                                ['rolls'] !=
                                                             null)
                                                           Text(
-                                                              'Rolls: ${product['qty_list']['Rolls']}'),
+                                                              'Rolls: ${product['qty_list']['rolls']}'),
                                                       ],
                                                     ),
                                                     Row(
@@ -582,15 +582,15 @@ class _allPalettePageState extends State<allPalettePage> {
                                                               .spaceBetween,
                                                       children: [
                                                         if (product['qty_list']
-                                                                ['Yards'] !=
+                                                                ['yards'] !=
                                                             null)
                                                           Text(
-                                                              'Yards: ${product['qty_list']['Yards']}'),
+                                                              'Yards: ${product['qty_list']['yards']}'),
                                                         if (product['qty_list']
-                                                                ['Sheets'] !=
+                                                                ['sheets'] !=
                                                             null)
                                                           Text(
-                                                              'Sheets: ${product['qty_list']['Sheets']}'),
+                                                              'Sheets: ${product['qty_list']['sheets']}'),
                                                       ],
                                                     ),
                                                     Row(
@@ -599,15 +599,15 @@ class _allPalettePageState extends State<allPalettePage> {
                                                               .spaceBetween,
                                                       children: [
                                                         if (product['qty_list']
-                                                                ['SQM'] !=
+                                                                ['sqm'] !=
                                                             null)
                                                           Text(
-                                                              'SQM: ${product['qty_list']['SQM']}'),
+                                                              'SQM: ${product['qty_list']['sqm']}'),
                                                         if (product['qty_list']
-                                                                ['Pallets'] !=
+                                                                ['pallets'] !=
                                                             null)
                                                           Text(
-                                                              'Pallets: ${product['qty_list']['Pallets']}'),
+                                                              'Pallets: ${product['qty_list']['pallets']}'),
                                                       ],
                                                     ),
                                                     Row(
@@ -616,15 +616,15 @@ class _allPalettePageState extends State<allPalettePage> {
                                                               .spaceBetween,
                                                       children: [
                                                         if (product['qty_list']
-                                                                ['KGM'] !=
+                                                                ['kgm'] !=
                                                             null)
                                                           Text(
-                                                              'KGM: ${product['qty_list']['KGM']}'),
+                                                              'KGM: ${product['qty_list']['kgm']}'),
                                                         if (product['qty_list']
-                                                                ['Bags'] !=
+                                                                ['bags'] !=
                                                             null)
                                                           Text(
-                                                              'Bags: ${product['qty_list']['Bags']}'),
+                                                              'Bags: ${product['qty_list']['bags']}'),
                                                       ],
                                                     ),
                                                   ],

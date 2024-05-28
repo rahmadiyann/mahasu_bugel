@@ -307,20 +307,20 @@ class _PalettePageState extends State<PalettePage> {
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: [
-                                                  if (qtyList['Meters'] != null)
+                                                  if (qtyList['meters'] != null)
                                                     UnitContainer(
                                                       unit: 'Meters',
-                                                      qty: qtyList['Meters'],
+                                                      qty: qtyList['meters'],
                                                     ),
-                                                  if (qtyList['Yards'] != null)
+                                                  if (qtyList['yards'] != null)
                                                     UnitContainer(
                                                       unit: 'Yards',
-                                                      qty: qtyList['Yards'],
+                                                      qty: qtyList['yards'],
                                                     ),
-                                                  if (qtyList['Rolls'] != null)
+                                                  if (qtyList['rolls'] != null)
                                                     UnitContainer(
                                                       unit: 'Rolls',
-                                                      qty: qtyList['Rolls'],
+                                                      qty: qtyList['rolls'],
                                                     ),
                                                 ],
                                               ),
@@ -329,21 +329,21 @@ class _PalettePageState extends State<PalettePage> {
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: [
-                                                  if (qtyList['Pallets'] !=
+                                                  if (qtyList['pallets'] !=
                                                       null)
                                                     UnitContainer(
                                                       unit: 'Pallets',
-                                                      qty: qtyList['Pallets'],
+                                                      qty: qtyList['pallets'],
                                                     ),
-                                                  if (qtyList['SQM'] != null)
+                                                  if (qtyList['sqm'] != null)
                                                     UnitContainer(
                                                       unit: 'SQM',
-                                                      qty: qtyList['SQM'],
+                                                      qty: qtyList['sqm'],
                                                     ),
-                                                  if (qtyList['Sheets'] != null)
+                                                  if (qtyList['sheets'] != null)
                                                     UnitContainer(
                                                       unit: 'Sheets',
-                                                      qty: qtyList['Sheets'],
+                                                      qty: qtyList['sheets'],
                                                     ),
                                                 ],
                                               ),
@@ -352,15 +352,15 @@ class _PalettePageState extends State<PalettePage> {
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: [
-                                                  if (qtyList['KGM'] != null)
+                                                  if (qtyList['kgm'] != null)
                                                     UnitContainer(
                                                       unit: 'KGM',
-                                                      qty: qtyList['KGM'],
+                                                      qty: qtyList['kgm'],
                                                     ),
-                                                  if (qtyList['Bags'] != null)
+                                                  if (qtyList['bags'] != null)
                                                     UnitContainer(
                                                       unit: 'Bags',
-                                                      qty: qtyList['Bags'],
+                                                      qty: qtyList['bags'],
                                                     ),
                                                 ],
                                               ),
