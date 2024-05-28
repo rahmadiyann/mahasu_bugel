@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, camel_case_types, use_build_context_synchronously
-
 import 'package:Mahasu/pages/products/product_i_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -22,10 +20,8 @@ class allPalettePage extends StatefulWidget {
 class _allPalettePageState extends State<allPalettePage> {
   final ActivityFirestoreService activityservice = ActivityFirestoreService();
   final PaletteFirestoreService paletteservice = PaletteFirestoreService();
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold();
-  // }
+  final TextEditingController searchController = TextEditingController();
+  String searchQuery = '';
 
   void showQRCodeModal(BuildContext context, String textToGenerate) {
     showModalBottomSheet(
@@ -35,10 +31,10 @@ class _allPalettePageState extends State<allPalettePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Color.fromRGBO(251, 210, 154, 1),
               ),
@@ -54,7 +50,7 @@ class _allPalettePageState extends State<allPalettePage> {
                 ),
               ),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 10),
               height: 100,
@@ -69,7 +65,7 @@ class _allPalettePageState extends State<allPalettePage> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -77,19 +73,16 @@ class _allPalettePageState extends State<allPalettePage> {
   }
 
   Future<void> scanBarcode() async {
-    // fetch all product doc id and return as list
     List<String> palettes = await paletteservice.getAllPaletteIds();
 
     String barcodeScanRes;
     late String paletteName;
     barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
         '#ff6666', 'Cancel', true, ScanMode.QR);
-    // once scanned, navigate to new inbound page and pass the barcode result
+
     if (barcodeScanRes == '-1') {
-      // User pressed "Cancel"
       Navigator.pop(context);
     } else if (palettes.contains(barcodeScanRes)) {
-      // User scanned a barcode
       paletteName = await paletteservice.getPaletteName(barcodeScanRes);
       Navigator.push(
         context,
@@ -101,7 +94,6 @@ class _allPalettePageState extends State<allPalettePage> {
         ),
       );
     } else {
-// No product
       showModalBottomSheet(
         useSafeArea: true,
         showDragHandle: false,
@@ -121,10 +113,10 @@ class _allPalettePageState extends State<allPalettePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Container(
                     margin: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: Color.fromRGBO(251, 210, 154, 1),
                     ),
@@ -137,7 +129,7 @@ class _allPalettePageState extends State<allPalettePage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   Container(
                     margin: const EdgeInsets.symmetric(vertical: 10),
                     height: 100,
@@ -181,10 +173,10 @@ class _allPalettePageState extends State<allPalettePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     color: Color.fromRGBO(251, 210, 154, 1),
                   ),
@@ -197,7 +189,7 @@ class _allPalettePageState extends State<allPalettePage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 10),
                   height: 100,
@@ -224,11 +216,10 @@ class _allPalettePageState extends State<allPalettePage> {
                     MyButton(
                       onTap: () {
                         paletteservice.stockOpnamePalette(id);
-                        // show snackbar
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
+                          const SnackBar(
                             content: Text('Stock Opname Confirmed'),
-                            duration: const Duration(seconds: 2),
+                            duration: Duration(seconds: 2),
                           ),
                         );
                         Navigator.pop(context);
@@ -237,7 +228,7 @@ class _allPalettePageState extends State<allPalettePage> {
                     ),
                   ],
                 ),
-                SizedBox(height: 20)
+                const SizedBox(height: 20)
               ],
             ),
           ),
@@ -252,7 +243,6 @@ class _allPalettePageState extends State<allPalettePage> {
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         backgroundColor: Colors.grey[100],
-        // if homepage, no back button
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -272,7 +262,7 @@ class _allPalettePageState extends State<allPalettePage> {
         ),
         actions: [
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 10),
+            margin: const EdgeInsets.symmetric(horizontal: 10),
             child: GestureDetector(
               onTap: () {
                 Navigator.pushNamed(context, '/new-palette');
@@ -281,7 +271,7 @@ class _allPalettePageState extends State<allPalettePage> {
                 width: 70,
                 height: 30,
                 decoration: BoxDecoration(
-                  color: Color(0xFFFAFAFA),
+                  color: const Color(0xFFFAFAFA),
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: Row(
@@ -326,325 +316,375 @@ class _allPalettePageState extends State<allPalettePage> {
         backgroundColor: Colors.grey,
         child: const Icon(Icons.qr_code_scanner),
       ),
-      body: Center(
-        child: StreamBuilder(
-          stream: paletteservice.readPalette(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              List stockOpnames = snapshot.data!.docs;
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            child: TextField(
+              controller: searchController,
+              decoration: InputDecoration(
+                hintText: 'Search palettes...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value;
+                });
+              },
+            ),
+          ),
+          Expanded(
+            child: StreamBuilder(
+              stream: paletteservice.readPalette(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List stockOpnames = snapshot.data!.docs;
 
-              // sort the palette by soStatus, the unconfirmed ones first
-              stockOpnames.sort((a, b) {
-                String aStatus = a['soStatus'];
-                String bStatus = b['soStatus'];
-                return bStatus.compareTo(aStatus);
-              });
+                  // Filter palettes based on the search query
+                  if (searchQuery.isNotEmpty) {
+                    stockOpnames = stockOpnames.where((palette) {
+                      String paletteName = palette['name'];
+                      return paletteName
+                          .toLowerCase()
+                          .contains(searchQuery.toLowerCase());
+                    }).toList();
+                  }
 
-              return ListView.builder(
-                itemCount: stockOpnames.length,
-                itemBuilder: (context, index) {
-                  DocumentSnapshot opnames = stockOpnames[index];
-                  String docId = opnames.id;
+                  // Sort the palettes by soStatus, the unconfirmed ones first
+                  stockOpnames.sort((a, b) {
+                    String aStatus = a['soStatus'];
+                    String bStatus = b['soStatus'];
+                    return bStatus.compareTo(aStatus);
+                  });
 
-                  Map<String, dynamic> data =
-                      opnames.data() as Map<String, dynamic>;
-                  String paletteName = data['name'];
-                  String soStatus = data['soStatus'];
-                  String whName = data['whname'];
+                  return ListView.builder(
+                    itemCount: stockOpnames.length,
+                    itemBuilder: (context, index) {
+                      DocumentSnapshot opnames = stockOpnames[index];
+                      String docId = opnames.id;
 
-                  DateTime dt = (data['lastStockOpname'] as Timestamp).toDate();
+                      Map<String, dynamic> data =
+                          opnames.data() as Map<String, dynamic>;
+                      String paletteName = data['name'];
+                      String soStatus = data['soStatus'];
+                      String whName = data['whname'];
 
-                  // sort by stock opname status, unconfirmed comes first
+                      DateTime dt =
+                          (data['lastStockOpname'] as Timestamp).toDate();
 
-                  // print('type of lastSO: ${dt.runtimeType}');
-                  // print('value of lastSO: $dt');
-                  // print('is lastSO null? ${dt == null}');
-
-                  return GestureDetector(
-                    // navigate to update palette page on tap
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PalettePage(
-                              productId: docId, paletteName: paletteName),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                      decoration: BoxDecoration(
-                          border:
-                              Border.all(color: Colors.grey.shade400, width: 1),
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.white),
-                      child: Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Image.asset('assets/images/rack.png',
-                                          height: 25, width: 25),
-                                      Text(
-                                        paletteName.toUpperCase(),
-                                        style: GoogleFonts.nunitoSans(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Image.asset(
-                                            'assets/images/warehouseicon.png',
-                                            height: 25,
-                                            width: 25),
-                                        Text(
-                                          whName.toUpperCase(),
-                                          style: GoogleFonts.nunitoSans(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ]),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Container(
-                                        margin: const EdgeInsets.only(right: 5),
-                                        padding: const EdgeInsets.all(5),
-                                        decoration: BoxDecoration(
-                                          color: soStatus == 'Unconfirmed'
-                                              ? Colors.red
-                                              : Colors.green,
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        child: soStatus == 'Unconfirmed'
-                                            ? Icon(
-                                                Icons.error_outline,
-                                                color: Colors.white,
-                                              )
-                                            : Icon(
-                                                Icons.check,
-                                                color: Colors.yellow,
-                                              ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          showQRCodeModal(context, docId);
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.all(5),
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey,
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                          ),
-                                          child: Icon(
-                                            Icons.qr_code,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PalettePage(
+                                  productId: docId, paletteName: paletteName),
                             ),
-                            // Divider
-                            const Divider(
-                              color: Color(0xFFE0E0E0),
-                              thickness: 1,
-                            ),
-
-                            if (data['products'] != null &&
-                                data['products'].isNotEmpty)
-                              ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                padding: const EdgeInsets.all(10),
-                                itemCount: data['products'].length,
-                                itemBuilder: (context, index) {
-                                  Map<String, dynamic> product =
-                                      data['products'][index];
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ProductPage(
-                                            productId: product['productId'],
+                          );
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.grey.shade400, width: 1),
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white),
+                          child: Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Image.asset('assets/images/rack.png',
+                                              height: 25, width: 25),
+                                          Text(
+                                            paletteName.toUpperCase(),
+                                            style: GoogleFonts.nunitoSans(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.grey.shade400,
-                                            width: 1),
-                                        borderRadius: BorderRadius.circular(10),
+                                        ],
                                       ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8),
-                                        child: Column(
+                                      Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
                                           children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 5.0),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  SizedBox(
-                                                    height: 15,
-                                                    width: 15,
-                                                    child: SvgPicture.asset(
-                                                      'assets/vectors/allproducticon.svg',
-                                                      fit: BoxFit.contain,
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: 5),
-                                                  Expanded(
-                                                    child: Text(
-                                                      product['productName'],
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: GoogleFonts
-                                                          .nunitoSans(
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
+                                            Image.asset(
+                                                'assets/images/warehouseicon.png',
+                                                height: 25,
+                                                width: 25),
+                                            Text(
+                                              whName.toUpperCase(),
+                                              style: GoogleFonts.nunitoSans(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                          ]),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Container(
+                                            margin:
+                                                const EdgeInsets.only(right: 5),
+                                            padding: const EdgeInsets.all(5),
+                                            decoration: BoxDecoration(
+                                              color: soStatus == 'Unconfirmed'
+                                                  ? Colors.red
+                                                  : Colors.green,
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                            ),
+                                            child: soStatus == 'Unconfirmed'
+                                                ? const Icon(
+                                                    Icons.error_outline,
+                                                    color: Colors.white,
+                                                  )
+                                                : const Icon(
+                                                    Icons.check,
+                                                    color: Colors.yellow,
+                                                  ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              showQRCodeModal(context, docId);
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets.all(5),
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey,
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: const Icon(
+                                                Icons.qr_code,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                const Divider(
+                                  color: Color(0xFFE0E0E0),
+                                  thickness: 1,
+                                ),
+                                if (data['products'] != null &&
+                                    data['products'].isNotEmpty)
+                                  ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    padding: const EdgeInsets.all(10),
+                                    itemCount: data['products'].length,
+                                    itemBuilder: (context, index) {
+                                      Map<String, dynamic> product =
+                                          data['products'][index];
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => ProductPage(
+                                                productId: product['productId'],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 5),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.grey.shade400,
+                                                width: 1),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8),
+                                            child: Column(
                                               children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    // there is a map of 'Meters': qty, 'Rolls': qty, and 'Yards': qty inside qty_list. If each exists, display the qty
-                                                    if (product['qty_list']
-                                                            ['Meters'] !=
-                                                        null)
-                                                      Text(
-                                                          'Meters: ${product['qty_list']['Meters']}'),
-                                                    if (product['qty_list']
-                                                            ['Rolls'] !=
-                                                        null)
-                                                      Text(
-                                                          'Rolls: ${product['qty_list']['Rolls']}'),
-                                                  ],
+                                                Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(vertical: 5.0),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      SizedBox(
+                                                        height: 15,
+                                                        width: 15,
+                                                        child: SvgPicture.asset(
+                                                          'assets/vectors/allproducticon.svg',
+                                                          fit: BoxFit.contain,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      Expanded(
+                                                        child: Text(
+                                                          product[
+                                                              'productName'],
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: GoogleFonts
+                                                              .nunitoSans(
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                                Row(
+                                                Column(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   children: [
-                                                    if (product['qty_list']
-                                                            ['Yards'] !=
-                                                        null)
-                                                      Text(
-                                                          'Yards: ${product['qty_list']['Yards']}'),
-                                                    if (product['qty_list']
-                                                            ['Sheets'] !=
-                                                        null)
-                                                      Text(
-                                                          'Sheets: ${product['qty_list']['Sheets']}'),
-                                                  ],
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    if (product['qty_list']
-                                                            ['SQM'] !=
-                                                        null)
-                                                      Text(
-                                                          'SQM: ${product['qty_list']['SQM']}'),
-                                                    if (product['qty_list']
-                                                            ['Pallets'] !=
-                                                        null)
-                                                      Text(
-                                                          'Pallets: ${product['qty_list']['Pallets']}'),
-                                                  ],
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    if (product['qty_list']
-                                                            ['KGM'] !=
-                                                        null)
-                                                      Text(
-                                                          'KGM: ${product['qty_list']['KGM']}'),
-                                                    if (product['qty_list']
-                                                            ['Bags'] !=
-                                                        null)
-                                                      Text(
-                                                          'Bags: ${product['qty_list']['Bags']}'),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        if (product['qty_list']
+                                                                ['Meters'] !=
+                                                            null)
+                                                          Text(
+                                                              'Meters: ${product['qty_list']['Meters']}'),
+                                                        if (product['qty_list']
+                                                                ['Rolls'] !=
+                                                            null)
+                                                          Text(
+                                                              'Rolls: ${product['qty_list']['Rolls']}'),
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        if (product['qty_list']
+                                                                ['Yards'] !=
+                                                            null)
+                                                          Text(
+                                                              'Yards: ${product['qty_list']['Yards']}'),
+                                                        if (product['qty_list']
+                                                                ['Sheets'] !=
+                                                            null)
+                                                          Text(
+                                                              'Sheets: ${product['qty_list']['Sheets']}'),
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        if (product['qty_list']
+                                                                ['SQM'] !=
+                                                            null)
+                                                          Text(
+                                                              'SQM: ${product['qty_list']['SQM']}'),
+                                                        if (product['qty_list']
+                                                                ['Pallets'] !=
+                                                            null)
+                                                          Text(
+                                                              'Pallets: ${product['qty_list']['Pallets']}'),
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        if (product['qty_list']
+                                                                ['KGM'] !=
+                                                            null)
+                                                          Text(
+                                                              'KGM: ${product['qty_list']['KGM']}'),
+                                                        if (product['qty_list']
+                                                                ['Bags'] !=
+                                                            null)
+                                                          Text(
+                                                              'Bags: ${product['qty_list']['Bags']}'),
+                                                      ],
+                                                    ),
                                                   ],
                                                 ),
                                               ],
                                             ),
-                                          ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                else
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'No products....',
+                                        style: GoogleFonts.nunitoSans(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w200,
                                         ),
                                       ),
-                                    ),
-                                  );
-                                },
-                              )
-                            else
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'No products....',
-                                    style: GoogleFonts.nunitoSans(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w200,
-                                    ),
+                                    ],
                                   ),
-                                ],
-                              ),
-
-                            SizedBox(height: 25),
-                            data['soStatus'] == 'Unconfirmed'
-                                ? Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
+                                const SizedBox(height: 25),
+                                data['soStatus'] == 'Unconfirmed'
+                                    ? Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              children: [
+                                                Text(
+                                                  'Last Stock Opname: ',
+                                                  style: GoogleFonts.nunitoSans(
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}',
+                                                  style: GoogleFonts.nunitoSans(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                            MyButton(
+                                                onTap: () => onTap(docId),
+                                                text: "Confirm Stock Opname")
+                                          ],
+                                        ),
+                                      )
+                                    : Center(
+                                        child: Column(
                                           children: [
                                             Text(
                                               'Last Stock Opname: ',
@@ -662,44 +702,21 @@ class _allPalettePageState extends State<allPalettePage> {
                                             )
                                           ],
                                         ),
-                                        MyButton(
-                                            onTap: () => onTap(docId),
-                                            text: "Confirm Stock Opname")
-                                      ],
-                                    ),
-                                  )
-                                : Center(
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          'Last Stock Opname: ',
-                                          style: GoogleFonts.nunitoSans(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.normal,
-                                          ),
-                                        ),
-                                        Text(
-                                          '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}',
-                                          style: GoogleFonts.nunitoSans(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                          ],
+                                      ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   );
-                },
-              );
-            } else {
-              return const CircularProgressIndicator();
-            }
-          },
-        ),
+                } else {
+                  return const CircularProgressIndicator();
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

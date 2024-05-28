@@ -1,3 +1,5 @@
+import 'package:Mahasu/services/palette_firestore.dart';
+import 'package:Mahasu/services/product_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ActivityFirestoreService {
@@ -11,11 +13,20 @@ class ActivityFirestoreService {
   final CollectionReference palette =
       FirebaseFirestore.instance.collection('palettes');
 
+  final PaletteFirestoreService paletteService = PaletteFirestoreService();
+  final ProductFirestoreService productService = ProductFirestoreService();
+
   // Read a activity
   Stream<QuerySnapshot> readActivity() {
     final activityStream = activitys.snapshots();
 
     return activityStream;
+  }
+
+  // Read activity by activityId
+  Future<Map<String, dynamic>> readActivityById(String activityId) async {
+    final activity = await activitys.doc(activityId).get();
+    return activity.data() as Map<String, dynamic>;
   }
 
   // read all activity and return as a list
@@ -77,10 +88,11 @@ class ActivityFirestoreService {
     return outboundActivityStream;
   }
 
-  // Create a new activity
-  Future<void> createActivity(String type, String productId, String paletteId,
+// Create a new activity
+  Future<String> createActivity(String type, String productId, String paletteId,
       String unit, int qty, String whId, String operator) async {
-    await activitys.add(
+    // Add the new activity to the collection and get the DocumentReference
+    DocumentReference docRef = await activitys.add(
       {
         'type': type,
         'product_id': productId,
@@ -92,6 +104,8 @@ class ActivityFirestoreService {
         'operator': operator
       },
     );
+    // Return the document reference
+    return docRef.id;
   }
 
   // delete activity by paletteId
@@ -121,5 +135,51 @@ class ActivityFirestoreService {
       final doc = activity.docs[i];
       await activitys.doc(doc.id).delete();
     }
+  }
+
+  // update activity by activityId
+  Future<String> updateActivityByActivityId(
+      String activityId, int newQty) async {
+    // delete the old activity then create a new one
+
+    // read the old activity
+    final activity = await activitys.doc(activityId).get();
+    final data = activity.data() as Map<String, dynamic>;
+    final productId = data['product_id'];
+    final paletteId = data['palette_id'];
+    final oldUnit = data['unit'];
+    int oldQty = data['qty'];
+
+    // if new qty is bigger than old qty, increment product qty in palette collection and product collection
+    if (oldQty == newQty) {
+      return 'Success';
+    } else if (oldQty < newQty) {
+      final productName = await productService.getProductNameById(productId);
+      final paletteName = await paletteService.getPaletteName(paletteId);
+      await paletteService.incrementProduct(
+          paletteId, productId, oldUnit, productName, newQty - oldQty);
+      await productService.incrementProduct(
+          productId, paletteId, paletteName, oldUnit, newQty - oldQty);
+      await productService.incrementProductTotalQty(
+          productId, oldUnit, newQty - oldQty);
+
+      // update the activity
+      await activitys.doc(activityId).update({'qty': newQty});
+      return 'Success';
+    }
+    int currentQty =
+        await paletteService.checkProductQtyList(paletteId, productId, oldUnit);
+    if (currentQty < newQty) {
+      return 'Not enough QTY';
+    }
+    await paletteService.decrementProduct(
+        paletteId, productId, oldUnit, oldQty - newQty);
+    await productService.decrementProductQtyList(
+        productId, paletteId, oldUnit, oldQty - newQty);
+    await productService.decrementProductTotalQty(
+        productId, oldUnit, oldQty - newQty);
+
+    await activitys.doc(activityId).update({'qty': newQty});
+    return 'Success';
   }
 }

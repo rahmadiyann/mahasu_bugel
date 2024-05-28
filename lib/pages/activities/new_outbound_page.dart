@@ -97,8 +97,8 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
 
     onTap() async {
       _isLoading = true;
-      String _whId = await paletteservice.getPaletteWhId(_selectedPaletteId);
-      String? operatorEmail = await FirebaseAuth.instance.currentUser!.email;
+      String whId = await paletteservice.getPaletteWhId(_selectedPaletteId);
+      String? operatorEmail = FirebaseAuth.instance.currentUser!.email;
       // print(qtyCtl.text);
       // print(_selectedPaletteId);
       // print(_selectedUnit);
@@ -134,16 +134,14 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
           ),
         );
       } else if (currentQty - int.parse(qtyCtl.text) == 0) {
-        await transactionService.createTransaction(
-            operatorEmail!, 'New outbound');
-        await activityService.createActivity(
+        final docid = await activityService.createActivity(
             'Outbound',
             productIdCtl.text,
             _selectedPaletteId,
             _selectedUnit,
             int.parse(qtyCtl.text),
-            _whId,
-            operatorEmail);
+            whId,
+            operatorEmail!);
 
         await productService.decrementProductQtyList(productIdCtl.text,
             _selectedPaletteId, _selectedUnit, int.parse(qtyCtl.text));
@@ -158,6 +156,9 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
             productIdCtl.text, _selectedUnit, int.parse(qtyCtl.text));
 
         await paletteservice.resetStockOpnamePalette(_selectedPaletteId);
+
+        await transactionService.createTransaction(
+            operatorEmail, 'New outbound', docid);
         // clear all text field
         descCtl.clear();
         qtyCtl.clear();
@@ -173,16 +174,14 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
         Navigator.popAndPushNamed(context, '/outbound');
       } else {
         _isLoading = true;
-        await transactionService.createTransaction(
-            operatorEmail!, 'New outbound');
-        await activityService.createActivity(
+        final docid = await activityService.createActivity(
             'Outbound',
             productIdCtl.text,
             _selectedPaletteId,
             _selectedUnit,
             int.parse(qtyCtl.text),
-            _whId,
-            operatorEmail);
+            whId,
+            operatorEmail!);
 
         await productService.decrementProductQtyList(productIdCtl.text,
             _selectedPaletteId, _selectedUnit, int.parse(qtyCtl.text));
@@ -196,6 +195,9 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
             productIdCtl.text, _selectedUnit, int.parse(qtyCtl.text));
 
         await paletteservice.resetStockOpnamePalette(_selectedPaletteId);
+
+        await transactionService.createTransaction(
+            operatorEmail, 'New outbound', docid);
 
         // clear all text field
         descCtl.clear();
@@ -286,22 +288,6 @@ class _NewOutboundPageState extends State<NewOutboundPage> {
                 ),
               ),
               SizedBox(height: 30),
-              // Container(
-              //   margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
-              //   child: Align(
-              //     alignment: Alignment.topLeft,
-              //     child: Text(
-              //       'Palette ',
-              //       style: GoogleFonts.getFont(
-              //         'Nunito Sans',
-              //         fontWeight: FontWeight.w200,
-              //         fontSize: 14,
-              //         height: 1.3,
-              //         color: Color(0xFF1E232C),
-              //       ),
-              //     ),
-              //   ),
-              // ),
               FutureBuilder(
                 future: productService.getPalettesByProductId(widget.productId),
                 builder: (context,

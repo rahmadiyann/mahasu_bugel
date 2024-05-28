@@ -65,14 +65,14 @@ class _NewSupplierPageState extends State<NewSupplierPage> {
       );
       return;
     }
-    await transactionservice.createTransaction(
-        operatorEmail!, 'Create supplier');
-    supplierService.createSupplier(
+    final supplierId = await supplierService.createSupplier(
         supplierNameCtl.text,
         supplierAddressCtl.text,
         supplierContactCtl.text,
         supplierPhoneCtl.text);
 
+    await transactionservice.createTransaction(
+        operatorEmail!, 'Create supplier', supplierId);
     // show snack bar
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

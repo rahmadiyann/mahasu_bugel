@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
+import 'package:Mahasu/pages/activities/edit_activity_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Mahasu/components/myappbar.dart';
@@ -180,213 +181,231 @@ class _InboundPageState extends State<InboundPage> {
                   Timestamp timestamp = data['timestamp'];
                   // get product name by product id
 
-                  return Container(
-                    margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    decoration: BoxDecoration(
-                        border:
-                            Border.all(color: Colors.grey.shade400, width: 1),
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          children: [
-                            Row(
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditActivityPage(
+                            activityId: activity.id,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      decoration: BoxDecoration(
+                          border:
+                              Border.all(color: Colors.grey.shade400, width: 1),
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            children: [
+                              Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Flexible(
+                                      child: FutureBuilder(
+                                          future: productService
+                                              .readProductById(productId),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              DocumentSnapshot product =
+                                                  snapshot.data
+                                                      as DocumentSnapshot;
+                                              Map<String, dynamic> productData =
+                                                  product.data()
+                                                      as Map<String, dynamic>;
+                                              String name = productData['name'];
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  name,
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              );
+                                            } else {
+                                              return Text('Loading...');
+                                            }
+                                          }),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Container(
+                                        // margin: EdgeInsets.only(left: 10),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 5, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          // green if outbound, yellow if outbound
+                                          color: Colors.green,
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              Colors.green.shade400,
+                                              Colors.green.shade300,
+                                            ],
+                                          ),
+                                        ),
+                                        child: Text(
+                                          type,
+                                          style: TextStyle(
+                                            color: Colors.green.shade900,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ]),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'QTY: ',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    Text(
+                                      '$qty $unit',
+                                      style: TextStyle(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Flexible(
-                                    child: FutureBuilder(
-                                        future: productService
-                                            .readProductById(productId),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.hasData) {
-                                            DocumentSnapshot product = snapshot
-                                                .data as DocumentSnapshot;
-                                            Map<String, dynamic> productData =
-                                                product.data()
-                                                    as Map<String, dynamic>;
-                                            String name = productData['name'];
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                name,
+                                  FutureBuilder(
+                                    future: paletteservice
+                                        .readPaletteById(paletteId),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        DocumentSnapshot palette =
+                                            snapshot.data as DocumentSnapshot;
+                                        Map<String, dynamic> paletteData =
+                                            palette.data()
+                                                as Map<String, dynamic>;
+                                        String name = paletteData['name'];
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Image.asset(
+                                                'assets/images/rack.png',
+                                                height: 20,
+                                                width: 20,
+                                              ),
+                                              Text(
+                                                name.toUpperCase(),
                                                 style: TextStyle(
-                                                  fontSize: 16,
+                                                  color: Colors.grey,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                            );
-                                          } else {
-                                            return Text('Loading...');
-                                          }
-                                        }),
+                                            ],
+                                          ),
+                                        );
+                                      } else {
+                                        return Text('Loading...');
+                                      }
+                                    },
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      // margin: EdgeInsets.only(left: 10),
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 5, vertical: 2),
-                                      decoration: BoxDecoration(
-                                        // green if outbound, yellow if outbound
-                                        color: Colors.green,
-                                        borderRadius: BorderRadius.circular(5),
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            Colors.green.shade400,
-                                            Colors.green.shade300,
-                                          ],
-                                        ),
-                                      ),
-                                      child: Text(
-                                        type,
-                                        style: TextStyle(
-                                          color: Colors.green.shade900,
-                                        ),
-                                      ),
-                                    ),
+                                  FutureBuilder(
+                                    future: warehouseservice
+                                        .readWarehouseById(warehouseId),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        DocumentSnapshot warehouse =
+                                            snapshot.data as DocumentSnapshot;
+                                        Map<String, dynamic> warehouseData =
+                                            warehouse.data()
+                                                as Map<String, dynamic>;
+                                        String name = warehouseData['name'];
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                name.toUpperCase(),
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              SizedBox(width: 10),
+                                              SvgPicture.asset(
+                                                'assets/vectors/warehouseicon.svg',
+                                                height: 20,
+                                                width: 20,
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      } else {
+                                        return Text('Loading...');
+                                      }
+                                    },
                                   ),
-                                ]),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'QTY: ',
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  Text(
-                                    '$qty $unit',
-                                    style: TextStyle(
+                                ],
+                              ),
+                              Container(
+                                margin: EdgeInsets.symmetric(vertical: 8),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    // Icon
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 8.0, right: 8.0),
+                                      child: Icon(
+                                        Icons.access_time,
                                         color: Colors.grey,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                FutureBuilder(
-                                  future:
-                                      paletteservice.readPaletteById(paletteId),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasData) {
-                                      DocumentSnapshot palette =
-                                          snapshot.data as DocumentSnapshot;
-                                      Map<String, dynamic> paletteData = palette
-                                          .data() as Map<String, dynamic>;
-                                      String name = paletteData['name'];
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Image.asset(
-                                              'assets/images/rack.png',
-                                              height: 20,
-                                              width: 20,
-                                            ),
-                                            Text(
-                                              name.toUpperCase(),
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    } else {
-                                      return Text('Loading...');
-                                    }
-                                  },
-                                ),
-                                FutureBuilder(
-                                  future: warehouseservice
-                                      .readWarehouseById(warehouseId),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasData) {
-                                      DocumentSnapshot warehouse =
-                                          snapshot.data as DocumentSnapshot;
-                                      Map<String, dynamic> warehouseData =
-                                          warehouse.data()
-                                              as Map<String, dynamic>;
-                                      String name = warehouseData['name'];
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            SvgPicture.asset(
-                                              'assets/vectors/warehouseicon.svg',
-                                              height: 20,
-                                              width: 20,
-                                            ),
-                                            Text(
-                                              name.toUpperCase(),
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    } else {
-                                      return Text('Loading...');
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
-                            Container(
-                              margin: EdgeInsets.symmetric(vertical: 8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  // Icon
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.only(left: 8.0, right: 8.0),
-                                    child: Icon(
-                                      Icons.access_time,
-                                      color: Colors.grey,
+                                      ),
                                     ),
-                                  ),
-                                  // Timestamp text
-                                  Text(
-                                    // format to DD-MM-YYYY HH:MM:SS and add 0 if single digit
-                                    '${timestamp.toDate().day.toString().padLeft(2, '0')}-${timestamp.toDate().month.toString().padLeft(2, '0')}-${timestamp.toDate().year} ${timestamp.toDate().hour.toString().padLeft(2, '0')}:${timestamp.toDate().minute.toString().padLeft(2, '0')}:${timestamp.toDate().second.toString().padLeft(2, '0')}',
-                                    style: TextStyle(
-                                      color: Colors.grey,
+                                    // Timestamp text
+                                    Text(
+                                      // format to DD-MM-YYYY HH:MM:SS and add 0 if single digit
+                                      '${timestamp.toDate().day.toString().padLeft(2, '0')}-${timestamp.toDate().month.toString().padLeft(2, '0')}-${timestamp.toDate().year} ${timestamp.toDate().hour.toString().padLeft(2, '0')}:${timestamp.toDate().minute.toString().padLeft(2, '0')}:${timestamp.toDate().second.toString().padLeft(2, '0')}',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                      ),
                                     ),
-                                  ),
-                                  // Divider
-                                  Container(
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 12),
-                                    height: 1,
-                                    width: 1,
-                                    color: Colors.grey[400],
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        )
-                      ],
+                                    // Divider
+                                    Container(
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 12),
+                                      height: 1,
+                                      width: 1,
+                                      color: Colors.grey[400],
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   );
                 },

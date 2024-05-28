@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:Mahasu/components/download_activity.dart';
+import 'package:Mahasu/pages/activities/edit_activity_page.dart';
 import 'package:Mahasu/pages/auth/auth_check.dart';
 import 'package:Mahasu/pages/products/product_i_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -431,8 +432,8 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ProductPage(
-                                productId: productId,
+                              builder: (context) => EditActivityPage(
+                                activityId: activity.id,
                               ),
                             ),
                           );
@@ -625,11 +626,6 @@ class _HomePageState extends State<HomePage> {
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.start,
                                                   children: [
-                                                    Image.asset(
-                                                      'assets/images/warehouseicon.png',
-                                                      height: 15,
-                                                      width: 15,
-                                                    ),
                                                     Text(
                                                       name.toUpperCase(),
                                                       style: TextStyle(
@@ -637,6 +633,12 @@ class _HomePageState extends State<HomePage> {
                                                         fontWeight:
                                                             FontWeight.bold,
                                                       ),
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    Image.asset(
+                                                      'assets/images/warehouseicon.png',
+                                                      height: 15,
+                                                      width: 15,
                                                     ),
                                                   ],
                                                 ),

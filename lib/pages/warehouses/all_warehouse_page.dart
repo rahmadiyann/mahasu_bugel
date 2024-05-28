@@ -38,7 +38,7 @@ class _WarehousesPageState extends State<WarehousesPage> {
         ),
         actions: [
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               String? operatorEmail = FirebaseAuth.instance.currentUser!.email;
               if (_nameController.text == '') {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -48,9 +48,10 @@ class _WarehousesPageState extends State<WarehousesPage> {
                 );
                 return;
               }
+              final warehouseid =
+                  await warehouseservice.createWarehouse(_nameController.text);
               transactionservice.createTransaction(
-                  operatorEmail!, 'Create warehouse');
-              warehouseservice.createWarehouse(_nameController.text);
+                  operatorEmail!, 'Create warehouse', warehouseid);
               _nameController.clear();
               Navigator.of(context).pop();
             },

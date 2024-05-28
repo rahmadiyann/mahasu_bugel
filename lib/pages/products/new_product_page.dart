@@ -40,12 +40,14 @@ class _NewProductPageState extends State<NewProductPage> {
 
   onTap() async {
     String? operatorEmail = FirebaseAuth.instance.currentUser!.email;
-    await transactionservice.createTransaction(
-        operatorEmail!, 'Create product');
+
     String productId = await productService.createProduct(
         productNameCtl.text, supplierIdCtl.text, supplierNameCtl.text);
     await supplierService.addProductToSupplier(
         supplierIdCtl.text, productId, productNameCtl.text);
+
+    await transactionservice.createTransaction(
+        operatorEmail!, 'Create product', productId);
 
     // show snack bar
     ScaffoldMessenger.of(context).showSnackBar(

@@ -103,17 +103,16 @@ class _NewInboundPageState extends State<NewInboundPage> {
         );
         return;
       }
-      transactionservice.createTransaction(operatorEmail!, 'New inbound');
 
       // print(_paletteName);
-      activityService.createActivity(
+      final docId = await activityService.createActivity(
           'Inbound',
           productIdCtl.text,
           _selectedPaletteId,
           _selectedUnit,
           int.parse(qtyCtl.text),
           _whId,
-          operatorEmail);
+          operatorEmail!);
 
       await productService.incrementProduct(
         productIdCtl.text,
@@ -138,6 +137,7 @@ class _NewInboundPageState extends State<NewInboundPage> {
       );
 
       await paletteservice.resetStockOpnamePalette(_selectedPaletteId);
+      transactionservice.createTransaction(operatorEmail, 'New inbound', docId);
 
       // clear all text field
       descCtl.clear();

@@ -11,10 +11,10 @@ class WarehouseFirestoreService {
   final ActivityFirestoreService activityservice = ActivityFirestoreService();
   // Create a new warehouse
   Future<String> createWarehouse(String name) async {
-    await warehouses.add(
+    DocumentReference warehouseref = await warehouses.add(
       {'name': name, 'palettes': {}},
     );
-    return warehouses.id;
+    return warehouseref.id;
   }
 
   // Read a warehouse

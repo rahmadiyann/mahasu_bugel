@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:Mahasu/services/activity_firestore.dart';
 import 'package:Mahasu/services/product_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -139,6 +141,13 @@ class PaletteFirestoreService {
     );
   }
 
+  // get paletteName by paletteId
+  Future<String> getPaletteNameById(String id) async {
+    final palette = await palettes.doc(id).get();
+    final name = palette['name'];
+    return name;
+  }
+
   // Stock Opname a palette
   Future<void> stockOpnamePalette(String id) async {
     await palettes.doc(id).update(
@@ -260,7 +269,7 @@ class PaletteFirestoreService {
       final products = palette.docs[i]['products'];
       for (var j = 0; j < products.length; j++) {
         if (products[j]['productId'] == productId) {
-          print('found!!!!');
+          log('found!!!!');
           // delete the product entry in the products list
           products.removeAt(j);
         }

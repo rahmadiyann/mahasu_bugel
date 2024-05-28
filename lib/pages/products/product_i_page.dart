@@ -2,6 +2,7 @@
 
 import 'package:Mahasu/components/product_total_qty_card.dart';
 import 'package:Mahasu/pages/palettes/palette_page.dart';
+import 'package:Mahasu/pages/products/product_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Mahasu/pages/products/edit_product_page.dart';
@@ -79,7 +80,14 @@ class _ProductPageState extends State<ProductPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return const AllProductPage();
+                },
+              ),
+            );
           },
         ),
         title: Text(

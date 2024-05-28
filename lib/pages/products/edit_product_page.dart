@@ -103,7 +103,7 @@ class _EditProductPageState extends State<EditProductPage> {
                         String? operatorEmail =
                             FirebaseAuth.instance.currentUser!.email;
                         transactionFirestoreService.createTransaction(
-                            operatorEmail!, 'Update product');
+                            operatorEmail!, 'Update product', widget.productId);
                         productFirestoreService.updateProduct(
                             widget.productId,
                             productNameController.text,
@@ -197,7 +197,7 @@ class _EditProductPageState extends State<EditProductPage> {
                         String? operatorEmail =
                             FirebaseAuth.instance.currentUser!.email;
                         await transactionFirestoreService.createTransaction(
-                            operatorEmail!, 'Delete product');
+                            operatorEmail!, 'Delete product', widget.productId);
                         await paletteFirestoreService
                             .removeProductFromAllPalette(widget.productId);
                         await productFirestoreService

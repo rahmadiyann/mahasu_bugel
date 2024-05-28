@@ -47,6 +47,7 @@ dependencies:
   fuzzy: ^0.5.1
   pretty_qr_code: ^3.3.0
   dependency_validator: ^4.0.0
+  screenshot: ^2.5.0
 
 dev_dependencies:
   flutter_test:

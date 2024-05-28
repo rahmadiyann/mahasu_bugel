@@ -52,12 +52,13 @@ class _NewPalettePageState extends State<NewPalettePage> {
       );
       return;
     }
-    await transactionservice.createTransaction(
-        operatorEmail!, 'Create Palette');
     String paletteId = await paletteService.createPalette(
         paletteNameCtl.text, whIdCtl.text, whNameCtl.text);
     await warehouseservice.addPaletteToWarehouse(
         whIdCtl.text, paletteId, paletteNameCtl.text);
+
+    await transactionservice.createTransaction(
+        operatorEmail!, 'Create Palette', paletteId);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

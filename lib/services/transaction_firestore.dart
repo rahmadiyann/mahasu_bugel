@@ -6,11 +6,12 @@ class TransactionFirestoreService {
 
   // Create transaction
   Future<void> createTransaction(
-      String operator, String transactionType) async {
+      String operator, String transactionType, String correspondingId) async {
     await transactions.add(
       {
         'operator': operator,
         'transactionType': transactionType,
+        'correspondingId': correspondingId,
         'timestamp': Timestamp.now(),
       },
     );

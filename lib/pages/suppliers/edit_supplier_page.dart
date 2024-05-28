@@ -113,6 +113,7 @@ class _EditSupplierPageState extends State<EditSupplierPage> {
                         transactionservice.createTransaction(
                           operatorEmail!,
                           'update supplier',
+                          widget.supplierId,
                         );
                         supplierFirestoreService.updateSupplier(
                             widget.supplierId,
@@ -209,6 +210,7 @@ class _EditSupplierPageState extends State<EditSupplierPage> {
                         transactionservice.createTransaction(
                           operatorEmail!,
                           'delete supplier',
+                          widget.supplierId,
                         );
                         supplierFirestoreService
                             .deleteSupplier(widget.supplierId);

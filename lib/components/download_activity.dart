@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'dart:typed_data';
 
 import 'package:Mahasu/services/activity_firestore.dart';
@@ -33,35 +35,35 @@ class _DownloadExcelButtonState extends State<DownloadExcelButton> {
 
     var timestampCell =
         sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0));
-    timestampCell.value = TextCellValue('Timestamp');
+    timestampCell.value = const TextCellValue('Timestamp');
 
     var typeCell =
         sheet.cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: 0));
-    typeCell.value = TextCellValue('Type');
+    typeCell.value = const TextCellValue('Type');
 
     var operatorCell =
         sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 0));
-    operatorCell.value = TextCellValue('Operator');
+    operatorCell.value = const TextCellValue('Operator');
 
     var productNameCell =
         sheet.cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 0));
-    productNameCell.value = TextCellValue('Product Name');
+    productNameCell.value = const TextCellValue('Product Name');
 
     var paletteNameCell =
         sheet.cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: 0));
-    paletteNameCell.value = TextCellValue('Palette Name');
+    paletteNameCell.value = const TextCellValue('Palette Name');
 
     var warehouseNameCell =
         sheet.cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: 0));
-    warehouseNameCell.value = TextCellValue('Warehouse Name');
+    warehouseNameCell.value = const TextCellValue('Warehouse Name');
 
     var unitCell =
         sheet.cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: 0));
-    unitCell.value = TextCellValue('Unit');
+    unitCell.value = const TextCellValue('Unit');
 
     var qtyCell =
         sheet.cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 0));
-    qtyCell.value = TextCellValue('Quantity');
+    qtyCell.value = const TextCellValue('Quantity');
 
     for (var i = 0; i < activities.length; i++) {
       String productId = activities[i]['product_id'];
@@ -149,9 +151,9 @@ class _DownloadExcelButtonState extends State<DownloadExcelButton> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        String url_path = await downloadExcel();
-        final Uri _url = Uri.parse(url_path);
-        launchUrl(_url);
+        String urlPath = await downloadExcel();
+        final Uri url = Uri.parse(urlPath);
+        launchUrl(url);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -168,13 +170,13 @@ class _DownloadExcelButtonState extends State<DownloadExcelButton> {
               ),
             ],
           ),
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           child: Text(
             'Download Data',
             style: GoogleFonts.nunitoSans(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: Color.fromARGB(255, 148, 146, 146),
+              color: const Color.fromARGB(255, 148, 146, 146),
             ),
           ),
         ),

@@ -128,7 +128,7 @@ class _UpdatePalettePageState extends State<UpdatePalettePage> {
                           whNameCtl.text,
                         );
                         transactionservice.createTransaction(
-                            operatorEmail!, 'Update Palette');
+                            operatorEmail!, 'Update Palette', widget.paletteId);
                         warehouseService.removePaletteFromWarehouse(
                             widget.oldWhId, widget.paletteId);
                         warehouseService.addPaletteToWarehouse(newwhIdCtl.text,
@@ -231,7 +231,7 @@ class _UpdatePalettePageState extends State<UpdatePalettePage> {
                         String? operatorEmail =
                             FirebaseAuth.instance.currentUser!.email;
                         await transactionservice.createTransaction(
-                            operatorEmail!, 'Delete Palette');
+                            operatorEmail!, 'Delete Palette', widget.paletteId);
                         await paletteService.deletePalette(
                           widget.paletteId,
                           paletteNameCtl.text,
