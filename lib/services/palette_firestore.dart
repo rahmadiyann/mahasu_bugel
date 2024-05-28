@@ -187,7 +187,7 @@ class PaletteFirestoreService {
         List<Map<String, dynamic>>.from(product.get('products') ?? []);
 
     bool updated = false;
-
+    unit = unit.toLowerCase();
     for (int i = 0; i < products.length; i++) {
       if (products[i]['productId'] == productId) {
         // Ensure qty_list is parsed correctly
@@ -228,6 +228,7 @@ class PaletteFirestoreService {
         List<Map<String, dynamic>>.from(product.get('products') ?? []);
 
     bool found = false;
+    unit = unit.toLowerCase();
     for (int i = 0; i < products.length; i++) {
       if (products[i]['productId'] == productId) {
         // Ensure qty_list is parsed correctly
@@ -283,8 +284,8 @@ class PaletteFirestoreService {
 
   // Delete a palette
   Future<void> deletePalette(String id, String name) async {
-    print('--deletePalette--');
-    print('paletteId: $id');
+    log('--deletePalette--');
+    log('paletteId: $id');
     // check if palette has products
     final palette = await palettes.doc(id).get();
     // remove palette from warehouse
