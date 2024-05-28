@@ -548,7 +548,7 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                         ),
                                         Text(
-                                          '$qty $unit',
+                                          '$qty ${unit.toUpperCase()}',
                                           style: TextStyle(
                                               color: Colors.grey,
                                               fontWeight: FontWeight.bold),
