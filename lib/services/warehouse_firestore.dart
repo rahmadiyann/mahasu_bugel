@@ -25,11 +25,12 @@ class WarehouseFirestoreService {
     bool warehouseExist = await checkWarehouseExist(name);
     if (warehouseExist) {
       return 'Warehouse exist';
+    } else {
+      DocumentReference warehouseref = await warehouses.add(
+        {'name': name, 'palettes': {}},
+      );
+      return warehouseref.id;
     }
-    DocumentReference warehouseref = await warehouses.add(
-      {'name': name, 'palettes': {}},
-    );
-    return warehouseref.id;
   }
 
   // Read a warehouse

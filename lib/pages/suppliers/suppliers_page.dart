@@ -219,8 +219,7 @@ class _AllSuppliersPageState extends State<AllSuppliersPage> {
                                     ),
                                     Text(
                                       supplierAddress.length > 15
-                                          ? supplierAddress.substring(0, 15) +
-                                              '...'
+                                          ? '${supplierAddress.substring(0, 15)}...'
                                           : supplierAddress,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.nunitoSans(
@@ -315,9 +314,9 @@ class _AllSuppliersPageState extends State<AllSuppliersPage> {
                                                             phoneNumberFormatted =
                                                             await stripPhoneNumber(
                                                                 supplierPhone);
-                                                        final Uri _url = Uri.parse(
+                                                        final Uri url = Uri.parse(
                                                             'https://wa.me/$phoneNumberFormatted');
-                                                        launchUrl(_url);
+                                                        launchUrl(url);
                                                       },
                                                       text: 'Yes',
                                                     ),

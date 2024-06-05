@@ -3,25 +3,25 @@
 		"platforms": {
 			"android": {
 				"default": {
-					"projectId": "mahasubugel-5abea",
-					"appId": "1:436906869765:android:b502f1267a2baa6422486c",
+					"projectId": "mahasu-bugel-dev",
+					"appId": "1:924304633509:android:22fc0606b482194e8ba74c",
 					"fileOutput": "android/app/google-services.json"
 				}
 			},
 			"ios": {
 				"default": {
-					"projectId": "mahasubugel-5abea",
-					"appId": "1:436906869765:ios:59571559e34c86cf22486c",
+					"projectId": "mahasu-bugel-dev",
+					"appId": "1:924304633509:ios:ded314261d5784a98ba74c",
 					"uploadDebugSymbols": false,
 					"fileOutput": "ios/Runner/GoogleService-Info.plist"
 				}
 			},
 			"dart": {
 				"lib/firebase_options.dart": {
-					"projectId": "mahasubugel-5abea",
+					"projectId": "mahasu-bugel-dev",
 					"configurations": {
-						"android": "1:436906869765:android:b502f1267a2baa6422486c",
-						"ios": "1:436906869765:ios:59571559e34c86cf22486c"
+						"android": "1:924304633509:android:22fc0606b482194e8ba74c",
+						"ios": "1:924304633509:ios:ded314261d5784a98ba74c"
 					}
 				}
 			}

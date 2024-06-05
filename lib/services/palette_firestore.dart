@@ -81,19 +81,20 @@ class PaletteFirestoreService {
     bool paletteExist = await checkPaletteExist(name);
     if (paletteExist) {
       return 'Palette already exist';
+    } else {
+      DocumentReference paletteRef = await palettes.add(
+        {
+          'name': name,
+          'whid': whId,
+          'whname': whName,
+          'soStatus': 'Confirmed',
+          'lastStockOpname': Timestamp.now(),
+          'products': [],
+          'createdAt': Timestamp.now()
+        },
+      );
+      return paletteRef.id;
     }
-    DocumentReference paletteRef = await palettes.add(
-      {
-        'name': name,
-        'whid': whId,
-        'whname': whName,
-        'soStatus': 'Confirmed',
-        'lastStockOpname': Timestamp.now(),
-        'products': [],
-        'createdAt': Timestamp.now()
-      },
-    );
-    return paletteRef.id;
   }
 
   // Get unconfirmed palette

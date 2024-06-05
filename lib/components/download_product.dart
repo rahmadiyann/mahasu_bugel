@@ -26,25 +26,25 @@ class _DownloadProductButtonState extends State<DownloadProductButton> {
 
     var productNameCell =
         sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0));
-    productNameCell.value = TextCellValue('Product Name');
+    productNameCell.value = const TextCellValue('Product Name');
     var meterCell =
         sheet.cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: 0));
-    meterCell.value = TextCellValue('Meter');
+    meterCell.value = const TextCellValue('Meter');
     var rollCell =
         sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 0));
-    rollCell.value = TextCellValue('Roll');
+    rollCell.value = const TextCellValue('Roll');
     var yardCell =
         sheet.cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 0));
-    yardCell.value = TextCellValue('Yard');
+    yardCell.value = const TextCellValue('Yard');
     var palletCell =
         sheet.cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: 0));
-    palletCell.value = TextCellValue('Pallet');
+    palletCell.value = const TextCellValue('Pallet');
     var sqmCell =
         sheet.cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: 0));
-    sqmCell.value = TextCellValue('SQM');
+    sqmCell.value = const TextCellValue('SQM');
     var sheetCell =
         sheet.cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: 0));
-    sheetCell.value = TextCellValue('Sheet');
+    sheetCell.value = const TextCellValue('Sheet');
 
     for (var i = 0; i < products.length; i++) {
       String productName = products[i]['name'];
@@ -91,14 +91,6 @@ class _DownloadProductButtonState extends State<DownloadProductButton> {
 
     try {
       final metadata = await firebaseStorageRef.getMetadata();
-      if (metadata == null) {
-        final Uint8List data = Uint8List.fromList(fileBytes!);
-        final uploadTask = firebaseStorageRef.putData(data);
-        final TaskSnapshot storageSnapshot =
-            await uploadTask.whenComplete(() => null);
-        final downloadUrl = await storageSnapshot.ref.getDownloadURL();
-        return downloadUrl;
-      }
     } on FirebaseException catch (storageError) {
       if (storageError.code == 'object-not-found') {
         final Uint8List data = Uint8List.fromList(fileBytes!);
@@ -120,9 +112,9 @@ class _DownloadProductButtonState extends State<DownloadProductButton> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        String url_path = await onTap();
-        final Uri _url = Uri.parse(url_path);
-        launchUrl(_url);
+        String urlPath = await onTap();
+        final Uri url = Uri.parse(urlPath);
+        launchUrl(url);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -142,8 +134,8 @@ class _DownloadProductButtonState extends State<DownloadProductButton> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 3),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3),
                 child: Icon(
                   Icons.download,
                   color: Color(0xFF058B06),

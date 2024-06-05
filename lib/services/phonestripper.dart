@@ -1,12 +1,6 @@
-import 'dart:typed_data';
 import 'package:Mahasu/services/activity_firestore.dart';
-import 'package:Mahasu/services/palette_firestore.dart';
-import 'package:Mahasu/services/product_firestore.dart';
-import 'package:Mahasu/services/warehouse_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path/path.dart';
 
 Future<String> stripPhoneNumber(String phoneNumber) async {
   String strippedPhoneNumber = phoneNumber.replaceAll(RegExp(r'\D'), '');
@@ -15,39 +9,34 @@ Future<String> stripPhoneNumber(String phoneNumber) async {
 
 downloadExcel() async {
   final ActivityFirestoreService activityservice = ActivityFirestoreService();
-  final ProductFirestoreService productservice = ProductFirestoreService();
-  final WarehouseFirestoreService warehouseservice =
-      WarehouseFirestoreService();
-  final PaletteFirestoreService paletteservice = PaletteFirestoreService();
-
   var excel = Excel.createExcel();
   Sheet sheet = excel['Sheet1'];
 
   // create header
   var typeCell =
       sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0));
-  typeCell.value = TextCellValue('Type');
+  typeCell.value = const TextCellValue('Type');
   var productNameCell =
       sheet.cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: 0));
-  productNameCell.value = TextCellValue('Product Name');
+  productNameCell.value = const TextCellValue('Product Name');
   var paletteNameCell =
       sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 0));
-  paletteNameCell.value = TextCellValue('Palette Name');
+  paletteNameCell.value = const TextCellValue('Palette Name');
   var warehouseNameCell =
       sheet.cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 0));
-  warehouseNameCell.value = TextCellValue('Warehouse Name');
+  warehouseNameCell.value = const TextCellValue('Warehouse Name');
   var unitCell =
       sheet.cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: 0));
-  unitCell.value = TextCellValue('Unit');
+  unitCell.value = const TextCellValue('Unit');
   var qtyCell =
       sheet.cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: 0));
-  qtyCell.value = TextCellValue('Quantity');
+  qtyCell.value = const TextCellValue('Quantity');
   var timestampCell =
       sheet.cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: 0));
-  timestampCell.value = TextCellValue('Timestamp');
+  timestampCell.value = const TextCellValue('Timestamp');
 
   // read every transaction from activityservice.readactivity
-  final activities = await activityservice.readActivity();
+  final activities = activityservice.readActivity();
   print('activities: $activities');
   activities.forEach(
     (element) async {

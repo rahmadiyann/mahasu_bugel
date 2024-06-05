@@ -54,10 +54,11 @@ class _NewPalettePageState extends State<NewPalettePage> {
     }
     String paletteId = await paletteService.createPalette(
         paletteNameCtl.text, whIdCtl.text, whNameCtl.text);
-    if (paletteId == 'Palette with name ${paletteNameCtl.text} exist') {
+    if (paletteId == 'Palette already exist') {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Palette already exist'),
+        SnackBar(
+          content:
+              Text('Palette with name ${paletteNameCtl.text} already exist'),
           duration: Duration(seconds: 2),
         ),
       );

@@ -36,27 +36,28 @@ class ProductFirestoreService {
 
     if (productExist) {
       return 'Product exist';
-    }
-    DocumentReference productRef = await products.add(
-      {
-        'name': name,
-        'supplier': {
-          'id': supplierId,
-          'name': supplierName,
+    } else {
+      DocumentReference productRef = await products.add(
+        {
+          'name': name,
+          'supplier': {
+            'id': supplierId,
+            'name': supplierName,
+          },
+          'created_at': Timestamp.now(),
+          'palettes': [],
+          'meters': 0,
+          'rolls': 0,
+          'yards': 0,
+          'sqm': 0,
+          'pallets': 0,
+          'kgm': 0,
+          'bags': 0,
+          'sheets': 0
         },
-        'created_at': Timestamp.now(),
-        'palettes': [],
-        'meters': 0,
-        'rolls': 0,
-        'yards': 0,
-        'sqm': 0,
-        'pallets': 0,
-        'kgm': 0,
-        'bags': 0,
-        'sheets': 0
-      },
-    );
-    return productRef.id;
+      );
+      return productRef.id;
+    }
   }
 
   // Increment product total qty

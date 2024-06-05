@@ -15,7 +15,7 @@ class _DateRangePickerState extends State<DateRangePicker> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 50),
+            const SizedBox(height: 50),
             ElevatedButton(
               onPressed: () async {
                 final dateTimeRange = await showDateRangePicker(

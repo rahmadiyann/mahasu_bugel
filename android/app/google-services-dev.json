@@ -1,0 +1,29 @@
+{
+	"project_info": {
+		"project_number": "924304633509",
+		"project_id": "mahasu-bugel-dev",
+		"storage_bucket": "mahasu-bugel-dev.appspot.com"
+	},
+	"client": [
+		{
+			"client_info": {
+				"mobilesdk_app_id": "1:924304633509:android:22fc0606b482194e8ba74c",
+				"android_client_info": {
+					"package_name": "com.example.mahasu_bugel"
+				}
+			},
+			"oauth_client": [],
+			"api_key": [
+				{
+					"current_key": "AIzaSyCvSQfC3fbItTlvb21dVBURtoe_xZTlG6c"
+				}
+			],
+			"services": {
+				"appinvite_service": {
+					"other_platform_oauth_client": []
+				}
+			}
+		}
+	],
+	"configuration_version": "1"
+}

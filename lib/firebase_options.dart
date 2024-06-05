@@ -49,6 +49,7 @@ class DefaultFirebaseOptions {
     }
   }
 
+  // production
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAmSUMXxB7GtMyOeAfVNkenlRu5T0xQLvk',
     appId: '1:436906869765:android:b502f1267a2baa6422486c',
@@ -65,4 +66,22 @@ class DefaultFirebaseOptions {
     storageBucket: 'mahasubugel-5abea.appspot.com',
     iosBundleId: 'com.example.mahasuBugel',
   );
+
+  // development
+  // static const FirebaseOptions android = FirebaseOptions(
+  //   apiKey: 'AIzaSyCvSQfC3fbItTlvb21dVBURtoe_xZTlG6c',
+  //   appId: '1:924304633509:android:22fc0606b482194e8ba74c',
+  //   messagingSenderId: '924304633509',
+  //   projectId: 'mahasu-bugel-dev',
+  //   storageBucket: 'mahasu-bugel-dev.appspot.com',
+  // );
+
+  // static const FirebaseOptions ios = FirebaseOptions(
+  //   apiKey: 'AIzaSyDL3sLhrJyFjBWWFoIjMqedpnXnaJcWf5k',
+  //   appId: '1:924304633509:ios:ded314261d5784a98ba74c',
+  //   messagingSenderId: '924304633509',
+  //   projectId: 'mahasu-bugel-dev',
+  //   storageBucket: 'mahasu-bugel-dev.appspot.com',
+  //   iosBundleId: 'com.example.mahasuBugel',
+  // );
 }
