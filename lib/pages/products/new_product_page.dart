@@ -43,6 +43,16 @@ class _NewProductPageState extends State<NewProductPage> {
 
     String productId = await productService.createProduct(
         productNameCtl.text, supplierIdCtl.text, supplierNameCtl.text);
+
+    if (productId == 'Product exist') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Product name ${productNameCtl.text} already exist'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
     await supplierService.addProductToSupplier(
         supplierIdCtl.text, productId, productNameCtl.text);
 

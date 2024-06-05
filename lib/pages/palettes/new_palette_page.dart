@@ -54,6 +54,15 @@ class _NewPalettePageState extends State<NewPalettePage> {
     }
     String paletteId = await paletteService.createPalette(
         paletteNameCtl.text, whIdCtl.text, whNameCtl.text);
+    if (paletteId == 'Palette with name ${paletteNameCtl.text} exist') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Palette already exist'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
     await warehouseservice.addPaletteToWarehouse(
         whIdCtl.text, paletteId, paletteNameCtl.text);
 

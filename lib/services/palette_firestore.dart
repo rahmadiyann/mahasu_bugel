@@ -61,8 +61,27 @@ class PaletteFirestoreService {
     }
   }
 
+  Future<bool> checkPaletteExist(String name) async {
+    try {
+      QuerySnapshot querySnapshot = await palettes.get();
+      for (var doc in querySnapshot.docs) {
+        if (doc['name'] == name) {
+          return true;
+        }
+      }
+      return false;
+    } catch (error) {
+      // Handle any errors here
+      return false; // Return an empty list in case of error
+    }
+  }
+
   // Create a new palette
   Future<String> createPalette(String name, String whId, String whName) async {
+    bool paletteExist = await checkPaletteExist(name);
+    if (paletteExist) {
+      return 'Palette already exist';
+    }
     DocumentReference paletteRef = await palettes.add(
       {
         'name': name,

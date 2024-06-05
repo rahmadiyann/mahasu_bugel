@@ -50,6 +50,14 @@ class _WarehousesPageState extends State<WarehousesPage> {
               }
               final warehouseid =
                   await warehouseservice.createWarehouse(_nameController.text);
+              if (warehouseid == 'Warehouse exist') {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Warehouse already exist'),
+                  ),
+                );
+                return;
+              }
               transactionservice.createTransaction(
                   operatorEmail!, 'Create warehouse', warehouseid);
               _nameController.clear();

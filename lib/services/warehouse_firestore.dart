@@ -9,8 +9,23 @@ class WarehouseFirestoreService {
 
   final PaletteFirestoreService palletservice = PaletteFirestoreService();
   final ActivityFirestoreService activityservice = ActivityFirestoreService();
+
+  Future<bool> checkWarehouseExist(String name) async {
+    final warehouses = await this.warehouses.get();
+    for (var doc in warehouses.docs) {
+      if (doc['name'] == name) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   // Create a new warehouse
   Future<String> createWarehouse(String name) async {
+    bool warehouseExist = await checkWarehouseExist(name);
+    if (warehouseExist) {
+      return 'Warehouse exist';
+    }
     DocumentReference warehouseref = await warehouses.add(
       {'name': name, 'palettes': {}},
     );

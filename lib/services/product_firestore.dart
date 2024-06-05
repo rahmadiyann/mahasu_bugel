@@ -19,9 +19,24 @@ class ProductFirestoreService {
     }
   }
 
+  Future<bool> checkProductExist(String name) async {
+    final products = await this.products.get();
+    for (var doc in products.docs) {
+      if (doc['name'] == name) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   // Create a new product
   Future<String> createProduct(
       String name, String supplierId, String supplierName) async {
+    bool productExist = await checkProductExist(name);
+
+    if (productExist) {
+      return 'Product exist';
+    }
     DocumentReference productRef = await products.add(
       {
         'name': name,
