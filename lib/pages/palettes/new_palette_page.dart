@@ -131,7 +131,7 @@ class _NewPalettePageState extends State<NewPalettePage> {
                     focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.blue),
                     ),
-                    hintText: 'Palette name',
+                    hintText: 'Enter palette name',
                     hintStyle: const TextStyle(color: Colors.grey),
                   ),
                   style: const TextStyle(color: Colors.black),
