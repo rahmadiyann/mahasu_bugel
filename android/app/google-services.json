@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "436906869765",
+    "project_id": "mahasubugel-5abea",
+    "storage_bucket": "mahasubugel-5abea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:436906869765:android:b502f1267a2baa6422486c",
+        "android_client_info": {
+          "package_name": "com.example.mahasu_bugel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmSUMXxB7GtMyOeAfVNkenlRu5T0xQLvk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
