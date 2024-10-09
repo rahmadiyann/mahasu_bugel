@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:myapp/services/activity_firestore.dart';
 import 'package:myapp/services/palette_firestore.dart';
 
@@ -43,7 +42,6 @@ class WarehouseFirestoreService {
 
   // Read a palette by id
   Future readWarehouseById(String id) async {
-    debugPrint("warehousefirestore: $id");
     final palette = await warehouses.doc(id).get();
     return palette;
   }
