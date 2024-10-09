@@ -5,10 +5,11 @@ class SupplierFirestoreService {
   final CollectionReference suppliers =
       FirebaseFirestore.instance.collection('suppliers');
 
-  // Create a new supplier
+  // Create a new supplier with the document ID as the supplier name
   Future<String> createSupplier(
       String name, String address, String contact, String phone) async {
-    DocumentReference suppliersRef = await suppliers.add(
+    // Set the document ID to the supplier's name
+    await suppliers.doc(name).set(
       {
         'name': name,
         'address': address,
@@ -18,7 +19,8 @@ class SupplierFirestoreService {
       },
     );
 
-    return suppliersRef.id;
+    // Return the supplier name as the document ID
+    return name;
   }
 
   // Read a supplier

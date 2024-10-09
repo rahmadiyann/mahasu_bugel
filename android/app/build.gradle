@@ -19,6 +19,7 @@ android {
             reset()
             //noinspection ChromeOsAbiSupport
             include "armeabi-v7a"
+//            include "armeabi-v7a", "arm64-v8a"
             universalApk false
         }
     }
@@ -30,6 +31,18 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8
+    }
+
+    subprojects {
+        afterEvaluate { project ->
+            if (project.plugins.hasPlugin("com.android.application") ||
+                    project.plugins.hasPlugin("com.android.library")) {
+                project.android {
+                    compileSdkVersion 34
+                    buildToolsVersion "34.0.0"
+                }
+            }
+        }
     }
 
     defaultConfig {
