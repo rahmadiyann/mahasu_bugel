@@ -1,6 +1,6 @@
+import 'package:barcode_scan2/platform_wrapper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:myapp/components/button.dart';
@@ -77,12 +77,9 @@ class _PalettesPageState extends State<PalettesPage> {
 
     String barcodeScanRes;
     late String paletteName;
-    barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666', 'Cancel', true, ScanMode.QR);
+    barcodeScanRes = (await BarcodeScanner.scan()).rawContent;
 
-    if (barcodeScanRes == '-1') {
-      Navigator.pop(context);
-    } else if (palettes.contains(barcodeScanRes)) {
+    if (palettes.contains(barcodeScanRes)) {
       paletteName = await paletteservice.getPaletteName(barcodeScanRes);
       Navigator.push(
         context,

@@ -44,10 +44,10 @@ dependencies:
   path: ^1.9.0
   firebase_storage: ^12.3.2
   flutter_svg: ^2.0.10+1
-  flutter_barcode_scanner: ^2.0.0
   pretty_qr_code: ^3.3.0
   fuzzy: ^0.5.1
   flutter_dotenv: ^5.1.0
+  barcode_scan2: ^4.3.3
 
 dev_dependencies:
   flutter_test:

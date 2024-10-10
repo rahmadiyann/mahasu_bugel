@@ -1,5 +1,5 @@
+import 'package:barcode_scan2/platform_wrapper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -42,16 +42,9 @@ class _OutboundPageState extends State<OutboundPage> {
     List<String> products = await productService.getAllProductIds();
 
     String barcodeScanRes;
-    barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666', 'Cancel', true, ScanMode.QR);
+    barcodeScanRes = (await BarcodeScanner.scan()).rawContent;
     // once scanned, navigate to new inbound page and pass the barcode result
-    if (barcodeScanRes == '-1') {
-      // User pressed "Cancel"
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const OutboundPage()),
-      );
-    } else if (products.contains(barcodeScanRes)) {
+    if (products.contains(barcodeScanRes)) {
       // User scanned a barcode
       Navigator.push(
         context,

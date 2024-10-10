@@ -1,6 +1,6 @@
+import 'package:barcode_scan2/platform_wrapper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fuzzy/fuzzy.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -140,16 +140,8 @@ class _ProductsPageState extends State<ProductsPage> {
     List<String> products = await productService.getAllProductIds();
 
     String barcodeScanRes;
-    barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666', 'Cancel', true, ScanMode.QR);
-    // once scanned, navigate to new inbound page and pass the barcode result
-    if (barcodeScanRes == '-1') {
-      // User pressed "Cancel"
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ProductsPage()),
-      );
-    } else if (products.contains(barcodeScanRes)) {
+    barcodeScanRes = (await BarcodeScanner.scan()).rawContent;
+    if (products.contains(barcodeScanRes)) {
       // User scanned a barcode
       Navigator.push(
         context,
@@ -158,7 +150,7 @@ class _ProductsPageState extends State<ProductsPage> {
         ),
       );
     } else {
-// No product
+      // No product
       showModalBottomSheet(
         useSafeArea: true,
         showDragHandle: false,
@@ -412,8 +404,19 @@ class _ProductsPageState extends State<ProductsPage> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(
-                                            'ID: $docId',
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              const Text(
+                                                'ID: ',
+                                              ),
+                                              Text(
+                                                docId.length > 30
+                                                    ? '${docId.substring(0, 30)}...'
+                                                    : docId,
+                                              ),
+                                            ],
                                           ),
                                           GestureDetector(
                                             onTap: () {
