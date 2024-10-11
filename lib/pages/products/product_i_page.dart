@@ -414,12 +414,12 @@ class _ProductPageState extends State<ProductPage> {
                                               ),
                                               TotalQtyCard(
                                                 unit: 'KGM',
-                                                text: (qtyList['KGM'] ?? 0)
+                                                text: (qtyList['kgm'] ?? 0)
                                                     .toString(),
                                               ),
                                               TotalQtyCard(
                                                 unit: 'Bags',
-                                                text: (qtyList['Bags'] ?? 0)
+                                                text: (qtyList['bags'] ?? 0)
                                                     .toString(),
                                               ),
                                             ],
